@@ -3,332 +3,368 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Breda KIS Dashboard - iOS Mobile Experience</title>
+    <title>Breda KIS Dashboard - Veiligheidsregio Midden- en West-Brabant</title>
     <link href="https://cdn.jsdelivr.net/npm/gridstack@10.0/dist/gridstack.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
-            /* Kleurpalet VRMWB | BMWB */
-            --navy-dark: #122053;
-            --navy-bright: #17428C;
-            --red-main: #D2100B;
-            --red-dark: #AE1F1B;
-            --gold: #CC9933;
+            /* Officiële Huisstijlkleuren VRMWB | BMWB */
+            --blauw-kobalt: #17428C;
+            --blauw-donker: #122053;
+            --rood-basis: #D2100B;
+            --rood-donker: #AE1F1B;
+            --goud: #CC9933;
+            --zwart: #000000;
+            --wit: #FFFFFF;
+            
+            /* UI Kleuren */
             --bg-page: #E6E6E6;
             --widget-bg: #FFFFFF;
             --text-main: #000000;
             --text-muted: #707172;
-            --green-check: #2d7a2d;
-            --table-alt: #e9ecef;
+            --table-alt: #f4f6f9;
+            --status-groen: #2d7a2d;
+            --status-grijs: #888888;
         }
 
         body {
             background-color: var(--bg-page);
-            background-image: url('img/odjbackdrop.png');
+            background-image: url('img/odjbackdrop.png'); /* Werkt alleen als deze image lokaal bestaat, anders toont hij var(--bg-page) */
             background-size: cover;
             background-attachment: fixed;
             background-position: center;
             margin: 0;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
+            padding: 0;
+            font-family: 'Mariné UP', Calibri, 'Segoe UI', sans-serif;
             color: var(--text-main);
             overflow-x: hidden;
-            height: 100vh;
-            -webkit-tap-highlight-color: transparent; /* Verwijder blauwe tap-box op mobiel */
+            -webkit-tap-highlight-color: transparent;
         }
-
-        /* --- LOGIN SCREEN --- */
-        #login-screen {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background-color: rgba(18, 32, 83, 0.9);
-            backdrop-filter: blur(10px);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 9999;
-        }
-        .login-card {
-            background: var(--widget-bg); padding: 40px; border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center;
-            border-top: 5px solid var(--red-main); width: 90%; max-width: 350px;
-        }
-        .login-avatar { 
-            width: 80px; height: 80px; border-radius: 50%; object-fit: cover; 
-            margin: 0 auto 20px auto; border: 3px solid var(--navy-bright);
-            display: block; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        .login-card h2 { color: var(--navy-dark); margin-top: 0; font-weight: 800; font-size: 1.2rem; }
-        .login-input {
-            width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ccc;
-            border-radius: 6px; box-sizing: border-box; font-size: 14px; text-align: center;
-        }
-        .login-input:focus { outline: 2px solid var(--navy-bright); border-color: transparent; }
-        .login-btn {
-            width: 100%; padding: 12px; background: var(--navy-bright);
-            color: white; border: none; border-radius: 6px; font-weight: bold;
-            cursor: pointer; transition: background 0.2s; text-transform: uppercase; font-size: 13px;
-        }
-        .login-btn:hover { background: var(--navy-dark); }
-        #login-error { color: var(--red-main); font-size: 12px; font-weight: bold; display: none; margin-top: 10px; }
 
         /* --- MAIN APP CONTAINER --- */
-        #app-container { display: none; padding: 20px; }
+        #app-container { padding: 20px; }
 
-        /* --- Header & Clock --- */
-        .header-bar {
-            position: relative; display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 25px; padding: 15px 25px; background: rgba(18, 32, 83, 0.95); border-radius: 12px;
-            color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.3); backdrop-filter: blur(10px);
+        /* --- Header & Controls --- */
+        .header-bar { 
+            position: relative; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 25px; 
+            padding: 15px 25px; 
+            background: rgba(18, 32, 83, 0.95); 
+            border-bottom: 3px solid var(--rood-basis);
+            border-radius: 12px; 
+            color: var(--wit); 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
+            backdrop-filter: blur(10px); 
         }
-        .clock-container { font-size: 1.5rem; font-weight: 800; color: var(--gold); letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
-        .header-logo { position: absolute; left: 50%; transform: translateX(-50%); height: 40px; object-fit: contain; }
-        .controls { display: flex; gap: 12px; align-items: center; }
-        .btn { padding: 10px 20px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 12px; transition: all 0.2s; }
-        #toggle-edit { background: var(--gold); color: white; }
-        #toggle-edit.active { background: var(--red-main); }
-        #open-widget-panel { background: var(--navy-bright); color: white; display: none; }
-        body.edit-mode #open-widget-panel { display: block; }
-        #logout-btn { background: #555; color: white; margin-right: 15px; }
-        #logout-btn:hover { background: var(--red-main); }
-
-        /* --- Desktop Widget Core Styling --- */
-        .grid-stack-item-content {
-            background-color: var(--widget-bg) !important; border: 2px solid var(--red-main); border-radius: 18px;
-            display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-        }
-        .widget-header { background: #f8f9fa; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; flex-shrink: 0; }
-        .widget-title { font-weight: 800; color: var(--navy-dark); font-size: 16px; }
-        .scrollable { overflow-y: auto; flex-grow: 1; padding: 0; position: relative; }
-        .delete-btn { background: #e0e0e0; color: #555; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; display: none; align-items: center; justify-content: center; font-size: 12px; }
-        .delete-btn:hover { background: var(--red-main); color: white; }
-        body.edit-mode .delete-btn { display: flex; }
-
-        /* --- Clean Widget UI (Lijsten & Cards) --- */
-        .widget-list { display: flex; flex-direction: column; padding: 12px; gap: 10px; }
-        .list-item { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 12px 15px; background: #fafafa; border: 1px solid #eee; 
-            border-radius: 10px; border-left: 4px solid var(--navy-bright); transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .list-item:hover { transform: translateX(2px); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .list-item.p1 { border-left-color: var(--red-main); }
-        .list-item.p2 { border-left-color: var(--gold); }
-        .list-item.room-free { border-left-color: var(--green-check); }
         
-        .item-main { flex-grow: 1; }
-        .item-title { font-weight: 800; font-size: 13px; color: var(--navy-dark); margin-bottom: 4px; display: flex; align-items: center; gap: 8px;}
-        .item-sub { font-size: 11px; color: var(--text-muted); }
-        .item-side { text-align: right; min-width: 100px; display: flex; flex-direction: column; align-items: flex-end; gap: 4px;}
+        .clock-container { 
+            font-size: 1.5rem; 
+            font-weight: 800; 
+            color: var(--goud); 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+        }
+        
+        .header-logo { 
+            position: absolute; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            height: 40px; 
+            object-fit: contain; 
+        }
+        
+        .controls { 
+            display: flex; 
+            gap: 12px; 
+            align-items: center; 
+        }
+        
+        .btn { 
+            padding: 10px 15px; 
+            border: none; 
+            border-radius: 8px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            text-transform: uppercase; 
+            font-size: 12px; 
+            transition: all 0.2s; 
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        #toggle-edit { background: var(--goud); color: var(--wit); }
+        #toggle-edit.active { background: var(--rood-basis); } 
+        #open-widget-panel { background: var(--blauw-kobalt); color: var(--wit); display: none; }
+        #sync-btn { background: #17a2b8; color: var(--wit); }
+        
+        /* Widget Panel knop alleen tonen in edit mode */
+        body.edit-mode #open-widget-panel { display: flex; }
 
+        /* --- GridStack Widget Core --- */
+        .grid-stack-item-content { 
+            background-color: var(--widget-bg) !important; 
+            border: 1px solid #e0e0e0;
+            border-radius: 12px; 
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08); 
+        }
+        
+        body.edit-mode .grid-stack-item-content {
+            border: 2px dashed var(--rood-basis);
+        }
+
+        .widget-header { 
+            background: var(--blauw-donker); 
+            padding: 15px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 3px solid var(--rood-basis); 
+            flex-shrink: 0; 
+        }
+        
+        .widget-title { 
+            font-weight: 800; 
+            color: var(--wit); 
+            font-size: 16px; 
+            letter-spacing: 0.5px;
+        }
+        
+        .scrollable { 
+            overflow-y: auto; 
+            flex-grow: 1; 
+            padding: 0; 
+            position: relative; 
+            background: #ffffff;
+        }
+        
+        .empty-state { 
+            padding: 30px; 
+            text-align: center; 
+            color: var(--text-muted); 
+            font-size: 13px; 
+            font-style: italic; 
+        }
+
+        /* --- Edit Mode Knoppen (+ en -) --- */
+        .header-actions { 
+            display: flex; 
+            gap: 8px; 
+            align-items: center;
+        }
+        
+        .add-data-btn, .delete-btn { 
+            border: none; 
+            border-radius: 50%; 
+            width: 28px; 
+            height: 28px; 
+            cursor: pointer; 
+            font-size: 14px; 
+            display: none; /* Verberg standaard */
+            align-items: center; 
+            justify-content: center; 
+            transition: background 0.2s;
+        }
+        
+        .add-data-btn { background: var(--goud); color: var(--blauw-donker); }
+        .add-data-btn:hover { background: #e6ad39; }
+        
+        .delete-btn { background: rgba(255,255,255,0.2); color: var(--wit); }
+        .delete-btn:hover { background: var(--rood-basis); }
+        
+        .del-item-btn { 
+            position: absolute; 
+            top: 50%; 
+            right: 10px; 
+            transform: translateY(-50%);
+            background: var(--rood-basis); 
+            color: var(--wit); 
+            border: none; 
+            border-radius: 6px; 
+            padding: 8px 12px;
+            font-size: 12px; 
+            font-weight: bold;
+            cursor: pointer; 
+            display: none; /* Verberg standaard */
+            z-index: 10; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
+        }
+        
+        /* TOON KNOPPEN ALLEEN IN EDIT MODE */
+        body.edit-mode .add-data-btn, 
+        body.edit-mode .delete-btn { 
+            display: flex; 
+        }
+        body.edit-mode .editable-wrap:hover .del-item-btn { 
+            display: block; 
+        }
+        
+        /* --- General Item Styles (Lijsten & Cards) --- */
+        .widget-list { display: flex; flex-direction: column; padding: 12px; gap: 10px; }
+        .list-item { position: relative; display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: #fafafa; border: 1px solid #eee; border-radius: 10px; border-left: 4px solid var(--blauw-kobalt); }
+        .list-item.p1 { border-left-color: var(--rood-basis); }
+        .list-item.p2 { border-left-color: var(--goud); }
+        .list-item.room-free { border-left-color: var(--status-groen); }
+        
+        .item-main { flex-grow: 1; padding-right: 15px;}
+        .item-title { font-weight: 800; font-size: 13px; color: var(--blauw-donker); margin-bottom: 4px; display: flex; align-items: center; gap: 8px;}
+        .item-sub { font-size: 11px; color: var(--text-muted); }
+        .item-side { text-align: right; min-width: 90px; display: flex; flex-direction: column; align-items: flex-end; gap: 4px;}
+
+        /* Badges & Tags */
         .badge { padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;}
-        .badge-red { background: var(--red-main); color: white; }
-        .badge-gold { background: var(--gold); color: white; }
-        .badge-navy { background: var(--navy-dark); color: white; }
-        .badge-green { background: var(--green-check); color: white; }
-        .badge-grey { background: #e0e0e0; color: #333; }
+        .badge-red { background: var(--rood-basis); color: var(--wit); }
+        .badge-gold { background: var(--goud); color: var(--blauw-donker); }
+        .badge-navy { background: var(--blauw-donker); color: var(--wit); }
+        .badge-blue { background: var(--blauw-kobalt); color: var(--wit); }
+        .badge-green { background: var(--status-groen); color: var(--wit); }
+        .badge-grey { background: var(--status-grijs); color: var(--wit); }
 
         .v-tag-list { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 6px; }
-        .v-tag { background: var(--table-alt); border: 1px solid #ddd; color: var(--navy-dark); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px;}
-        .v-tag i { color: var(--red-main); }
+        .v-tag { background: var(--table-alt); border: 1px solid #ddd; color: var(--blauw-donker); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px;}
+        .v-tag i { color: var(--rood-basis); }
 
+        /* Voertuigen Grid & Wegafsluitingen */
         .vehicle-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; padding: 12px; }
-        .vehicle-card { background: white; border: 1px solid #eee; border-radius: 12px; padding: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); display: flex; flex-direction: column; justify-content: space-between; }
+        .vehicle-card { position: relative; background: var(--wit); border: 1px solid #eee; border-radius: 12px; overflow: hidden; padding: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); display: flex; flex-direction: column; justify-content: space-between; }
         .v-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
-        .v-title { font-weight: 900; font-size: 1.2rem; color: var(--navy-dark); display: flex; align-items: center; }
+        .v-title { font-weight: 900; font-size: 1.2rem; color: var(--blauw-donker); display: flex; align-items: center; }
         .v-type { font-size: 0.8rem; color: var(--text-muted); font-weight: normal; margin-left: 5px; }
         .v-details { font-size: 11px; color: var(--text-muted); margin-bottom: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
-        .v-details i { color: var(--navy-bright); width: 14px; text-align: center; }
+        .v-details i { color: var(--blauw-kobalt); width: 14px; text-align: center; }
         
         .v-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; }
-        .v-dot.red { background-color: var(--red-main); box-shadow: 0 0 5px rgba(210,16,11,0.4); }
-        .v-dot.green { background-color: var(--green-check); box-shadow: 0 0 5px rgba(45,122,45,0.4); }
+        .v-dot.red { background: var(--rood-basis); }
+        .v-dot.green { background: var(--status-groen); }
+        .v-dot.grey { background: var(--status-grijs); }
 
+        /* Progress Bars */
         .v-gauges { display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 5px; }
         .progress-row { display: flex; align-items: center; gap: 10px; width: 100%; }
         .progress-label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; width: 65px; }
         .progress-track { flex-grow: 1; height: 8px; background: #e9ecef; border-radius: 4px; overflow: hidden; position: relative; }
         .progress-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease-in-out; }
-        .progress-fill.blue { background-color: var(--navy-bright); }
+        .progress-fill.blue { background-color: var(--blauw-kobalt); }
         .progress-fill.lightblue { background-color: #5bc0de; }
-        .progress-fill.gold { background-color: var(--gold); }
-        .progress-val { font-size: 11px; font-weight: 800; color: var(--navy-dark); width: 35px; text-align: right; }
+        .progress-fill.gold { background-color: var(--goud); }
+        .progress-val { font-size: 11px; font-weight: 800; color: var(--blauw-donker); width: 35px; text-align: right; }
 
+        /* KIS Native UI (Werkzaamheden & Weer) */
         .kis-container { padding: 20px; }
-        .kis-title { font-size: 1.8rem; color: var(--navy-dark); margin: 0; }
-        .kis-date { color: var(--text-muted); border-bottom: 3px solid var(--gold); padding-bottom: 5px; margin-bottom: 20px; font-weight: 600; }
-        .work-item { display: flex; gap: 15px; padding: 15px; border-bottom: 1px solid #eee; transition: all 0.3s ease; }
+        .kis-title { font-size: 1.6rem; font-weight: 800; color: var(--blauw-donker); margin: 0 0 5px 0; }
+        .kis-date { color: var(--text-muted); border-bottom: 2px solid var(--rood-basis); padding-bottom: 10px; margin-bottom: 20px; font-weight: 600; }
+        
+        .work-item { position: relative; display: flex; gap: 15px; padding: 15px; border-bottom: 1px solid #eee; transition: all 0.3s ease; }
         .work-item.completed { opacity: 0.5; background: #fcfcfc; }
         .work-item.completed .task-title { text-decoration: line-through; color: var(--text-muted); }
+        .kis-checkbox { color: var(--status-groen); font-size: 1.6rem; background: none; border: none; padding: 0; cursor: pointer; }
         .work-item.completed .kis-checkbox { color: var(--text-muted); }
-        .kis-checkbox { color: var(--green-check); font-size: 1.6rem; background: none; border: none; padding: 0; cursor: pointer; transition: color 0.2s; }
-        .work-details .task-title { font-weight: 800; color: var(--red-dark); font-size: 1.1rem; margin-bottom: 5px; transition: all 0.3s; }
-        .performer-tag { display: inline-block; background: var(--navy-dark); color: white; padding: 3px 10px; border-radius: 6px; font-size: 11px; margin: 2px 2px 2px 0; font-weight: 600; }
+        .work-details .task-title { font-weight: 800; color: var(--blauw-kobalt); font-size: 1.1rem; margin-bottom: 5px; }
+        .performer-tag { display: inline-block; background: var(--blauw-donker); color: var(--wit); padding: 3px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+
         .weather-box { text-align: center; padding: 30px 10px; height: 100%; display: flex; flex-direction: column; justify-content: center;}
-        .weather-temp { font-size: 3.5rem; font-weight: 900; color: var(--navy-dark); margin: 10px 0; }
-        .weather-loc { font-weight: bold; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; }
+        .weather-temp { font-size: 4rem; font-weight: 900; color: var(--blauw-donker); margin: 10px 0; }
+        .weather-loc { font-weight: 800; color: var(--rood-basis); text-transform: uppercase; letter-spacing: 1px; }
 
-        /* --- iOS Style Widget Drawer (Desktop Only) --- */
-        .widget-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(5px); z-index: 999; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        /* --- MODAL FORM (Toevoegen Pop-up) --- */
+        .modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+            background: rgba(18, 32, 83, 0.7); backdrop-filter: blur(5px); 
+            display: none; justify-content: center; align-items: center; z-index: 10001; 
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-card { 
+            background: var(--wit); width: 90%; max-width: 450px; 
+            border-radius: 12px; padding: 30px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4); 
+            border-top: 5px solid var(--rood-basis); 
+            max-height: 90vh; overflow-y: auto;
+        }
+        .modal-card h3 { color: var(--blauw-donker); margin-top: 0; font-size: 1.4rem; font-weight: 800; border-bottom: 2px solid #eee; padding-bottom: 10px;}
+        .form-group { margin-bottom: 15px; text-align: left; }
+        .form-group label { display: block; font-size: 12px; font-weight: bold; color: var(--blauw-donker); margin-bottom: 5px; text-transform: uppercase;}
+        .form-group input, .form-group select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-family: inherit; font-size: 14px;}
+        .form-group input:focus, .form-group select:focus { outline: 2px solid var(--blauw-kobalt); border-color: transparent;}
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; }
+        .btn-cancel { background: #eee; color: #333; }
+        .btn-save { background: var(--blauw-kobalt); color: var(--wit); }
+        .btn-save:hover { background: var(--blauw-donker); }
+
+        /* --- iOS Style Widget Drawer (Onderin scherm voor nieuwe widgets) --- */
+        .widget-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(5px); z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
         .widget-overlay.active { opacity: 1; pointer-events: auto; }
-        .widget-drawer { position: fixed; bottom: -100%; left: 50%; transform: translateX(-50%); width: 90%; max-width: 600px; height: 70vh; background: #f6f6f6; border-radius: 30px 30px 0 0; z-index: 1000; transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); padding: 30px; box-shadow: 0 -10px 40px rgba(0,0,0,0.2); display: flex; flex-direction: column; }
+        .widget-drawer { position: fixed; bottom: -100%; left: 50%; transform: translateX(-50%); width: 90%; max-width: 600px; height: 70vh; background: #f6f6f6; border-radius: 24px 24px 0 0; z-index: 10000; transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); padding: 30px; box-shadow: 0 -10px 40px rgba(0,0,0,0.2); display: flex; flex-direction: column; }
         .widget-drawer.active { bottom: 0; }
-        .drawer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .drawer-header h2 { margin: 0; color: var(--navy-dark); font-size: 1.5rem; }
-        .close-drawer { background: #e0e0e0; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-size: 16px; font-weight: bold;}
+        .drawer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--rood-basis); padding-bottom: 10px;}
+        .drawer-header h2 { margin: 0; color: var(--blauw-donker); font-size: 1.5rem; font-weight: 800; }
+        .close-drawer { background: var(--blauw-kobalt); color: var(--wit); border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; font-size: 16px; font-weight: bold;}
         .widget-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; overflow-y: auto; padding-bottom: 20px; }
-        .widget-card { background: white; border-radius: 20px; padding: 20px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
-        .widget-card:hover { border-color: var(--navy-bright); transform: translateY(-3px); }
-        .widget-card i { font-size: 2.5rem; color: var(--red-main); margin-bottom: 15px; }
-        .widget-card h3 { margin: 0 0 5px 0; font-size: 1rem; color: var(--navy-dark); }
-        .widget-card p { margin: 0; font-size: 0.8rem; color: var(--text-muted); }
+        .widget-card { background: var(--wit); border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
+        .widget-card:hover { border-color: var(--blauw-kobalt); transform: translateY(-3px); }
+        .widget-card i { font-size: 2.5rem; color: var(--rood-basis); margin-bottom: 15px; }
+        .widget-card h3 { margin: 0; font-size: 1rem; color: var(--blauw-donker); font-weight: 800;}
 
-        /* =========================================================
-           NIEUW: MOBIELE WEERGAVE (iOS HOME SCREEN STIJL) 
-           ========================================================= */
+        /* --- MOBIELE WEERGAVE (iOS App Grid) --- */
         .mobile-only { display: none; }
-
         @media (max-width: 768px) {
-            #app-container { padding: 15px 10px; }
-            
-            /* Verberg Desktop specifieke elementen */
+            #app-container { padding: 10px; }
             .grid-stack { display: none !important; }
             .controls { display: none !important; }
-            .header-bar { margin-bottom: 30px; justify-content: center; padding: 10px; }
-            .clock-container { font-size: 1.2rem; }
-            .header-logo { display: none; } /* Logo weglaten voor meer ruimte op mobiel */
-
-            /* Toon Mobiele elementen */
+            .header-bar { margin-bottom: 30px; justify-content: center; padding: 15px; border-radius: 0 0 16px 16px; }
+            .clock-container { font-size: 1.3rem; }
+            .header-logo { display: none; } 
+            
             .mobile-only { display: block; }
-
-            /* Het App Grid */
-            #mobile-home-screen {
-                display: grid;
-                grid-template-columns: repeat(4, 1fr);
-                gap: 25px 15px;
-                padding: 10px;
-                max-width: 500px;
-                margin: 0 auto;
-            }
-
-            .app-icon-wrap {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                cursor: pointer;
-            }
-
-            .app-icon {
-                width: 65px;
-                height: 65px;
-                border-radius: 22%; /* Perfecte iOS squircle simulatie */
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                font-size: 28px;
-                color: white;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.25);
-                margin-bottom: 8px;
-                background: linear-gradient(135deg, var(--navy-bright), var(--navy-dark));
-                transition: transform 0.1s;
-            }
-            .app-icon-wrap:active .app-icon { transform: scale(0.9); } /* Tap effect */
-
-            /* Brand Colors voor de apps afwisselen */
-            .app-icon.color-red { background: linear-gradient(135deg, #ff4b4b, var(--red-main)); }
-            .app-icon.color-gold { background: linear-gradient(135deg, #ffe57f, var(--gold)); }
-            .app-icon.color-green { background: linear-gradient(135deg, #4ade80, var(--green-check)); }
-
-            .app-label {
-                font-size: 11px;
-                color: white;
-                font-weight: 600;
-                text-align: center;
-                text-shadow: 0 1px 3px rgba(0,0,0,0.8); /* Zorgt dat tekst leesbaar is op elke foto */
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                width: 100%;
-            }
-
-            /* Geopende App Weergave (Full Screen) */
-            #mobile-app-view {
-                position: fixed;
-                top: 0; left: 0; width: 100vw; height: 100vh;
-                background: var(--bg-page);
-                z-index: 10000;
-                display: flex;
-                flex-direction: column;
-                transform: translateX(100%); /* Buiten beeld naar rechts */
-                transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
-            }
-            #mobile-app-view.active {
-                transform: translateX(0); /* Schuif in beeld */
-            }
-
-            .mobile-app-header {
-                background: rgba(18, 32, 83, 0.95);
-                backdrop-filter: blur(10px);
-                color: white;
-                padding: 15px;
-                padding-top: max(15px, env(safe-area-inset-top)); /* Voor iPhone notch */
-                display: flex;
-                align-items: center;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-                z-index: 2;
-            }
-
-            .mobile-back-btn {
-                background: none; border: none;
-                color: var(--gold);
-                font-size: 16px; font-weight: 600;
-                padding: 5px 10px 5px 0;
-                display: flex; align-items: center; gap: 6px;
-                cursor: pointer;
-            }
-
-            .mobile-app-title {
-                font-size: 17px; font-weight: 800;
-                flex-grow: 1; text-align: center;
-                margin-right: 65px; /* Compenseer voor de terug-knop om titel te centreren */
-                white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-            }
-
-            #mobile-app-content {
-                flex-grow: 1;
-                overflow-y: auto;
-                padding: 0;
-                background: white;
-            }
-
-            /* Verberg de desktop widget header in de mobiele app view */
+            
+            #mobile-home-screen { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px 10px; padding: 10px; max-width: 500px; margin: 0 auto; }
+            .app-icon-wrap { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+            .app-icon { width: 65px; height: 65px; border-radius: 22%; display: flex; justify-content: center; align-items: center; font-size: 28px; color: var(--wit); box-shadow: 0 4px 10px rgba(0,0,0,0.2); margin-bottom: 8px; background: linear-gradient(135deg, var(--blauw-kobalt), var(--blauw-donker)); transition: transform 0.1s; }
+            .app-icon-wrap:active .app-icon { transform: scale(0.9); }
+            .app-icon.color-red { background: linear-gradient(135deg, #ff4b4b, var(--rood-basis)); }
+            .app-icon.color-gold { background: linear-gradient(135deg, #ffe57f, var(--goud)); }
+            .app-icon.color-green { background: linear-gradient(135deg, #4ade80, var(--status-groen)); }
+            .app-label { font-size: 11px; color: var(--wit); font-weight: 600; text-align: center; text-shadow: 0 1px 3px rgba(0,0,0,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+            
+            #mobile-app-view { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-page); z-index: 10000; display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1); }
+            #mobile-app-view.active { transform: translateX(0); }
+            .mobile-app-header { background: rgba(18, 32, 83, 0.95); backdrop-filter: blur(10px); color: var(--wit); padding: 15px; padding-top: max(15px, env(safe-area-inset-top)); display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 2; border-bottom: 3px solid var(--rood-basis);}
+            .mobile-back-btn { background: none; border: none; color: var(--goud); font-size: 16px; font-weight: 600; padding: 5px 10px 5px 0; display: flex; align-items: center; gap: 6px; cursor: pointer; }
+            .mobile-app-title { font-size: 16px; font-weight: 800; flex-grow: 1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            #mobile-app-content { flex-grow: 1; overflow-y: auto; padding: 0; background: var(--wit); }
+            
+            /* Hide desktop header inside mobile app view */
             #mobile-app-content .widget-header { display: none; }
+            
+            /* Veiligheid op mobiel: Verwijder knop verbergen, toevoegen mag wel */
+            .del-item-btn { display: none !important; }
         }
     </style>
 </head>
 <body>
 
-    <div id="login-screen">
-        <div class="login-card">
-            <img src="https://static.vecteezy.com/system/resources/previews/026/434/409/non_2x/default-avatar-profile-icon-social-media-user-photo-vector.jpg" alt="User Avatar" class="login-avatar">
-            <h2>Dashboard Toegang</h2>
-            <input type="password" id="login-password" class="login-input" placeholder="Wachtwoord" autofocus>
-            <button id="login-btn" class="login-btn">Inloggen</button>
-            <div id="login-error">Wachtwoord onjuist. Probeer opnieuw.</div>
-        </div>
-    </div>
-
     <div id="app-container">
+        
         <header class="header-bar">
             <div class="clock-container">
                 <i class="fa-regular fa-clock"></i>
                 <span id="live-clock">00:00:00</span>
             </div>
             
-            <img src="img/logo.png" alt="Veiligheidsregio Brandweer" class="header-logo">
+            <img src="img/logo.png" alt="VRMWB Logo" class="header-logo">
             
             <div class="controls">
-                <button id="logout-btn" class="btn"><i class="fa-solid fa-lock"></i></button>
+                <button id="sync-btn" class="btn" title="Cloud Sync"><i class="fa-solid fa-cloud"></i> Sync</button>
                 <span id="status-label" style="margin-right: 15px; font-size: 13px;">Layout: <strong>Vergrendeld</strong></span>
-                <button id="open-widget-panel" class="btn"><i class="fa-solid fa-plus"></i> Add Widget</button>
-                <button id="toggle-edit" class="btn">Edit Mode</button>
+                <button id="open-widget-panel" class="btn"><i class="fa-solid fa-plus"></i> Widgets Toevoegen</button>
+                <button id="toggle-edit" class="btn"><i class="fa-solid fa-pen"></i> Edit Mode</button>
             </div>
         </header>
 
@@ -340,374 +376,509 @@
             <div class="mobile-app-header">
                 <button class="mobile-back-btn" id="mobile-back-btn"><i class="fa-solid fa-chevron-left"></i> Terug</button>
                 <div class="mobile-app-title" id="mobile-app-title">App Name</div>
+                <div id="mobile-app-actions"></div>
             </div>
             <div id="mobile-app-content" class="scrollable"></div>
         </div>
-
+        
         <div class="widget-overlay" id="widget-overlay"></div>
         <div class="widget-drawer" id="widget-drawer">
             <div class="drawer-header">
-                <h2>Add Widgets</h2>
-                <button class="close-drawer" id="close-drawer">✕</button>
+                <h2>Beschikbare Widgets</h2>
+                <button class="close-drawer" id="close-drawer"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="widget-grid" id="drawer-grid"></div>
+        </div>
+
+    </div>
+
+    <div id="data-modal" class="modal-overlay">
+        <div class="modal-card">
+            <h3 id="modal-title">Toevoegen</h3>
+            <div id="modal-form"></div>
+            <div class="modal-actions">
+                <button class="btn btn-cancel" onclick="closeModal()">Annuleren</button>
+                <button class="btn btn-save" onclick="saveModalData()"><i class="fa-solid fa-check"></i> Opslaan</button>
+            </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/gridstack@10.0/dist/gridstack-all.js"></script>
     <script>
-        // --- 0. LOGIN LOGIC ---
-        const loginScreen = document.getElementById('login-screen');
-        const appContainer = document.getElementById('app-container');
-        const passwordInput = document.getElementById('login-password');
-        const loginBtn = document.getElementById('login-btn');
-        const errorMsg = document.getElementById('login-error');
-        const logoutBtn = document.getElementById('logout-btn');
+        // ==========================================
+        // 1. DATA STRUCTUUR (Leeg om mee te beginnen)
+        // ==========================================
+        let appData = {
+            'topdesk': [],
+            'alarmen': [],
+            'wegafsluitingen': [],
+            'ruimtes': [],
+            'ploeg': [],
+            'voertuigen': [],
+            'werk': []
+        };
 
-        let gridInitialized = false;
-
-        function checkAuth() {
-            if (sessionStorage.getItem('vrmwb_auth') === 'true') { showDashboard(); }
-        }
-
-        function attemptLogin() {
-            if (passwordInput.value === 'vrmwb') {
-                sessionStorage.setItem('vrmwb_auth', 'true');
-                errorMsg.style.display = 'none';
-                showDashboard();
-            } else {
-                errorMsg.style.display = 'block'; passwordInput.value = ''; passwordInput.focus();
-            }
-        }
-
-        function showDashboard() {
-            loginScreen.style.display = 'none';
-            appContainer.style.display = 'block';
-            if (!gridInitialized) { 
-                initGridStackDashboard(); 
-                renderMobileApps(); // Genereer iPhone layout
-                gridInitialized = true; 
-            }
-        }
-
-        loginBtn.addEventListener('click', attemptLogin);
-        passwordInput.addEventListener('keypress', function(e) { if (e.key === 'Enter') attemptLogin(); });
-
-        logoutBtn.addEventListener('click', () => {
-            sessionStorage.removeItem('vrmwb_auth');
-            appContainer.style.display = 'none';
-            loginScreen.style.display = 'flex';
-            passwordInput.value = ''; passwordInput.focus();
-        });
-
+        // Klokje
         setInterval(() => { document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('nl-NL'); }, 1000);
 
-        // --- 1. DATA & WIDGET DEFINITIONS ---
-        function renderProgressBar(val, colorClass, label) {
-            if(!val) return '';
-            return `
-            <div class="progress-row" title="${label}: ${val}%">
-                <div class="progress-label">${label}</div>
-                <div class="progress-track"><div class="progress-fill ${colorClass}" style="width: ${val}%;"></div></div>
-                <div class="progress-val">${val}%</div>
-            </div>`;
+        // ==========================================
+        // 2. CLOUD SYNC LOGICA (JSONBlob)
+        // ==========================================
+        let syncId = new URLSearchParams(window.location.search).get('sync');
+
+        async function loadData() {
+            if (syncId) {
+                try {
+                    let res = await fetch(`https://jsonblob.com/api/jsonBlob/${syncId}`);
+                    if(res.ok) {
+                        appData = await res.json();
+                        console.log("Data geladen vanuit Cloud Sync.");
+                        return;
+                    }
+                } catch(e) { console.error("Cloud load error", e); }
+            }
+            // Fallback naar LocalStorage (Apparaat opslag)
+            let local = localStorage.getItem('vrmwb_appData_v13');
+            if (local) appData = JSON.parse(local);
         }
 
-        // LET OP: ID's zijn vervangen door dynamische classes (dyn-...) om duplicaten te voorkomen in mobiele/desktop weergave tegelijk.
-        const WIDGET_LIB = {
-            'topdesk': { w: 6, h: 4, title: 'Topdesk', short: 'Topdesk', icon: 'fa-clipboard-list', desc: 'Meldingen Kazerne 1/2', html: `
-                <div class="widget-header"><span class="widget-title">Topdesk - Kazerne 1 / 2</span><button class="delete-btn" onclick="removeWidget('topdesk')"><i class="fa-solid fa-xmark"></i></button></div>
-                <div class="scrollable">
-                    <div class="widget-list">
-                        <div class="list-item">
-                            <div class="item-main">
-                                <div class="item-title">Verstopping <span class="badge badge-navy">Breda</span></div>
-                                <div class="item-sub"><strong>M2603 156</strong> • Aangemaakt: Di, 3 mrt 2026 • Streefdatum: 04/03</div>
+        async function saveDataToCloud() {
+            localStorage.setItem('vrmwb_appData_v13', JSON.stringify(appData)); // Sla altijd lokaal op
+            
+            if (syncId) {
+                // Update live in de cloud
+                fetch(`https://jsonblob.com/api/jsonBlob/${syncId}`, {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(appData)
+                });
+            }
+            renderAllWidgets(); // Ververs het scherm direct
+        }
+
+        function setupSyncBtn() {
+            document.getElementById('sync-btn').addEventListener('click', async () => {
+                if (syncId) {
+                    let url = window.location.origin + window.location.pathname + '?sync=' + syncId;
+                    alert("Jouw Cloud Sync Link is actief!\n\nKopieer deze link en open hem op je telefoon om live mee te kijken:\n\n" + url);
+                } else {
+                    document.getElementById('sync-btn').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Bezig...';
+                    try {
+                        let res = await fetch('https://jsonblob.com/api/jsonBlob', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+                            body: JSON.stringify(appData)
+                        });
+                        let loc = res.headers.get('Location');
+                        if (loc) {
+                            syncId = loc.split('/').pop();
+                            window.history.replaceState(null, null, '?sync=' + syncId);
+                            let url = window.location.origin + window.location.pathname + '?sync=' + syncId;
+                            alert("Cloud Sync geactiveerd!\n\nOpen deze link op een ander apparaat om alles live te synchroniseren:\n\n" + url);
+                        }
+                    } catch(e) {
+                        alert("Fout bij aanmaken Cloud Sync. Controleer je internetverbinding.");
+                    }
+                    document.getElementById('sync-btn').innerHTML = '<i class="fa-solid fa-cloud"></i> Sync Actief';
+                    document.getElementById('sync-btn').style.background = "var(--status-groen)";
+                }
+            });
+            
+            if(syncId) {
+                document.getElementById('sync-btn').innerHTML = '<i class="fa-solid fa-cloud"></i> Sync Actief';
+                document.getElementById('sync-btn').style.background = "var(--status-groen)";
+            }
+        }
+
+        // ==========================================
+        // 3. WIDGET DEFINITIES & RENDER LOGICA
+        // ==========================================
+        
+        function renderPB(val, colorClass, label) {
+            if(!val) return '';
+            return `<div class="progress-row"><div class="progress-label">${label}</div><div class="progress-track"><div class="progress-fill ${colorClass}" style="width: ${val}%;"></div></div><div class="progress-val">${val}%</div></div>`;
+        }
+
+        const WIDGET_DEF = {
+            'topdesk': { title: 'Topdesk', short: 'Topdesk', icon: 'fa-clipboard-list', form: [
+                { id: 'titel', label: 'Omschrijving storing/melding', type: 'text', req: true },
+                { id: 'locatie', label: 'Ruimte / Locatie', type: 'text' },
+                { id: 'ticket', label: 'Ticketnummer (bijv M2603 001)', type: 'text' },
+                { id: 'status', label: 'Status', type: 'select', opts: ['Nieuw (Grijs)', 'In Behandeling (Blauw)', 'Afgehandeld (Groen)'] },
+                { id: 'persoon', label: 'Toegewezen aan', type: 'text' }
+            ]},
+            'alarmen': { title: 'Alarmen Vorige Dienst', short: 'Alarmen', icon: 'fa-bell', form: [
+                { id: 'prio', label: 'Prioriteit', type: 'select', opts: ['P1 (Rood)', 'P2 (Goud)'] },
+                { id: 'melding', label: 'Incident omschrijving', type: 'text', req: true },
+                { id: 'locatie', label: 'Adres', type: 'text' },
+                { id: 'tijd', label: 'Datum / Tijdstip', type: 'text' },
+                { id: 'voertuigen', label: 'Gealarmeerde Voertuigen (komma gescheiden)', type: 'text' }
+            ]},
+            'wegafsluitingen': { title: 'Wegafsluitingen', short: 'Wegen', icon: 'fa-road-barrier', form: [
+                { id: 'straat', label: 'Straatnaam', type: 'text', req: true },
+                { id: 'datum', label: 'Datum / Periode', type: 'text' },
+                { id: 'reden', label: 'Reden Afsluiting', type: 'text' },
+                { id: 'img', label: 'Link naar kaartafbeelding (URL)', type: 'text' }
+            ]},
+            'ruimtes': { title: 'Ruimte Reserveringen', short: 'Ruimtes', icon: 'fa-calendar-check', form: [
+                { id: 'naam', label: 'Ruimtenaam (bijv. Breda 1.77)', type: 'text', req: true },
+                { id: 'type', label: 'Type (bijv. Hybride / Vergader)', type: 'text' },
+                { id: 'tijden', label: 'Gereserveerde Tijden (komma gescheiden, bijv. 09:00 - 10:00, 14:00 - 15:00)', type: 'text' }
+            ]},
+            'ploeg': { title: 'Ploegindeling Breda', short: 'Ploeg', icon: 'fa-users', form: [
+                { id: 'naam', label: 'Voor- en Achternaam', type: 'text', req: true },
+                { id: 'rol', label: 'Rol / Positie (bijv. TS 1 : BV)', type: 'text' },
+                { id: 'kleur', label: 'Kleur Label', type: 'select', opts: ['Rood', 'Blauw', 'Groen', 'Goud', 'Grijs'] }
+            ]},
+            'voertuigen': { title: 'Status Voertuigen', short: 'Voertuigen', icon: 'fa-truck-fast', form: [
+                { id: 'voertuig', label: 'Voertuig Nummer (bijv. 203132)', type: 'text', req: true },
+                { id: 'type', label: 'Type (bijv. TS of HW)', type: 'text' },
+                { id: 'status', label: 'Status Code (bijv. ov (10) of kz (5))', type: 'text' },
+                { id: 'kleur', label: 'Status Kleurbolletje', type: 'select', opts: ['Rood', 'Groen', 'Grijs'] },
+                { id: 'water', label: 'Watertank % (leeglaten is verbergen)', type: 'number' },
+                { id: 'schuim', label: 'Schuimtank % (leeglaten is verbergen)', type: 'number' },
+                { id: 'brandstof', label: 'Brandstof % (leeglaten is verbergen)', type: 'number' }
+            ]},
+            'werk': { title: 'Alg. Werkzaamheden', short: 'Taken', icon: 'fa-list-check', form: [
+                { id: 'taak', label: 'Taak / Omschrijving', type: 'text', req: true },
+                { id: 'uitvoerder', label: 'Wie gaat het doen?', type: 'text' },
+                { id: 'auteur', label: 'Aangemaakt door', type: 'text' }
+            ]},
+            'weather': { title: 'Actueel Weer', short: 'Weer', icon: 'fa-cloud-sun', noAdd: true }
+        };
+
+        // Koppel tekst dropdowns aan de juiste CSS klasses
+        const colorMap = {
+            'Nieuw (Grijs)': 'grey', 'In Behandeling (Blauw)': 'blue', 'Afgehandeld (Groen)': 'green',
+            'P1 (Rood)': 'p1', 'P2 (Goud)': 'p2',
+            'Rood': 'red', 'Blauw': 'blue', 'Groen': 'green', 'Goud': 'gold', 'Grijs': 'grey'
+        };
+
+        // Bouw de HTML voor de inhoud van een widget
+        function buildHTML(widgetId, isMobile = false) {
+            let items = appData[widgetId] || [];
+            let html = '';
+
+            // Desktop Header (met knoppen)
+            if(!isMobile) {
+                let btnHtml = WIDGET_DEF[widgetId].noAdd ? '' : `<button class="add-data-btn" onclick="openModal('${widgetId}')" title="Toevoegen"><i class="fa-solid fa-plus"></i></button>`;
+                html += `<div class="widget-header">
+                            <span class="widget-title">${WIDGET_DEF[widgetId].title}</span>
+                            <div class="header-actions">
+                                ${btnHtml}
+                                <button class="delete-btn" onclick="removeWidgetFromGrid('${widgetId}')" title="Widget verwijderen"><i class="fa-solid fa-xmark"></i></button>
                             </div>
-                            <div class="item-side"><span class="badge badge-green">Afgehandeld</span><div class="item-sub">Meijers, Dennis</div></div>
-                        </div>
-                        <div class="list-item">
-                            <div class="item-main">
-                                <div class="item-title">Hybride schermen storing 1.77 <span class="badge badge-navy">Instructieruimte</span></div>
-                                <div class="item-sub"><strong>M2603 073</strong> • Aangemaakt: Ma, 2 mrt 2026 • Streefdatum: 03/03</div>
-                            </div>
-                            <div class="item-side"><span class="badge badge-green">Afgehandeld</span><div class="item-sub">Hoekstra, Joost</div></div>
-                        </div>
-                    </div>
-                </div>`
-            },
-            'alarmen': { w: 6, h: 4, title: 'Alarmen Vorige Dienst', short: 'Alarmen', icon: 'fa-bell', desc: 'Recente P1/P2', html: `
-                <div class="widget-header"><span class="widget-title">Alarmen vorige dienst</span><button class="delete-btn" onclick="removeWidget('alarmen')"><i class="fa-solid fa-xmark"></i></button></div>
-                <div class="scrollable">
-                    <div class="widget-list">
-                        <div class="list-item p1">
-                            <div class="item-main">
-                                <div class="item-title"><span class="badge badge-red">P1</span> Brand - Gebouw - 05 Industrie</div>
-                                <div class="item-sub"><i class="fa-solid fa-location-dot" style="color:var(--gold);"></i> Breda • 4-3-2026 (07:45)</div>
-                                <div class="v-tag-list"><span class="v-tag">203133</span><span class="v-tag">203093</span><span class="v-tag">203134</span><span class="v-tag">200021</span></div>
-                            </div>
-                        </div>
-                        <div class="list-item p2">
-                            <div class="item-main">
-                                <div class="item-title"><span class="badge badge-gold">P2</span> Brand - Buiten</div>
-                                <div class="item-sub"><i class="fa-solid fa-location-dot" style="color:var(--gold);"></i> Verbeetenstraat Breda • 5-3-2026 (04:12)</div>
-                                <div class="v-tag-list"><span class="v-tag">203132</span></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>`
-            },
-            'wegafsluitingen': { w: 4, h: 6, title: 'Wegafsluitingen', short: 'Wegen', icon: 'fa-road-barrier', desc: 'Actuele wegafsluitingen', html: `
-                <div class="widget-header"><span class="widget-title">Wegafsluitingen</span><button class="delete-btn" onclick="removeWidget('wegafsluitingen')"><i class="fa-solid fa-xmark"></i></button></div>
-                <div class="scrollable" style="padding: 12px; background: #fafafa;">
-                    <div class="vehicle-card" style="padding: 0; overflow: hidden; border: 1px solid #ddd;">
-                        <img src="blob:https://kis.vrmwb.nl/9d4e2fc8-40aa-4771-99e3-f2155e955b17" onerror="this.src='https://placehold.co/600x400/eeeeee/888888?text=Kaart+niet+gevonden'" alt="Kaart" style="width: 100%; height: 180px; object-fit: cover; border-bottom: 2px solid var(--red-main);">
-                        <div style="padding: 15px;">
-                            <div class="item-title" style="font-size: 15px; margin-bottom: 8px;">Ploegstraat Breda <span class="badge badge-red" style="float: right;">Afgesloten</span></div>
-                            <div class="item-sub" style="margin-bottom: 12px;"><i class="fa-regular fa-calendar"></i> Wo, 11 maart 2026 (Fase 1 t/m 5)</div>
-                            <div style="font-size: 12px; font-weight: 700; color: var(--navy-dark); margin-bottom: 5px;">Herinrichting / onderhoud van Weg</div>
-                            <div class="item-sub" style="color: var(--red-main); font-weight: bold;"><i class="fa-solid fa-triangle-exclamation"></i> Geen doorgang mogelijk.</div>
-                        </div>
-                    </div>
-                </div>`
-            },
-            'ruimtes': { w: 4, h: 6, title: 'Ruimte Reserveringen', short: 'Ruimtes', icon: 'fa-calendar-check', desc: 'Overzicht bezetting', html: `
-                <div class="widget-header"><span class="widget-title">Reserveringen Breda</span><button class="delete-btn" onclick="removeWidget('ruimtes')"><i class="fa-solid fa-xmark"></i></button></div>
-                <div class="scrollable">
-                    <div class="widget-list">
-                        <div class="list-item">
-                            <div class="item-main">
-                                <div class="item-title">Breda 1.77 <span class="v-type">Hybride</span></div>
-                                <div class="v-tag-list"><span class="v-tag"><i class="fa-regular fa-clock"></i> 09:30 - 11:30</span><span class="v-tag"><i class="fa-regular fa-clock"></i> 13:00 - 14:00</span></div>
-                            </div>
-                            <div class="item-side"><span class="badge badge-red">Bezet</span></div>
-                        </div>
-                        <div class="list-item">
-                            <div class="item-main">
-                                <div class="item-title">Breda 2.26 <span class="v-type">Vergader</span></div>
-                                <div class="v-tag-list"><span class="v-tag"><i class="fa-regular fa-clock"></i> 08:00 - 12:00</span></div>
-                            </div>
-                            <div class="item-side"><span class="badge badge-red">Bezet</span></div>
-                        </div>
-                        <div class="list-item room-free">
-                            <div class="item-main">
-                                <div class="item-title">Breda 0.14 <span class="v-type">Vergader</span></div>
-                                <div class="item-sub">Geen reserveringen.</div>
-                            </div>
-                            <div class="item-side"><span class="badge badge-green">Vrij</span></div>
-                        </div>
-                    </div>
-                </div>`
-            },
-            'ploeg': { w: 4, h: 6, title: 'Ploegindeling', short: 'Ploeg', icon: 'fa-users', desc: 'Bezetting Breda', html: `
-                <div class="widget-header"><span class="widget-title">Ploegindeling</span><button class="delete-btn" onclick="removeWidget('ploeg')"><i class="fa-solid fa-xmark"></i></button></div>
-                <div class="scrollable kis-container">
-                    <h2 style="color:var(--navy-dark); border-bottom: 2px solid var(--gold); padding-bottom:5px; margin-top:0; font-size:1.4rem;">Bezetting Breda</h2>
-                    <div class="dyn-ploeg">Laden...</div>
-                </div>`
-            },
-            'voertuigen': { w: 12, h: 6, title: 'Status Voertuigen', short: 'Wagenpark', icon: 'fa-truck-fast', desc: 'Overzicht wagenpark', html: `
-                <div class="widget-header"><span class="widget-title">Status Voertuigen</span><button class="delete-btn" onclick="removeWidget('voertuigen')"><i class="fa-solid fa-xmark"></i></button></div>
-                <div class="scrollable">
-                    <div class="vehicle-grid">
-                        <div class="vehicle-card">
-                            <div class="v-header">
-                                <div class="v-title"><span class="v-dot red"></span> 203132 <span class="v-type">(TS)</span></div>
-                                <span class="badge badge-red">ov (10)</span>
-                            </div>
-                            <div class="v-details"><div><i class="fa-solid fa-warehouse"></i> BREDA_1</div><div><i class="fa-regular fa-clock"></i> 06:29</div></div>
-                            <div class="v-gauges">${renderProgressBar(98, 'blue', 'Water')}${renderProgressBar(63, 'lightblue', 'Schuim')}${renderProgressBar(100, 'gold', 'Brand')}</div>
-                        </div>
-                        <div class="vehicle-card">
-                            <div class="v-header">
-                                <div class="v-title"><span class="v-dot red"></span> 203133 <span class="v-type">(TS)</span></div>
-                                <span class="badge badge-red">ov (10)</span>
-                            </div>
-                            <div class="v-details"><div><i class="fa-solid fa-warehouse"></i> BREDA_1</div><div><i class="fa-regular fa-clock"></i> 06:29</div></div>
-                            <div class="v-gauges">${renderProgressBar(100, 'blue', 'Water')}${renderProgressBar(96, 'lightblue', 'Schuim')}${renderProgressBar(90, 'gold', 'Brand')}</div>
-                        </div>
-                    </div>
-                </div>`
-            },
-            'weather': { w: 4, h: 4, title: 'Actueel Weer', short: 'Weer', icon: 'fa-cloud-sun', desc: 'Lokale weersverwachting', html: `
-                <div class="widget-header"><span class="widget-title">Actueel Weer</span><button class="delete-btn" onclick="removeWidget('weather')"><i class="fa-solid fa-xmark"></i></button></div>
-                <div class="weather-box"><div class="weather-loc">Tramsingel 71, Breda</div><div class="weather-temp dyn-temp">--°C</div><div class="dyn-desc" style="font-weight:600; color:#555">Laden...</div></div>` 
-            },
-            'werk': { w: 6, h: 6, title: 'Werkzaamheden', short: 'Taken', icon: 'fa-list-check', desc: 'Dagelijkse taken', html: `
-                <div class="widget-header"><span class="widget-title">Werkzaamheden</span><button class="delete-btn" onclick="removeWidget('werk')"><i class="fa-solid fa-xmark"></i></button></div>
-                <div class="scrollable"><div class="kis-container"><h1 class="kis-title">Alg. Werkzaamheden</h1><p class="kis-date dyn-werk-date">Vandaag</p><div class="dyn-worklist">Laden...</div></div></div>`
+                         </div>`;
+            }
+
+            // Scrollbare container
+            html += `<div class="scrollable">`;
+            
+            // Uitzondering 1: Weer (wordt live ingeladen via Open-Meteo API)
+            if (widgetId === 'weather') {
+                html += `<div class="weather-box"><div class="weather-loc">Tramsingel 71, Breda</div><div class="weather-temp dyn-temp">--°C</div><div class="dyn-desc" style="font-weight:600; color:var(--text-muted)">Laden...</div></div></div>`;
+                return html;
+            }
+
+            // Uitzondering 2: Werkzaamheden Layout
+            if (widgetId === 'werk') {
+                const dateStr = new Date().toLocaleDateString('nl-NL', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                html += `<div class="kis-container"><h1 class="kis-title">Overzicht Taken</h1><p class="kis-date">${dateStr}</p>`;
+            } 
+            // Uitzondering 3: Ploegindeling Layout
+            else if (widgetId === 'ploeg') {
+                html += `<div class="kis-container"><h2 style="color:var(--blauw-donker); border-bottom: 2px solid var(--rood-basis); padding-bottom:10px; margin-top:0; font-size:1.4rem;">Ploeg Dienst</h2>`;
+            }
+
+            // Geen data aanwezig? Toon een melding.
+            if (items.length === 0) {
+                let txt = isMobile ? "Geen gegevens gevonden." : "Nog leeg. Zet Edit Mode aan en klik op de gele + in de titelbalk om iets toe te voegen.";
+                html += `<div class="empty-state">${txt}</div></div>`;
+                if(widgetId === 'werk' || widgetId === 'ploeg') html += `</div>`;
+                return html;
+            }
+
+            // Lijst wrappers
+            if(['topdesk', 'alarmen', 'ruimtes'].includes(widgetId)) html += `<div class="widget-list">`;
+            if(widgetId === 'voertuigen') html += `<div class="vehicle-grid">`;
+
+            // Loop door alle toegevoegde items in de database
+            items.forEach((item, index) => {
+                let delBtn = `<button class="del-item-btn" onclick="deleteItem('${widgetId}', ${index})">Verwijder</button>`;
+                
+                if (widgetId === 'topdesk') {
+                    let badgeClass = colorMap[item.status] || 'grey';
+                    html += `<div class="list-item editable-wrap"><div class="item-main"><div class="item-title">${item.titel} <span class="badge badge-navy">${item.locatie||''}</span></div><div class="item-sub"><strong>${item.ticket||'-'}</strong></div></div><div class="item-side"><span class="badge badge-${badgeClass}">${item.status.split(' ')[0]}</span><div class="item-sub">${item.persoon||''}</div></div>${delBtn}</div>`;
+                }
+                else if (widgetId === 'alarmen') {
+                    let pClass = colorMap[item.prio] || 'p1';
+                    let pBadge = pClass === 'p1' ? `<span class="badge badge-red">P1</span>` : `<span class="badge badge-gold">P2</span>`;
+                    let tags = (item.voertuigen||'').split(',').filter(x=>x.trim()!=='').map(v => `<span class="v-tag">${v.trim()}</span>`).join('');
+                    html += `<div class="list-item ${pClass} editable-wrap"><div class="item-main"><div class="item-title">${pBadge} ${item.melding}</div><div class="item-sub"><i class="fa-solid fa-location-dot" style="color:var(--goud);"></i> ${item.locatie||'Onbekend'} • ${item.tijd||'-'}</div><div class="v-tag-list">${tags}</div></div>${delBtn}</div>`;
+                }
+                else if (widgetId === 'wegafsluitingen') {
+                    let img = item.img || 'https://placehold.co/600x300/e9ecef/17428c?text=Kaart+Wegafsluiting';
+                    html += `<div style="padding:12px;"><div class="vehicle-card editable-wrap" style="padding:0;"><img src="${img}" style="width:100%; height:180px; object-fit:cover; border-bottom:2px solid var(--rood-basis);"><div style="padding:15px;"><div class="item-title" style="font-size:15px; margin-bottom:8px;">${item.straat} <span class="badge badge-red" style="float:right;">Afgesloten</span></div><div class="item-sub" style="margin-bottom:12px;"><i class="fa-regular fa-calendar"></i> ${item.datum||'Tot nader bericht'}</div><div style="font-size:12px; font-weight:700; color:var(--blauw-donker); margin-bottom:5px;">${item.reden||'Onderhoud'}</div><div class="item-sub" style="color:var(--rood-basis); font-weight:bold;"><i class="fa-solid fa-triangle-exclamation"></i> Geen doorgang.</div></div>${delBtn}</div></div>`;
+                }
+                else if (widgetId === 'ruimtes') {
+                    let tags = (item.tijden||'').split(',').filter(x=>x.trim()!=='').map(v => `<span class="v-tag"><i class="fa-regular fa-clock"></i> ${v.trim()}</span>`).join('');
+                    let isFree = tags.length === 0;
+                    let sideBadge = isFree ? `<span class="badge badge-green">Vrij</span>` : `<span class="badge badge-red">Bezet</span>`;
+                    let subText = isFree ? `<div class="item-sub">Geen reserveringen.</div>` : `<div class="v-tag-list">${tags}</div>`;
+                    html += `<div class="list-item editable-wrap ${isFree?'room-free':''}"><div class="item-main"><div class="item-title">${item.naam} <span class="v-type">${item.type||''}</span></div>${subText}</div><div class="item-side">${sideBadge}</div>${delBtn}</div>`;
+                }
+                else if (widgetId === 'ploeg') {
+                    let badgeCol = colorMap[item.kleur] || 'red';
+                    // Convert to correct CSS var for background
+                    let bgVar = badgeCol === 'red' ? 'var(--rood-basis)' : badgeCol === 'blue' ? 'var(--blauw-kobalt)' : badgeCol === 'green' ? 'var(--status-groen)' : badgeCol === 'gold' ? 'var(--goud)' : '#888';
+                    let textCol = badgeCol === 'gold' ? 'var(--blauw-donker)' : 'white';
+                    
+                    html += `<div class="editable-wrap" style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid #eee; align-items:center;"><span style="font-weight:700; color:var(--text-main);">${item.naam}</span><span style="background:${bgVar}; color:${textCol}; padding:4px 10px; border-radius:6px; font-size:11px; font-weight:bold;">${item.rol||'-'}</span>${delBtn}</div>`;
+                }
+                else if (widgetId === 'voertuigen') {
+                    let dotCol = colorMap[item.kleur] || 'grey';
+                    let gauges = '';
+                    if(item.water) gauges += renderPB(item.water, 'blue', 'Water');
+                    if(item.schuim) gauges += renderPB(item.schuim, 'lightblue', 'Schuim');
+                    if(item.brandstof) gauges += renderPB(item.brandstof, 'gold', 'Brand');
+                    
+                    html += `<div class="vehicle-card editable-wrap"><div class="v-header"><div class="v-title"><span class="v-dot ${dotCol}"></span> ${item.voertuig} <span class="v-type">(${item.type||'-'})</span></div><span class="badge badge-${dotCol}">${item.status||'-'}</span></div><div class="v-details"><div><i class="fa-regular fa-clock"></i> Laatste update: Nu</div></div><div class="v-gauges">${gauges}</div>${delBtn}</div>`;
+                }
+                else if (widgetId === 'werk') {
+                    let comp = item.completed ? 'completed' : '';
+                    html += `<div class="work-item editable-wrap ${comp}"><button class="kis-checkbox" onclick="toggleTask(${index})"><i class="fa-solid fa-square-check"></i></button><div class="work-details"><div class="task-title">${item.taak}</div><div>Uitvoerende: <span class="performer-tag">${item.uitvoerder||'-'}</span></div><div class="meta-info subtext">Auteur: ${item.auteur||'-'}</div></div>${delBtn}</div>`;
+                }
+            });
+
+            if(['topdesk', 'alarmen', 'ruimtes', 'voertuigen'].includes(widgetId)) html += `</div>`;
+            if(widgetId === 'werk' || widgetId === 'ploeg') html += `</div>`;
+            
+            html += `</div>`; // sluit scrollable
+            return html;
+        }
+
+        // --- Render Trigger ---
+        function renderAllWidgets() {
+            // Desktop Update
+            document.querySelectorAll('.grid-stack-item').forEach(el => {
+                let id = el.getAttribute('gs-id');
+                if(WIDGET_DEF[id]) el.querySelector('.grid-stack-item-content').innerHTML = buildHTML(id, false);
+            });
+
+            // Mobiele App Update (als er eentje open staat)
+            let openMobileApp = document.getElementById('mobile-app-view').getAttribute('data-active-app');
+            if (openMobileApp) {
+                document.getElementById('mobile-app-content').innerHTML = buildHTML(openMobileApp, true);
+            }
+
+            // Weer API ophalen
+            if(document.querySelector('.dyn-temp')) {
+                fetch('https://api.open-meteo.com/v1/forecast?latitude=51.5896&longitude=4.7694&current_weather=true')
+                .then(r=>r.json()).then(d=>{
+                    document.querySelectorAll('.dyn-temp').forEach(el => el.innerText = `${Math.round(d.current_weather.temperature)}°C`);
+                    document.querySelectorAll('.dyn-desc').forEach(el => el.innerText = "Breda - Actueel gemeten");
+                }).catch(e=>console.log("Weer API error:", e));
+            }
+        }
+
+        // ==========================================
+        // 4. MODAL LOGICA (Toevoegen formulier)
+        // ==========================================
+        let currentModalWidget = null;
+
+        window.openModal = function(widgetId) {
+            currentModalWidget = widgetId;
+            let def = WIDGET_DEF[widgetId];
+            document.getElementById('modal-title').innerText = def.title + ' Toevoegen';
+            
+            let formHtml = '';
+            def.form.forEach(f => {
+                formHtml += `<div class="form-group"><label>${f.label}</label>`;
+                if (f.type === 'select') {
+                    formHtml += `<select id="inp-${f.id}">` + f.opts.map(o => `<option value="${o}">${o}</option>`).join('') + `</select>`;
+                } else {
+                    formHtml += `<input type="${f.type}" id="inp-${f.id}" placeholder="${f.req ? 'Verplicht veld...' : 'Optioneel...'}" ${f.req ? 'required' : ''}>`;
+                }
+                formHtml += `</div>`;
+            });
+            document.getElementById('modal-form').innerHTML = formHtml;
+            document.getElementById('data-modal').classList.add('active');
+        };
+
+        window.closeModal = function() {
+            document.getElementById('data-modal').classList.remove('active');
+            currentModalWidget = null;
+        };
+
+        window.saveModalData = function() {
+            if(!currentModalWidget) return;
+            let def = WIDGET_DEF[currentModalWidget];
+            let newItem = {};
+            
+            // Verzamel data uit formulier
+            for (let f of def.form) {
+                let val = document.getElementById(`inp-${f.id}`).value.trim();
+                if (f.req && !val) { alert(`Je bent een verplicht veld vergeten:\n\n- ${f.label}`); return; }
+                newItem[f.id] = val;
+            }
+            if(currentModalWidget === 'werk') newItem.completed = false; // Taken beginnen als niet-afgehandeld
+
+            // Voeg toe aan globale database
+            if(!appData[currentModalWidget]) appData[currentModalWidget] = [];
+            appData[currentModalWidget].push(newItem);
+            
+            saveDataToCloud();
+            closeModal();
+        };
+
+        window.deleteItem = function(widgetId, index) {
+            if(confirm("Weet je zeker dat je dit blok wilt verwijderen?")) {
+                appData[widgetId].splice(index, 1);
+                saveDataToCloud();
             }
         };
 
-        const workData = [
-            { id: 1, title: "Boodschappen & Koken", performers: ["Patrick Evers"], author: "Paul van der Heijden" },
-            { id: 2, title: "Sport", performers: ["Geert Tuerlings"], author: "Paul van der Heijden" }
-        ];
+        window.toggleTask = function(index) {
+            appData['werk'][index].completed = !appData['werk'][index].completed;
+            saveDataToCloud(); // Status checkbox live opslaan
+        };
 
-        const ploegData = [
-            { name: "Arjan Otjens", chip: "TS 1 : BV" },
-            { name: "Jurgen Bakx", chip: "TS 1 : Ch" },
-            { name: "Dennis Meijers", chip: "TS 1 : 111" },
-            { name: "Joost Hoekstra", chip: "TS 1 : 112" }
-        ];
-
-        // --- 2. INITIALIZATION FUNCTION ---
+        // ==========================================
+        // 5. INITIALISATIE & LAYOUT (Desktop Grid)
+        // ==========================================
         let grid;
         const DEFAULT_LAYOUT = [
-            { id: 'topdesk', x: 0, y: 0, w: 6, h: 4 },
-            { id: 'alarmen', x: 6, y: 0, w: 6, h: 4 },
-            { id: 'ruimtes', x: 0, y: 4, w: 4, h: 6 },
-            { id: 'ploeg', x: 4, y: 4, w: 4, h: 6 },
-            { id: 'wegafsluitingen', x: 8, y: 4, w: 4, h: 6 },
-            { id: 'voertuigen', x: 0, y: 10, w: 12, h: 6 }
+            { id: 'alarmen', x: 0, y: 0, w: 6, h: 4 }, { id: 'topdesk', x: 6, y: 0, w: 6, h: 4 },
+            { id: 'ruimtes', x: 0, y: 4, w: 4, h: 6 }, { id: 'ploeg', x: 4, y: 4, w: 4, h: 6 },
+            { id: 'wegafsluitingen', x: 8, y: 4, w: 4, h: 6 }, { id: 'voertuigen', x: 0, y: 10, w: 12, h: 6 }
         ];
 
         function initGridStackDashboard() {
             grid = GridStack.init({ cellHeight: 70, margin: 15, staticGrid: true, animate: true });
-            loadLayout();
-            grid.on('change added removed', saveLayout);
-            setupDrawer();
-            setupEditMode();
-        }
-
-        // --- 3. LAYOUT MANAGEMENT ---
-        function loadLayout() {
-            const saved = localStorage.getItem('bredaDashboardLayoutV9');
+            
+            const saved = localStorage.getItem('bredaDashboardLayoutGrid_v13');
             let layoutToLoad = saved ? JSON.parse(saved) : DEFAULT_LAYOUT;
             
             grid.removeAll();
             layoutToLoad.forEach(item => {
-                if (WIDGET_LIB[item.id]) {
-                    grid.addWidget({ id: item.id, x: item.x, y: item.y, w: item.w, h: item.h, content: WIDGET_LIB[item.id].html });
-                    populateWidgetData(item.id);
+                if (WIDGET_DEF[item.id]) {
+                    grid.addWidget({ id: item.id, x: item.x, y: item.y, w: item.w, h: item.h, content: buildHTML(item.id, false) });
                 }
             });
-            updateDrawer();
-        }
-
-        function saveLayout() {
-            const currentLayout = grid.engine.nodes.map(node => ({ id: node.id, x: node.x, y: node.y, w: node.w, h: node.h }));
-            localStorage.setItem('bredaDashboardLayoutV9', JSON.stringify(currentLayout));
-            updateDrawer();
-        }
-
-        window.removeWidget = function(id) { const el = document.querySelector(`.grid-stack-item[gs-id="${id}"]`); if (el) grid.removeWidget(el); };
-
-        // --- 4. POPULATE WIDGET DATA (Aangepast voor classes) ---
-        function populateWidgetData(id) {
-            if (id === 'weather') {
-                fetch('https://api.open-meteo.com/v1/forecast?latitude=51.5896&longitude=4.7694&current_weather=true').then(res => res.json()).then(data => {
-                    document.querySelectorAll('.dyn-temp').forEach(el => el.innerText = `${Math.round(data.current_weather.temperature)}°C`);
-                    document.querySelectorAll('.dyn-desc').forEach(el => el.innerText = "Actueel gemeten");
-                }).catch(e => console.log(e));
-            }
-            if (id === 'werk') {
-                const dateStr = new Date().toLocaleDateString('nl-NL', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-                document.querySelectorAll('.dyn-werk-date').forEach(el => el.innerText = dateStr);
-                const htmlStr = workData.map(item => `<div class="work-item"><button class="kis-checkbox"><i class="fa-solid fa-square-check"></i></button><div class="work-details"><div class="task-title">${item.title}</div><div>Uitvoerende: ${item.performers.map(p => `<span class="performer-tag">${p}</span>`).join('')}</div><div class="meta-info subtext">Auteur: ${item.author}</div></div></div>`).join('');
-                document.querySelectorAll('.dyn-worklist').forEach(el => el.innerHTML = htmlStr);
-            }
-            if (id === 'ploeg') {
-                const htmlStr = ploegData.map(p => `
-                    <div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid #eee; align-items:center;">
-                        <span style="font-weight:700;">${p.name}</span>
-                        <span style="background:var(--red-main); color:white; padding:4px 10px; border-radius:6px; font-size:11px; font-weight:bold;">${p.chip}</span>
-                    </div>`).join('');
-                document.querySelectorAll('.dyn-ploeg').forEach(el => el.innerHTML = htmlStr);
-            }
-        }
-
-        // --- 5. IOS WIDGET DRAWER (Desktop) ---
-        function setupDrawer() {
-            const overlay = document.getElementById('widget-overlay'); const drawer = document.getElementById('widget-drawer');
-            const oldBtn = document.getElementById('open-widget-panel'); const newBtn = oldBtn.cloneNode(true);
-            oldBtn.parentNode.replaceChild(newBtn, oldBtn);
             
-            newBtn.addEventListener('click', () => { updateDrawer(); overlay.classList.add('active'); drawer.classList.add('active'); });
-            const closePanel = () => { overlay.classList.remove('active'); drawer.classList.remove('active'); };
-            document.getElementById('close-drawer').addEventListener('click', closePanel);
-            overlay.addEventListener('click', closePanel);
-        }
-
-        function updateDrawer() {
-            const activeIds = grid.engine.nodes.map(n => n.id); const drawerGrid = document.getElementById('drawer-grid');
-            drawerGrid.innerHTML = '';
-            Object.keys(WIDGET_LIB).forEach(id => {
-                if (!activeIds.includes(id)) {
-                    const w = WIDGET_LIB[id];
-                    drawerGrid.innerHTML += `<div class="widget-card" onclick="addWidgetFromDrawer('${id}')"><i class="fa-solid ${w.icon}"></i><h3>${w.title}</h3><p>${w.desc}</p></div>`;
-                }
+            grid.on('change added removed', () => {
+                const currentLayout = grid.engine.nodes.map(n => ({ id: n.id, x: n.x, y: n.y, w: n.w, h: n.h }));
+                localStorage.setItem('bredaDashboardLayoutGrid_v13', JSON.stringify(currentLayout));
+                setupDrawerUI();
             });
-            if (drawerGrid.innerHTML === '') drawerGrid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color:#888;">Geen widgets meer beschikbaar.</p>';
+
+            setupDrawerUI();
+            setupEditMode();
+            renderAllWidgets();
         }
 
-        window.addWidgetFromDrawer = function(id) {
-            const w = WIDGET_LIB[id]; grid.addWidget({ id: id, w: w.w, h: w.h, content: w.html });
-            populateWidgetData(id); document.getElementById('close-drawer').click(); 
+        window.removeWidgetFromGrid = function(id) { 
+            const el = document.querySelector(`.grid-stack-item[gs-id="${id}"]`); 
+            if (el) grid.removeWidget(el); 
         };
 
-        // --- 6. EDIT MODE TOGGLE (Desktop) ---
-        function setupEditMode() {
-            const toggleBtn = document.getElementById('toggle-edit'); const newToggle = toggleBtn.cloneNode(true);
-            toggleBtn.parentNode.replaceChild(newToggle, toggleBtn);
-            let isEditMode = false;
-            newToggle.addEventListener('click', () => {
-                isEditMode = !isEditMode; grid.setStatic(!isEditMode); document.body.classList.toggle('edit-mode', isEditMode);
-                newToggle.textContent = isEditMode ? 'Klaar' : 'Edit Mode'; newToggle.classList.toggle('active', isEditMode);
-                document.getElementById('status-label').innerHTML = `Layout: <strong>${isEditMode ? 'Ontgrendeld' : 'Vergrendeld'}</strong>`;
+        // --- Widget Lade (Add Widgets Menu) ---
+        function setupDrawerUI() {
+            const activeIds = grid ? grid.engine.nodes.map(n => n.id) : [];
+            const drawerGrid = document.getElementById('drawer-grid');
+            if(!drawerGrid) return;
+            drawerGrid.innerHTML = '';
+            Object.keys(WIDGET_DEF).forEach(id => {
+                if (!activeIds.includes(id)) {
+                    const w = WIDGET_DEF[id];
+                    drawerGrid.innerHTML += `<div class="widget-card" onclick="addWidgetToGrid('${id}')"><i class="fa-solid ${w.icon}"></i><h3>${w.title}</h3></div>`;
+                }
             });
         }
 
-        // =========================================================
-        // NIEUW: MOBIELE APPS LOGICA (iOS STIJL)
-        // =========================================================
+        window.addWidgetToGrid = function(id) {
+            grid.addWidget({ id: id, w: WIDGET_DEF[id].noAdd ? 4 : 6, h: 6, content: buildHTML(id, false) });
+            document.getElementById('close-drawer').click(); 
+        };
+
+        document.getElementById('open-widget-panel').addEventListener('click', () => { setupDrawerUI(); document.getElementById('widget-overlay').classList.add('active'); document.getElementById('widget-drawer').classList.add('active'); });
+        document.getElementById('close-drawer').addEventListener('click', () => { document.getElementById('widget-overlay').classList.remove('active'); document.getElementById('widget-drawer').classList.remove('active'); });
+
+        // --- EDIT MODE TOGGLE ---
+        function setupEditMode() {
+            const toggleBtn = document.getElementById('toggle-edit');
+            let isEditMode = false;
+            toggleBtn.addEventListener('click', () => {
+                isEditMode = !isEditMode; 
+                grid.setStatic(!isEditMode); 
+                document.body.classList.toggle('edit-mode', isEditMode);
+                
+                if(isEditMode) {
+                    toggleBtn.innerHTML = '<i class="fa-solid fa-lock-open"></i> Klaar met editen';
+                    toggleBtn.classList.add('active');
+                    document.getElementById('status-label').innerHTML = `Layout: <strong>Ontgrendeld (Je kunt nu + en X klikken)</strong>`;
+                } else {
+                    toggleBtn.innerHTML = '<i class="fa-solid fa-pen"></i> Edit Mode';
+                    toggleBtn.classList.remove('active');
+                    document.getElementById('status-label').innerHTML = `Layout: <strong>Vergrendeld</strong>`;
+                }
+            });
+        }
+
+        // ==========================================
+        // 6. MOBIELE WEERGAVE (iOS App Grid)
+        // ==========================================
         function renderMobileApps() {
             const mobileContainer = document.getElementById('mobile-home-screen');
             if (!mobileContainer) return;
-            
             mobileContainer.innerHTML = '';
-            
-            // Kleurenpalet voor de app-icoontjes (blauw, rood, goud, groen)
             const colors = ['', 'color-red', 'color-gold', 'color-green'];
             let colorIndex = 0;
-
-            Object.keys(WIDGET_LIB).forEach(id => {
-                const w = WIDGET_LIB[id];
-                const appHTML = `
+            
+            Object.keys(WIDGET_DEF).forEach(id => {
+                const w = WIDGET_DEF[id];
+                mobileContainer.innerHTML += `
                     <div class="app-icon-wrap" onclick="openMobileApp('${id}')">
-                        <div class="app-icon ${colors[colorIndex % colors.length]}">
-                            <i class="fa-solid ${w.icon}"></i>
-                        </div>
+                        <div class="app-icon ${colors[colorIndex % colors.length]}"><i class="fa-solid ${w.icon}"></i></div>
                         <div class="app-label">${w.short}</div>
-                    </div>
-                `;
-                mobileContainer.innerHTML += appHTML;
+                    </div>`;
                 colorIndex++;
             });
         }
 
         window.openMobileApp = function(id) {
-            const w = WIDGET_LIB[id];
-            document.getElementById('mobile-app-title').innerText = w.title;
+            document.getElementById('mobile-app-view').setAttribute('data-active-app', id);
+            document.getElementById('mobile-app-title').innerText = WIDGET_DEF[id].title;
             
-            const contentDiv = document.getElementById('mobile-app-content');
-            contentDiv.innerHTML = w.html; // Injecteer de widget HTML
-            
-            populateWidgetData(id); // Haal live data op of vul in
-            
-            // Schuif het appscherm in beeld
+            // Toevoegen knop (+) ook in de mobiele balk zetten
+            let actionContainer = document.getElementById('mobile-app-actions');
+            actionContainer.innerHTML = '';
+            if(!WIDGET_DEF[id].noAdd) {
+                actionContainer.innerHTML = `<button class="add-data-btn" style="display:flex; background:var(--goud); color:var(--blauw-donker);" onclick="openModal('${id}')"><i class="fa-solid fa-plus"></i></button>`;
+            }
+
+            document.getElementById('mobile-app-content').innerHTML = buildHTML(id, true);
             document.getElementById('mobile-app-view').classList.add('active');
         };
 
-        // Sluit mobiele app
         document.getElementById('mobile-back-btn').addEventListener('click', () => {
             document.getElementById('mobile-app-view').classList.remove('active');
-            // Wis de content na de slide-animatie (300ms)
+            document.getElementById('mobile-app-view').removeAttribute('data-active-app');
             setTimeout(() => { document.getElementById('mobile-app-content').innerHTML = ''; }, 300);
+            renderAllWidgets(); // refresh desktop grid in case data was changed on mobile
         });
 
-        // --- START PUNT ---
-        document.addEventListener('DOMContentLoaded', () => { checkAuth(); });
+        // ==========================================
+        // START PUNT
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', async () => { 
+            await loadData();
+            setupSyncBtn();
+            
+            // Render direct
+            initGridStackDashboard(); 
+            renderMobileApps();
+        });
 
     </script>
 </body>
