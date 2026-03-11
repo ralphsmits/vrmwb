@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Breda KIS Dashboard - Export/Import Editie</title>
+    <title>Breda KIS Dashboard - iOS Mobile Experience</title>
     <link href="https://cdn.jsdelivr.net/npm/gridstack@10.0/dist/gridstack.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -34,77 +34,103 @@
             color: var(--text-main);
             overflow-x: hidden;
             height: 100vh;
-            -webkit-tap-highlight-color: transparent;
+            -webkit-tap-highlight-color: transparent; /* Verwijder blauwe tap-box op mobiel */
         }
 
+        /* --- LOGIN SCREEN --- */
+        #login-screen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: rgba(18, 32, 83, 0.9);
+            backdrop-filter: blur(10px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 9999;
+        }
+        .login-card {
+            background: var(--widget-bg); padding: 40px; border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center;
+            border-top: 5px solid var(--red-main); width: 90%; max-width: 350px;
+        }
+        .login-avatar { 
+            width: 80px; height: 80px; border-radius: 50%; object-fit: cover; 
+            margin: 0 auto 20px auto; border: 3px solid var(--navy-bright);
+            display: block; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .login-card h2 { color: var(--navy-dark); margin-top: 0; font-weight: 800; font-size: 1.2rem; }
+        .login-input {
+            width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ccc;
+            border-radius: 6px; box-sizing: border-box; font-size: 14px; text-align: center;
+        }
+        .login-input:focus { outline: 2px solid var(--navy-bright); border-color: transparent; }
+        .login-btn {
+            width: 100%; padding: 12px; background: var(--navy-bright);
+            color: white; border: none; border-radius: 6px; font-weight: bold;
+            cursor: pointer; transition: background 0.2s; text-transform: uppercase; font-size: 13px;
+        }
+        .login-btn:hover { background: var(--navy-dark); }
+        #login-error { color: var(--red-main); font-size: 12px; font-weight: bold; display: none; margin-top: 10px; }
+
         /* --- MAIN APP CONTAINER --- */
-        #app-container { padding: 20px; }
+        #app-container { display: none; padding: 20px; }
 
         /* --- Header & Clock --- */
-        .header-bar { position: relative; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding: 15px 25px; background: rgba(18, 32, 83, 0.95); border-bottom: 3px solid var(--red-main); border-radius: 12px; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.3); backdrop-filter: blur(10px); }
-        .clock-container { font-size: 1.5rem; font-weight: 800; color: var(--gold); display: flex; align-items: center; gap: 10px; }
+        .header-bar {
+            position: relative; display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 25px; padding: 15px 25px; background: rgba(18, 32, 83, 0.95); border-radius: 12px;
+            color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.3); backdrop-filter: blur(10px);
+        }
+        .clock-container { font-size: 1.5rem; font-weight: 800; color: var(--gold); letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
         .header-logo { position: absolute; left: 50%; transform: translateX(-50%); height: 40px; object-fit: contain; }
-        .controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; justify-content: flex-end;}
-        .btn { padding: 10px 15px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 12px; transition: all 0.2s; display: flex; align-items: center; gap: 6px;}
-        
-        #toggle-edit { background: var(--gold); color: var(--navy-dark); }
-        #toggle-edit.active { background: var(--red-main); color: white;} 
+        .controls { display: flex; gap: 12px; align-items: center; }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 12px; transition: all 0.2s; }
+        #toggle-edit { background: var(--gold); color: white; }
+        #toggle-edit.active { background: var(--red-main); }
         #open-widget-panel { background: var(--navy-bright); color: white; display: none; }
-        body.edit-mode #open-widget-panel { display: flex; }
-        
-        #export-btn { background: var(--navy-bright); color: white; }
-        #export-btn:hover { background: var(--navy-dark); }
-        #import-btn { background: var(--status-groen); color: white; }
+        body.edit-mode #open-widget-panel { display: block; }
+        #logout-btn { background: #555; color: white; margin-right: 15px; }
+        #logout-btn:hover { background: var(--red-main); }
 
-        /* --- Widget Core Styling --- */
-        .grid-stack-item-content { background-color: var(--widget-bg) !important; border: 1px solid #e0e0e0; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
-        body.edit-mode .grid-stack-item-content { border: 2px dashed var(--red-main); }
-        
-        .widget-header { background: var(--navy-dark); padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--red-main); flex-shrink: 0; }
-        .widget-title { font-weight: 800; color: white; font-size: 16px; letter-spacing: 0.5px;}
-        
-        .header-actions { display: flex; gap: 8px; align-items: center;}
-        .add-data-btn, .delete-btn { border: none; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; font-size: 14px; display: none; align-items: center; justify-content: center; transition: background 0.2s;}
-        .add-data-btn { background: var(--gold); color: var(--navy-dark); }
-        .add-data-btn:hover { background: #e6ad39; }
-        .delete-btn { background: rgba(255,255,255,0.2); color: white; }
-        .delete-btn:hover { background: var(--red-main); }
-        
-        body.edit-mode .add-data-btn, body.edit-mode .delete-btn { display: flex; }
-
-        .del-item-btn { position: absolute; top: 50%; right: 10px; transform: translateY(-50%); background: var(--red-main); color: white; border:none; border-radius:6px; padding: 8px 12px; font-size:12px; font-weight: bold; cursor:pointer; display:none; z-index:10; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .editable-wrap { position: relative; }
-        body.edit-mode .editable-wrap:hover .del-item-btn { display: block; }
-
+        /* --- Desktop Widget Core Styling --- */
+        .grid-stack-item-content {
+            background-color: var(--widget-bg) !important; border: 2px solid var(--red-main); border-radius: 18px;
+            display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+        .widget-header { background: #f8f9fa; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; flex-shrink: 0; }
+        .widget-title { font-weight: 800; color: var(--navy-dark); font-size: 16px; }
         .scrollable { overflow-y: auto; flex-grow: 1; padding: 0; position: relative; }
-        .empty-state { padding: 30px; text-align: center; color: var(--text-muted); font-size: 13px; font-style: italic; }
+        .delete-btn { background: #e0e0e0; color: #555; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; display: none; align-items: center; justify-content: center; font-size: 12px; }
+        .delete-btn:hover { background: var(--red-main); color: white; }
+        body.edit-mode .delete-btn { display: flex; }
 
-        /* General Item Styles (Lists & Cards) */
+        /* --- Clean Widget UI (Lijsten & Cards) --- */
         .widget-list { display: flex; flex-direction: column; padding: 12px; gap: 10px; }
-        .list-item { position: relative; display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: #fafafa; border: 1px solid #eee; border-radius: 10px; border-left: 4px solid var(--navy-bright); }
+        .list-item { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 12px 15px; background: #fafafa; border: 1px solid #eee; 
+            border-radius: 10px; border-left: 4px solid var(--navy-bright); transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .list-item:hover { transform: translateX(2px); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .list-item.p1 { border-left-color: var(--red-main); }
         .list-item.p2 { border-left-color: var(--gold); }
         .list-item.room-free { border-left-color: var(--green-check); }
-        .item-main { flex-grow: 1; padding-right: 15px;}
+        
+        .item-main { flex-grow: 1; }
         .item-title { font-weight: 800; font-size: 13px; color: var(--navy-dark); margin-bottom: 4px; display: flex; align-items: center; gap: 8px;}
         .item-sub { font-size: 11px; color: var(--text-muted); }
-        .item-side { text-align: right; min-width: 90px; display: flex; flex-direction: column; align-items: flex-end; gap: 4px;}
+        .item-side { text-align: right; min-width: 100px; display: flex; flex-direction: column; align-items: flex-end; gap: 4px;}
 
         .badge { padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;}
         .badge-red { background: var(--red-main); color: white; }
-        .badge-gold { background: var(--gold); color: var(--navy-dark); }
+        .badge-gold { background: var(--gold); color: white; }
         .badge-navy { background: var(--navy-dark); color: white; }
-        .badge-blue { background: var(--navy-bright); color: white; }
         .badge-green { background: var(--green-check); color: white; }
-        .badge-grey { background: #bbb; color: #333; }
+        .badge-grey { background: #e0e0e0; color: #333; }
 
         .v-tag-list { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 6px; }
         .v-tag { background: var(--table-alt); border: 1px solid #ddd; color: var(--navy-dark); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px;}
         .v-tag i { color: var(--red-main); }
 
-        /* Voertuigen Grid & Wegafsluitingen */
         .vehicle-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; padding: 12px; }
-        .vehicle-card { position: relative; background: white; border: 1px solid #eee; border-radius: 12px; overflow: hidden; padding: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); display: flex; flex-direction: column; justify-content: space-between; }
+        .vehicle-card { background: white; border: 1px solid #eee; border-radius: 12px; padding: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); display: flex; flex-direction: column; justify-content: space-between; }
         .v-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
         .v-title { font-weight: 900; font-size: 1.2rem; color: var(--navy-dark); display: flex; align-items: center; }
         .v-type { font-size: 0.8rem; color: var(--text-muted); font-weight: normal; margin-left: 5px; }
@@ -112,11 +138,9 @@
         .v-details i { color: var(--navy-bright); width: 14px; text-align: center; }
         
         .v-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; }
-        .v-dot.red { background: var(--red-main); box-shadow: 0 0 5px rgba(210,16,11,0.4); }
-        .v-dot.green { background: var(--green-check); box-shadow: 0 0 5px rgba(45,122,45,0.4); }
-        .v-dot.grey { background: #bbb; }
+        .v-dot.red { background-color: var(--red-main); box-shadow: 0 0 5px rgba(210,16,11,0.4); }
+        .v-dot.green { background-color: var(--green-check); box-shadow: 0 0 5px rgba(45,122,45,0.4); }
 
-        /* Progress Bars */
         .v-gauges { display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 5px; }
         .progress-row { display: flex; align-items: center; gap: 10px; width: 100%; }
         .progress-label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; width: 65px; }
@@ -127,102 +151,184 @@
         .progress-fill.gold { background-color: var(--gold); }
         .progress-val { font-size: 11px; font-weight: 800; color: var(--navy-dark); width: 35px; text-align: right; }
 
-        /* Werkzaamheden & Weer */
         .kis-container { padding: 20px; }
-        .kis-title { font-size: 1.6rem; font-weight: 800; color: var(--navy-dark); margin: 0 0 5px 0; }
-        .kis-date { color: var(--text-muted); border-bottom: 2px solid var(--rood-basis); padding-bottom: 10px; margin-bottom: 20px; font-weight: 600; }
-        .work-item { position: relative; display: flex; gap: 15px; padding: 15px; border-bottom: 1px solid #eee; transition: all 0.3s ease; }
+        .kis-title { font-size: 1.8rem; color: var(--navy-dark); margin: 0; }
+        .kis-date { color: var(--text-muted); border-bottom: 3px solid var(--gold); padding-bottom: 5px; margin-bottom: 20px; font-weight: 600; }
+        .work-item { display: flex; gap: 15px; padding: 15px; border-bottom: 1px solid #eee; transition: all 0.3s ease; }
         .work-item.completed { opacity: 0.5; background: #fcfcfc; }
         .work-item.completed .task-title { text-decoration: line-through; color: var(--text-muted); }
-        .kis-checkbox { color: var(--green-check); font-size: 1.6rem; background: none; border: none; padding: 0; cursor: pointer; }
         .work-item.completed .kis-checkbox { color: var(--text-muted); }
-        .work-details .task-title { font-weight: 800; color: var(--navy-bright); font-size: 1.1rem; margin-bottom: 5px; }
-        .performer-tag { display: inline-block; background: var(--navy-dark); color: white; padding: 3px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; }
-
+        .kis-checkbox { color: var(--green-check); font-size: 1.6rem; background: none; border: none; padding: 0; cursor: pointer; transition: color 0.2s; }
+        .work-details .task-title { font-weight: 800; color: var(--red-dark); font-size: 1.1rem; margin-bottom: 5px; transition: all 0.3s; }
+        .performer-tag { display: inline-block; background: var(--navy-dark); color: white; padding: 3px 10px; border-radius: 6px; font-size: 11px; margin: 2px 2px 2px 0; font-weight: 600; }
         .weather-box { text-align: center; padding: 30px 10px; height: 100%; display: flex; flex-direction: column; justify-content: center;}
-        .weather-temp { font-size: 4rem; font-weight: 900; color: var(--navy-dark); margin: 10px 0; }
-        .weather-loc { font-weight: 800; color: var(--rood-basis); text-transform: uppercase; letter-spacing: 1px; }
+        .weather-temp { font-size: 3.5rem; font-weight: 900; color: var(--navy-dark); margin: 10px 0; }
+        .weather-loc { font-weight: bold; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; }
 
-        /* --- MODAL FORM --- */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(18, 32, 83, 0.7); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 10001; }
-        .modal-overlay.active { display: flex; }
-        .modal-card { background: white; width: 90%; max-width: 500px; border-radius: 12px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.4); border-top: 5px solid var(--rood-basis); max-height: 90vh; overflow-y: auto;}
-        .modal-card h3 { color: var(--navy-dark); margin-top: 0; font-size: 1.4rem; font-weight: 800; border-bottom: 2px solid #eee; padding-bottom: 10px;}
-        .form-group { margin-bottom: 15px; text-align: left; }
-        .form-group label { display: block; font-size: 12px; font-weight: bold; color: var(--navy-dark); margin-bottom: 5px; text-transform: uppercase;}
-        .form-group input, .form-group select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-family: inherit; font-size: 14px;}
-        .form-group input:focus, .form-group select:focus { outline: 2px solid var(--navy-bright); border-color: transparent;}
-        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; }
-        .btn-cancel { background: #eee; color: #333; }
-        .btn-save { background: var(--navy-bright); color: white; }
-
-        /* --- iOS Style Widget Drawer (Desktop) --- */
-        .widget-drawer { position: fixed; bottom: -100%; left: 50%; transform: translateX(-50%); width: 90%; max-width: 600px; height: 70vh; background: #f6f6f6; border-radius: 24px 24px 0 0; z-index: 10000; transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); padding: 30px; box-shadow: 0 -10px 40px rgba(0,0,0,0.2); display: flex; flex-direction: column; }
+        /* --- iOS Style Widget Drawer (Desktop Only) --- */
+        .widget-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(5px); z-index: 999; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        .widget-overlay.active { opacity: 1; pointer-events: auto; }
+        .widget-drawer { position: fixed; bottom: -100%; left: 50%; transform: translateX(-50%); width: 90%; max-width: 600px; height: 70vh; background: #f6f6f6; border-radius: 30px 30px 0 0; z-index: 1000; transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); padding: 30px; box-shadow: 0 -10px 40px rgba(0,0,0,0.2); display: flex; flex-direction: column; }
         .widget-drawer.active { bottom: 0; }
-        .drawer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--rood-basis); padding-bottom: 10px;}
-        .drawer-header h2 { margin: 0; color: var(--navy-dark); font-size: 1.5rem; font-weight: 800; }
-        .close-drawer { background: var(--navy-bright); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; font-size: 16px; font-weight: bold;}
+        .drawer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .drawer-header h2 { margin: 0; color: var(--navy-dark); font-size: 1.5rem; }
+        .close-drawer { background: #e0e0e0; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-size: 16px; font-weight: bold;}
         .widget-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; overflow-y: auto; padding-bottom: 20px; }
-        .widget-card { background: white; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
+        .widget-card { background: white; border-radius: 20px; padding: 20px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
         .widget-card:hover { border-color: var(--navy-bright); transform: translateY(-3px); }
-        .widget-card i { font-size: 2.5rem; color: var(--rood-basis); margin-bottom: 15px; }
-        .widget-card h3 { margin: 0; font-size: 1rem; color: var(--navy-dark); font-weight: 800;}
+        .widget-card i { font-size: 2.5rem; color: var(--red-main); margin-bottom: 15px; }
+        .widget-card h3 { margin: 0 0 5px 0; font-size: 1rem; color: var(--navy-dark); }
+        .widget-card p { margin: 0; font-size: 0.8rem; color: var(--text-muted); }
 
-        /* --- MOBIELE WEERGAVE --- */
+        /* =========================================================
+           NIEUW: MOBIELE WEERGAVE (iOS HOME SCREEN STIJL) 
+           ========================================================= */
         .mobile-only { display: none; }
+
         @media (max-width: 768px) {
-            #app-container { padding: 10px; }
+            #app-container { padding: 15px 10px; }
+            
+            /* Verberg Desktop specifieke elementen */
             .grid-stack { display: none !important; }
-            .controls { flex-wrap: wrap; justify-content: center; }
-            .header-bar { flex-direction: column; gap: 15px; margin-bottom: 20px; padding: 15px; border-radius: 0 0 16px 16px; }
-            .clock-container { font-size: 1.3rem; }
-            .header-logo { display: none; } 
-            
+            .controls { display: none !important; }
+            .header-bar { margin-bottom: 30px; justify-content: center; padding: 10px; }
+            .clock-container { font-size: 1.2rem; }
+            .header-logo { display: none; } /* Logo weglaten voor meer ruimte op mobiel */
+
+            /* Toon Mobiele elementen */
             .mobile-only { display: block; }
-            
-            #mobile-home-screen { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px 10px; padding: 10px; max-width: 500px; margin: 0 auto; }
-            .app-icon-wrap { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
-            .app-icon { width: 65px; height: 65px; border-radius: 22%; display: flex; justify-content: center; align-items: center; font-size: 28px; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.2); margin-bottom: 8px; background: linear-gradient(135deg, var(--navy-bright), var(--navy-dark)); transition: transform 0.1s; }
-            .app-icon-wrap:active .app-icon { transform: scale(0.9); }
+
+            /* Het App Grid */
+            #mobile-home-screen {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 25px 15px;
+                padding: 10px;
+                max-width: 500px;
+                margin: 0 auto;
+            }
+
+            .app-icon-wrap {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                cursor: pointer;
+            }
+
+            .app-icon {
+                width: 65px;
+                height: 65px;
+                border-radius: 22%; /* Perfecte iOS squircle simulatie */
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 28px;
+                color: white;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+                margin-bottom: 8px;
+                background: linear-gradient(135deg, var(--navy-bright), var(--navy-dark));
+                transition: transform 0.1s;
+            }
+            .app-icon-wrap:active .app-icon { transform: scale(0.9); } /* Tap effect */
+
+            /* Brand Colors voor de apps afwisselen */
             .app-icon.color-red { background: linear-gradient(135deg, #ff4b4b, var(--red-main)); }
             .app-icon.color-gold { background: linear-gradient(135deg, #ffe57f, var(--gold)); }
             .app-icon.color-green { background: linear-gradient(135deg, #4ade80, var(--green-check)); }
-            .app-label { font-size: 11px; color: white; font-weight: 600; text-align: center; text-shadow: 0 1px 3px rgba(0,0,0,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
-            
-            #mobile-app-view { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-page); z-index: 10000; display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1); }
-            #mobile-app-view.active { transform: translateX(0); }
-            .mobile-app-header { background: rgba(18, 32, 83, 0.95); backdrop-filter: blur(10px); color: white; padding: 15px; padding-top: max(15px, env(safe-area-inset-top)); display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 2; border-bottom: 3px solid var(--rood-basis);}
-            .mobile-back-btn { background: none; border: none; color: var(--gold); font-size: 16px; font-weight: 600; padding: 5px 10px 5px 0; display: flex; align-items: center; gap: 6px; cursor: pointer; }
-            .mobile-app-title { font-size: 16px; font-weight: 800; flex-grow: 1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-            #mobile-app-content { flex-grow: 1; overflow-y: auto; padding: 0; background: white; }
-            
+
+            .app-label {
+                font-size: 11px;
+                color: white;
+                font-weight: 600;
+                text-align: center;
+                text-shadow: 0 1px 3px rgba(0,0,0,0.8); /* Zorgt dat tekst leesbaar is op elke foto */
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                width: 100%;
+            }
+
+            /* Geopende App Weergave (Full Screen) */
+            #mobile-app-view {
+                position: fixed;
+                top: 0; left: 0; width: 100vw; height: 100vh;
+                background: var(--bg-page);
+                z-index: 10000;
+                display: flex;
+                flex-direction: column;
+                transform: translateX(100%); /* Buiten beeld naar rechts */
+                transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            }
+            #mobile-app-view.active {
+                transform: translateX(0); /* Schuif in beeld */
+            }
+
+            .mobile-app-header {
+                background: rgba(18, 32, 83, 0.95);
+                backdrop-filter: blur(10px);
+                color: white;
+                padding: 15px;
+                padding-top: max(15px, env(safe-area-inset-top)); /* Voor iPhone notch */
+                display: flex;
+                align-items: center;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+                z-index: 2;
+            }
+
+            .mobile-back-btn {
+                background: none; border: none;
+                color: var(--gold);
+                font-size: 16px; font-weight: 600;
+                padding: 5px 10px 5px 0;
+                display: flex; align-items: center; gap: 6px;
+                cursor: pointer;
+            }
+
+            .mobile-app-title {
+                font-size: 17px; font-weight: 800;
+                flex-grow: 1; text-align: center;
+                margin-right: 65px; /* Compenseer voor de terug-knop om titel te centreren */
+                white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            }
+
+            #mobile-app-content {
+                flex-grow: 1;
+                overflow-y: auto;
+                padding: 0;
+                background: white;
+            }
+
+            /* Verberg de desktop widget header in de mobiele app view */
             #mobile-app-content .widget-header { display: none; }
-            .del-item-btn { display: none !important; }
         }
     </style>
 </head>
 <body>
 
+    <div id="login-screen">
+        <div class="login-card">
+            <img src="https://static.vecteezy.com/system/resources/previews/026/434/409/non_2x/default-avatar-profile-icon-social-media-user-photo-vector.jpg" alt="User Avatar" class="login-avatar">
+            <h2>Dashboard Toegang</h2>
+            <input type="password" id="login-password" class="login-input" placeholder="Wachtwoord" autofocus>
+            <button id="login-btn" class="login-btn">Inloggen</button>
+            <div id="login-error">Wachtwoord onjuist. Probeer opnieuw.</div>
+        </div>
+    </div>
+
     <div id="app-container">
-        
         <header class="header-bar">
             <div class="clock-container">
                 <i class="fa-regular fa-clock"></i>
                 <span id="live-clock">00:00:00</span>
             </div>
             
-            <img src="img/logo.png" alt="VRMWB Logo" class="header-logo">
+            <img src="img/logo.png" alt="Veiligheidsregio Brandweer" class="header-logo">
             
             <div class="controls">
-                <button id="export-btn" class="btn" title="Download data als bestand"><i class="fa-solid fa-download"></i> Exporteer</button>
-                <button id="import-btn" class="btn" title="Laad data in via bestand"><i class="fa-solid fa-upload"></i> Importeer</button>
-                
-                <input type="file" id="import-file" accept=".json" style="display:none;">
-
-                <span id="status-label" style="margin: 0 10px; font-size: 13px;">Layout: <strong>Vergrendeld</strong></span>
-                
-                <button id="open-widget-panel" class="btn"><i class="fa-solid fa-plus"></i> Widgets Toevoegen</button>
-                <button id="toggle-edit" class="btn"><i class="fa-solid fa-pen"></i> Edit Mode</button>
+                <button id="logout-btn" class="btn"><i class="fa-solid fa-lock"></i></button>
+                <span id="status-label" style="margin-right: 15px; font-size: 13px;">Layout: <strong>Vergrendeld</strong></span>
+                <button id="open-widget-panel" class="btn"><i class="fa-solid fa-plus"></i> Add Widget</button>
+                <button id="toggle-edit" class="btn">Edit Mode</button>
             </div>
         </header>
 
@@ -234,528 +340,374 @@
             <div class="mobile-app-header">
                 <button class="mobile-back-btn" id="mobile-back-btn"><i class="fa-solid fa-chevron-left"></i> Terug</button>
                 <div class="mobile-app-title" id="mobile-app-title">App Name</div>
-                <div id="mobile-app-actions"></div>
             </div>
             <div id="mobile-app-content" class="scrollable"></div>
         </div>
-        
+
         <div class="widget-overlay" id="widget-overlay"></div>
         <div class="widget-drawer" id="widget-drawer">
             <div class="drawer-header">
-                <h2>Beschikbare Widgets</h2>
-                <button class="close-drawer" id="close-drawer"><i class="fa-solid fa-xmark"></i></button>
+                <h2>Add Widgets</h2>
+                <button class="close-drawer" id="close-drawer">✕</button>
             </div>
             <div class="widget-grid" id="drawer-grid"></div>
-        </div>
-
-    </div>
-
-    <div id="data-modal" class="modal-overlay">
-        <div class="modal-card">
-            <h3 id="modal-title">Toevoegen</h3>
-            <div id="modal-form"></div>
-            <div class="modal-actions">
-                <button class="btn btn-cancel" onclick="closeModal()">Annuleren</button>
-                <button class="btn btn-save" onclick="saveModalData()"><i class="fa-solid fa-check"></i> Opslaan</button>
-            </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/gridstack@10.0/dist/gridstack-all.js"></script>
     <script>
-        // ==========================================
-        // 1. DATA STRUCTUUR 
-        // ==========================================
-        let appData = {
-            'topdesk': [], 'alarmen': [], 'wegafsluitingen': [], 'ruimtes': [], 'ploeg': [], 'voertuigen': [], 'werk': []
-        };
+        // --- 0. LOGIN LOGIC ---
+        const loginScreen = document.getElementById('login-screen');
+        const appContainer = document.getElementById('app-container');
+        const passwordInput = document.getElementById('login-password');
+        const loginBtn = document.getElementById('login-btn');
+        const errorMsg = document.getElementById('login-error');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        let gridInitialized = false;
+
+        function checkAuth() {
+            if (sessionStorage.getItem('vrmwb_auth') === 'true') { showDashboard(); }
+        }
+
+        function attemptLogin() {
+            if (passwordInput.value === 'vrmwb') {
+                sessionStorage.setItem('vrmwb_auth', 'true');
+                errorMsg.style.display = 'none';
+                showDashboard();
+            } else {
+                errorMsg.style.display = 'block'; passwordInput.value = ''; passwordInput.focus();
+            }
+        }
+
+        function showDashboard() {
+            loginScreen.style.display = 'none';
+            appContainer.style.display = 'block';
+            if (!gridInitialized) { 
+                initGridStackDashboard(); 
+                renderMobileApps(); // Genereer iPhone layout
+                gridInitialized = true; 
+            }
+        }
+
+        loginBtn.addEventListener('click', attemptLogin);
+        passwordInput.addEventListener('keypress', function(e) { if (e.key === 'Enter') attemptLogin(); });
+
+        logoutBtn.addEventListener('click', () => {
+            sessionStorage.removeItem('vrmwb_auth');
+            appContainer.style.display = 'none';
+            loginScreen.style.display = 'flex';
+            passwordInput.value = ''; passwordInput.focus();
+        });
 
         setInterval(() => { document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('nl-NL'); }, 1000);
 
-        // ==========================================
-        // 2. EXPORT / IMPORT LOGICA (JSON Bestand)
-        // ==========================================
-        function loadLocalData() {
-            let local = localStorage.getItem('vrmwb_appData_v15');
-            if (local) appData = JSON.parse(local);
-        }
-
-        function saveLocalData() {
-            localStorage.setItem('vrmwb_appData_v15', JSON.stringify(appData));
-            renderAllWidgets(); 
-        }
-
-        // Exporteer functie
-        document.getElementById('export-btn').addEventListener('click', () => {
-            const layout = JSON.parse(localStorage.getItem('bredaDashboardLayoutGrid_v15')) || DEFAULT_LAYOUT;
-            const exportObj = {
-                appData: appData,
-                layout: layout
-            };
-            
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj, null, 2));
-            const downloadAnchorNode = document.createElement('a');
-            downloadAnchorNode.setAttribute("href", dataStr);
-            
-            // Genereer datum voor de bestandsnaam
-            const dateStr = new Date().toISOString().slice(0,10);
-            downloadAnchorNode.setAttribute("download", `brandweer_dashboard_backup_${dateStr}.json`);
-            
-            document.body.appendChild(downloadAnchorNode);
-            downloadAnchorNode.click();
-            downloadAnchorNode.remove();
-        });
-
-        // Importeer functie
-        document.getElementById('import-btn').addEventListener('click', () => {
-            document.getElementById('import-file').click();
-        });
-
-        document.getElementById('import-file').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const importedObj = JSON.parse(e.target.result);
-                    
-                    if (importedObj.appData) {
-                        appData = importedObj.appData;
-                        localStorage.setItem('vrmwb_appData_v15', JSON.stringify(appData));
-                    }
-                    if (importedObj.layout) {
-                        localStorage.setItem('bredaDashboardLayoutGrid_v15', JSON.stringify(importedObj.layout));
-                    }
-                    
-                    alert("Data succesvol geïmporteerd! Het dashboard wordt nu herladen.");
-                    location.reload(); // Herlaad de pagina zodat GridStack de nieuwe layout pakt
-                } catch (err) {
-                    alert("Fout bij het importeren van het bestand. Is het een geldig JSON back-up bestand?");
-                    console.error(err);
-                }
-            };
-            reader.readAsText(file);
-            
-            // Reset input field, zodat hetzelfde bestand eventueel nog een keer geselecteerd kan worden
-            event.target.value = ""; 
-        });
-
-        // ==========================================
-        // 3. WIDGET DEFINITIES
-        // ==========================================
-        function renderPB(val, colorClass, label) {
+        // --- 1. DATA & WIDGET DEFINITIONS ---
+        function renderProgressBar(val, colorClass, label) {
             if(!val) return '';
-            return `<div class="progress-row"><div class="progress-label">${label}</div><div class="progress-track"><div class="progress-fill ${colorClass}" style="width: ${val}%;"></div></div><div class="progress-val">${val}%</div></div>`;
+            return `
+            <div class="progress-row" title="${label}: ${val}%">
+                <div class="progress-label">${label}</div>
+                <div class="progress-track"><div class="progress-fill ${colorClass}" style="width: ${val}%;"></div></div>
+                <div class="progress-val">${val}%</div>
+            </div>`;
         }
 
-        const WIDGET_DEF = {
-            'topdesk': { title: 'Topdesk', short: 'Topdesk', icon: 'fa-clipboard-list', form: [
-                { id: 'titel', label: 'Omschrijving storing/melding', type: 'text', req: true },
-                { id: 'locatie', label: 'Ruimte / Locatie', type: 'text' },
-                { id: 'ticket', label: 'Ticketnummer (bijv M2603 001)', type: 'text' },
-                { id: 'status', label: 'Status', type: 'select', opts: ['Nieuw (Grijs)', 'In Behandeling (Blauw)', 'Afgehandeld (Groen)'] },
-                { id: 'persoon', label: 'Toegewezen aan', type: 'text' }
-            ]},
-            'alarmen': { title: 'Alarmen Vorige Dienst', short: 'Alarmen', icon: 'fa-bell', form: [
-                { id: 'prio', label: 'Prioriteit', type: 'select', opts: ['P1 (Rood)', 'P2 (Goud)'] },
-                { id: 'melding', label: 'Incident omschrijving', type: 'text', req: true },
-                { id: 'locatie', label: 'Adres', type: 'text' },
-                { id: 'tijd', label: 'Datum / Tijdstip', type: 'text' },
-                { id: 'voertuigen', label: 'Gealarmeerde Voertuigen (komma gescheiden)', type: 'text' }
-            ]},
-            'wegafsluitingen': { title: 'Wegafsluitingen', short: 'Wegen', icon: 'fa-road-barrier', form: [
-                { id: 'straat', label: 'Straatnaam', type: 'text', req: true },
-                { id: 'datum', label: 'Datum / Periode', type: 'text' },
-                { id: 'reden', label: 'Reden Afsluiting', type: 'text' },
-                { id: 'img', label: 'Link naar kaartafbeelding (URL)', type: 'text' }
-            ]},
-            'ruimtes': { title: 'Ruimte Reserveringen', short: 'Ruimtes', icon: 'fa-calendar-check', form: [
-                { id: 'naam', label: 'Ruimtenaam (bijv. Breda 1.77)', type: 'text', req: true },
-                { id: 'type', label: 'Type (bijv. Hybride / Vergader)', type: 'text' },
-                { id: 'tijden', label: 'Gereserveerde Tijden (komma gescheiden)', type: 'text' }
-            ]},
-            'ploeg': { title: 'Ploegindeling Breda', short: 'Ploeg', icon: 'fa-users', form: [
-                { id: 'naam', label: 'Voor- en Achternaam', type: 'text', req: true },
-                { id: 'roles_container', label: 'Functies & Kleuren Toewijzen', type: 'role-builder' }
-            ]},
-            'voertuigen': { title: 'Status Voertuigen', short: 'Voertuigen', icon: 'fa-truck-fast', form: [
-                { id: 'voertuig', label: 'Voertuig Nummer (bijv. 203132)', type: 'text', req: true },
-                { id: 'type', label: 'Type (bijv. TS of HW)', type: 'text' },
-                { id: 'status', label: 'Status Code (bijv. ov (10) of kz (5))', type: 'text' },
-                { id: 'kleur', label: 'Status Kleurbolletje', type: 'select', opts: ['Rood', 'Groen', 'Grijs'] },
-                { id: 'water', label: 'Watertank %', type: 'number' },
-                { id: 'schuim', label: 'Schuimtank %', type: 'number' },
-                { id: 'brandstof', label: 'Brandstof %', type: 'number' }
-            ]},
-            'werk': { title: 'Alg. Werkzaamheden', short: 'Taken', icon: 'fa-list-check', form: [
-                { id: 'taak', label: 'Taak / Omschrijving', type: 'text', req: true },
-                { id: 'uitvoerder', label: 'Wie gaat het doen?', type: 'text' },
-                { id: 'auteur', label: 'Aangemaakt door', type: 'text' }
-            ]},
-            'weather': { title: 'Actueel Weer', short: 'Weer', icon: 'fa-cloud-sun', noAdd: true }
-        };
-
-        const colorMap = {
-            'Nieuw (Grijs)': 'grey', 'In Behandeling (Blauw)': 'blue', 'Afgehandeld (Groen)': 'green',
-            'P1 (Rood)': 'p1', 'P2 (Goud)': 'p2',
-            'Rood': 'red', 'Blauw': 'blue', 'Groen': 'green', 'Goud': 'gold', 'Grijs': 'grey'
-        };
-
-        // --- HTML BOUWEN ---
-        function buildHTML(widgetId, isMobile = false) {
-            let items = appData[widgetId] || [];
-            let html = '';
-
-            if(!isMobile) {
-                let btnHtml = WIDGET_DEF[widgetId].noAdd ? '' : `<button class="add-data-btn" onclick="openModal('${widgetId}')" title="Toevoegen"><i class="fa-solid fa-plus"></i></button>`;
-                html += `<div class="widget-header"><span class="widget-title">${WIDGET_DEF[widgetId].title}</span><div class="header-actions">${btnHtml}<button class="delete-btn" onclick="removeWidgetFromGrid('${widgetId}')" title="Widget verwijderen"><i class="fa-solid fa-xmark"></i></button></div></div>`;
-            }
-
-            html += `<div class="scrollable">`;
-            
-            if (widgetId === 'weather') {
-                html += `<div class="weather-box"><div class="weather-loc">Tramsingel 71, Breda</div><div class="weather-temp dyn-temp">--°C</div><div class="dyn-desc" style="font-weight:600; color:var(--text-muted)">Laden...</div></div></div>`;
-                return html;
-            }
-            if (widgetId === 'werk') {
-                const dateStr = new Date().toLocaleDateString('nl-NL', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-                html += `<div class="kis-container"><h1 class="kis-title">Overzicht Taken</h1><p class="kis-date">${dateStr}</p>`;
-            } else if (widgetId === 'ploeg') {
-                html += `<div class="kis-container"><h2 style="color:var(--blauw-donker); border-bottom: 2px solid var(--rood-basis); padding-bottom:10px; margin-top:0; font-size:1.4rem;">Ploeg Dienst</h2>`;
-            }
-
-            if (items.length === 0) {
-                let txt = isMobile ? "Geen gegevens gevonden." : "Nog leeg. Zet Edit Mode aan en klik op de gele + in de titelbalk om iets toe te voegen.";
-                html += `<div class="empty-state">${txt}</div></div>`;
-                if(widgetId === 'werk' || widgetId === 'ploeg') html += `</div>`;
-                return html;
-            }
-
-            if(['topdesk', 'alarmen', 'ruimtes'].includes(widgetId)) html += `<div class="widget-list">`;
-            if(widgetId === 'voertuigen') html += `<div class="vehicle-grid">`;
-
-            items.forEach((item, index) => {
-                let delBtn = `<button class="del-item-btn" onclick="deleteItem('${widgetId}', ${index})">Verwijderen</button>`;
-                
-                if (widgetId === 'topdesk') {
-                    let badgeClass = colorMap[item.status] || 'grey';
-                    html += `<div class="list-item editable-wrap"><div class="item-main"><div class="item-title">${item.titel} <span class="badge badge-navy">${item.locatie||''}</span></div><div class="item-sub"><strong>${item.ticket||'-'}</strong></div></div><div class="item-side"><span class="badge badge-${badgeClass}">${item.status.split(' ')[0]}</span><div class="item-sub">${item.persoon||''}</div></div>${delBtn}</div>`;
-                }
-                else if (widgetId === 'alarmen') {
-                    let pClass = colorMap[item.prio] || 'p1';
-                    let pBadge = pClass === 'p1' ? `<span class="badge badge-red">P1</span>` : `<span class="badge badge-gold">P2</span>`;
-                    let tags = (item.voertuigen||'').split(',').filter(x=>x.trim()!=='').map(v => `<span class="v-tag">${v.trim()}</span>`).join('');
-                    html += `<div class="list-item ${pClass} editable-wrap"><div class="item-main"><div class="item-title">${pBadge} ${item.melding}</div><div class="item-sub"><i class="fa-solid fa-location-dot" style="color:var(--goud);"></i> ${item.locatie||'Onbekend'} • ${item.tijd||'-'}</div><div class="v-tag-list">${tags}</div></div>${delBtn}</div>`;
-                }
-                else if (widgetId === 'wegafsluitingen') {
-                    let img = item.img || 'https://placehold.co/600x300/e9ecef/17428c?text=Kaart+Wegafsluiting';
-                    html += `<div style="padding:12px;"><div class="vehicle-card editable-wrap" style="padding:0;"><img src="${img}" style="width:100%; height:180px; object-fit:cover; border-bottom:2px solid var(--rood-basis);"><div style="padding:15px;"><div class="item-title" style="font-size:15px; margin-bottom:8px;">${item.straat} <span class="badge badge-red" style="float:right;">Afgesloten</span></div><div class="item-sub" style="margin-bottom:12px;"><i class="fa-regular fa-calendar"></i> ${item.datum||'Tot nader bericht'}</div><div style="font-size:12px; font-weight:700; color:var(--blauw-donker); margin-bottom:5px;">${item.reden||'Onderhoud'}</div><div class="item-sub" style="color:var(--rood-basis); font-weight:bold;"><i class="fa-solid fa-triangle-exclamation"></i> Geen doorgang.</div></div>${delBtn}</div></div>`;
-                }
-                else if (widgetId === 'ruimtes') {
-                    let tags = (item.tijden||'').split(',').filter(x=>x.trim()!=='').map(v => `<span class="v-tag"><i class="fa-regular fa-clock"></i> ${v.trim()}</span>`).join('');
-                    let isFree = tags.length === 0;
-                    let sideBadge = isFree ? `<span class="badge badge-green">Vrij</span>` : `<span class="badge badge-red">Bezet</span>`;
-                    let subText = isFree ? `<div class="item-sub">Geen reserveringen.</div>` : `<div class="v-tag-list">${tags}</div>`;
-                    html += `<div class="list-item editable-wrap ${isFree?'room-free':''}"><div class="item-main"><div class="item-title">${item.naam} <span class="v-type">${item.type||''}</span></div>${subText}</div><div class="item-side">${sideBadge}</div>${delBtn}</div>`;
-                }
-                else if (widgetId === 'ploeg') {
-                    let rolesHtml = '';
-                    if (item.roles && item.roles.length > 0) {
-                        rolesHtml = item.roles.map(r => {
-                            let badgeCol = colorMap[r.color] || 'red';
-                            let bgVar = badgeCol === 'red' ? 'var(--rood-basis)' : badgeCol === 'blue' ? 'var(--blauw-kobalt)' : badgeCol === 'green' ? 'var(--status-groen)' : badgeCol === 'gold' ? 'var(--goud)' : '#888';
-                            let textCol = badgeCol === 'gold' ? 'var(--blauw-donker)' : 'white';
-                            return `<span style="background:${bgVar}; color:${textCol}; padding:4px 10px; border-radius:6px; font-size:11px; font-weight:bold; margin-left:5px; margin-bottom:4px; display:inline-block;">${r.name}</span>`;
-                        }).join('');
-                    } else {
-                        rolesHtml = `<span style="color:#bbb; font-size:11px;">Geen rol</span>`;
-                    }
-                    
-                    html += `<div class="editable-wrap" style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid #eee; align-items:center;">
-                                <span style="font-weight:700; color:var(--text-main);">${item.naam}</span>
-                                <div style="display:flex; flex-wrap:wrap; justify-content:flex-end;">${rolesHtml}</div>
-                                ${delBtn}
-                             </div>`;
-                }
-                else if (widgetId === 'voertuigen') {
-                    let dotCol = colorMap[item.kleur] || 'grey';
-                    let gauges = '';
-                    if(item.water) gauges += renderPB(item.water, 'blue', 'Water');
-                    if(item.schuim) gauges += renderPB(item.schuim, 'lightblue', 'Schuim');
-                    if(item.brandstof) gauges += renderPB(item.brandstof, 'gold', 'Brand');
-                    
-                    html += `<div class="vehicle-card editable-wrap"><div class="v-header"><div class="v-title"><span class="v-dot ${dotCol}"></span> ${item.voertuig} <span class="v-type">(${item.type||'-'})</span></div><span class="badge badge-${dotCol}">${item.status||'-'}</span></div><div class="v-details"><div><i class="fa-regular fa-clock"></i> Laatste update: Nu</div></div><div class="v-gauges">${gauges}</div>${delBtn}</div>`;
-                }
-                else if (widgetId === 'werk') {
-                    let comp = item.completed ? 'completed' : '';
-                    html += `<div class="work-item editable-wrap ${comp}"><button class="kis-checkbox" onclick="toggleTask(${index})"><i class="fa-solid fa-square-check"></i></button><div class="work-details"><div class="task-title">${item.taak}</div><div>Uitvoerende: <span class="performer-tag">${item.uitvoerder||'-'}</span></div><div class="meta-info subtext">Auteur: ${item.auteur||'-'}</div></div>${delBtn}</div>`;
-                }
-            });
-
-            if(['topdesk', 'alarmen', 'ruimtes', 'voertuigen'].includes(widgetId)) html += `</div>`;
-            if(widgetId === 'werk' || widgetId === 'ploeg') html += `</div>`;
-            
-            html += `</div>`; 
-            return html;
-        }
-
-        function renderAllWidgets() {
-            document.querySelectorAll('.grid-stack-item').forEach(el => {
-                let id = el.getAttribute('gs-id');
-                if(WIDGET_DEF[id]) el.querySelector('.grid-stack-item-content').innerHTML = buildHTML(id, false);
-            });
-
-            let openMobileApp = document.getElementById('mobile-app-view').getAttribute('data-active-app');
-            if (openMobileApp) {
-                document.getElementById('mobile-app-content').innerHTML = buildHTML(openMobileApp, true);
-            }
-
-            if(document.querySelector('.dyn-temp')) {
-                fetch('https://api.open-meteo.com/v1/forecast?latitude=51.5896&longitude=4.7694&current_weather=true')
-                .then(r=>r.json()).then(d=>{
-                    document.querySelectorAll('.dyn-temp').forEach(el => el.innerText = `${Math.round(d.current_weather.temperature)}°C`);
-                    document.querySelectorAll('.dyn-desc').forEach(el => el.innerText = "Breda - Actueel gemeten");
-                }).catch(e=>console.log("Weer API error:", e));
-            }
-        }
-
-        // ==========================================
-        // 4. MODAL LOGICA (Toevoegen Formulier)
-        // ==========================================
-        let currentModalWidget = null;
-
-        // Functie voor meervoudige rollen in ploegindeling
-        window.addRoleRow = function() {
-            const container = document.getElementById('role-builder-container');
-            const row = document.createElement('div');
-            row.className = 'role-row form-group';
-            row.style.display = 'flex'; row.style.gap = '10px'; row.style.marginBottom = '10px';
-            row.innerHTML = `
-                <input type="text" class="role-input" placeholder="Rol (bijv. Chauffeur)" style="flex-grow:1;">
-                <select class="role-color" style="width:110px;">
-                    <option value="Rood">Rood</option>
-                    <option value="Blauw">Blauw</option>
-                    <option value="Groen">Groen</option>
-                    <option value="Goud">Goud</option>
-                    <option value="Grijs">Grijs</option>
-                </select>
-                <button type="button" onclick="this.parentElement.remove()" style="background:var(--red-main); color:white; border:none; border-radius:6px; cursor:pointer; width:45px;"><i class="fa-solid fa-trash"></i></button>
-            `;
-            container.appendChild(row);
-        };
-
-        window.openModal = function(widgetId) {
-            currentModalWidget = widgetId;
-            let def = WIDGET_DEF[widgetId];
-            document.getElementById('modal-title').innerText = def.title + ' Toevoegen';
-            
-            let formHtml = '';
-            def.form.forEach(f => {
-                if (f.type === 'role-builder') {
-                    formHtml += `<div class="form-group"><label>${f.label}</label>
-                                 <div id="role-builder-container" style="background:#f4f6f9; padding:15px; border-radius:8px; border:1px solid #ddd;"></div>
-                                 <button type="button" class="btn" style="background:var(--blauw-kobalt); color:white; margin-top:10px;" onclick="addRoleRow()"><i class="fa-solid fa-plus"></i> Extra rol toevoegen</button>
-                                 </div>`;
-                } else {
-                    formHtml += `<div class="form-group"><label>${f.label}</label>`;
-                    if (f.type === 'select') {
-                        formHtml += `<select id="inp-${f.id}">` + f.opts.map(o => `<option value="${o}">${o}</option>`).join('') + `</select>`;
-                    } else {
-                        formHtml += `<input type="${f.type}" id="inp-${f.id}" placeholder="${f.req ? 'Verplicht veld...' : 'Optioneel...'}" ${f.req ? 'required' : ''}>`;
-                    }
-                    formHtml += `</div>`;
-                }
-            });
-            document.getElementById('modal-form').innerHTML = formHtml;
-            
-            // Als het ploeg is, start met 1 lege rij
-            if (widgetId === 'ploeg') window.addRoleRow();
-
-            document.getElementById('data-modal').classList.add('active');
-        };
-
-        window.closeModal = function() {
-            document.getElementById('data-modal').classList.remove('active');
-            currentModalWidget = null;
-        };
-
-        window.saveModalData = function() {
-            if(!currentModalWidget) return;
-            let def = WIDGET_DEF[currentModalWidget];
-            let newItem = {};
-            
-            for (let f of def.form) {
-                if (f.type === 'role-builder') {
-                    let roles = [];
-                    document.querySelectorAll('.role-row').forEach(row => {
-                        let name = row.querySelector('.role-input').value.trim();
-                        let col = row.querySelector('.role-color').value;
-                        if(name) roles.push({ name: name, color: col });
-                    });
-                    newItem.roles = roles;
-                } else {
-                    let val = document.getElementById(`inp-${f.id}`).value.trim();
-                    if (f.req && !val) { alert(`Je bent een verplicht veld vergeten:\n\n- ${f.label}`); return; }
-                    newItem[f.id] = val;
-                }
-            }
-            if(currentModalWidget === 'werk') newItem.completed = false;
-
-            if(!appData[currentModalWidget]) appData[currentModalWidget] = [];
-            appData[currentModalWidget].push(newItem);
-            
-            saveLocalData();
-            closeModal();
-        };
-
-        window.deleteItem = function(widgetId, index) {
-            if(confirm("Weet je zeker dat je dit wilt wissen?")) {
-                appData[widgetId].splice(index, 1);
-                saveLocalData();
+        // LET OP: ID's zijn vervangen door dynamische classes (dyn-...) om duplicaten te voorkomen in mobiele/desktop weergave tegelijk.
+        const WIDGET_LIB = {
+            'topdesk': { w: 6, h: 4, title: 'Topdesk', short: 'Topdesk', icon: 'fa-clipboard-list', desc: 'Meldingen Kazerne 1/2', html: `
+                <div class="widget-header"><span class="widget-title">Topdesk - Kazerne 1 / 2</span><button class="delete-btn" onclick="removeWidget('topdesk')"><i class="fa-solid fa-xmark"></i></button></div>
+                <div class="scrollable">
+                    <div class="widget-list">
+                        <div class="list-item">
+                            <div class="item-main">
+                                <div class="item-title">Verstopping <span class="badge badge-navy">Breda</span></div>
+                                <div class="item-sub"><strong>M2603 156</strong> • Aangemaakt: Di, 3 mrt 2026 • Streefdatum: 04/03</div>
+                            </div>
+                            <div class="item-side"><span class="badge badge-green">Afgehandeld</span><div class="item-sub">Meijers, Dennis</div></div>
+                        </div>
+                        <div class="list-item">
+                            <div class="item-main">
+                                <div class="item-title">Hybride schermen storing 1.77 <span class="badge badge-navy">Instructieruimte</span></div>
+                                <div class="item-sub"><strong>M2603 073</strong> • Aangemaakt: Ma, 2 mrt 2026 • Streefdatum: 03/03</div>
+                            </div>
+                            <div class="item-side"><span class="badge badge-green">Afgehandeld</span><div class="item-sub">Hoekstra, Joost</div></div>
+                        </div>
+                    </div>
+                </div>`
+            },
+            'alarmen': { w: 6, h: 4, title: 'Alarmen Vorige Dienst', short: 'Alarmen', icon: 'fa-bell', desc: 'Recente P1/P2', html: `
+                <div class="widget-header"><span class="widget-title">Alarmen vorige dienst</span><button class="delete-btn" onclick="removeWidget('alarmen')"><i class="fa-solid fa-xmark"></i></button></div>
+                <div class="scrollable">
+                    <div class="widget-list">
+                        <div class="list-item p1">
+                            <div class="item-main">
+                                <div class="item-title"><span class="badge badge-red">P1</span> Brand - Gebouw - 05 Industrie</div>
+                                <div class="item-sub"><i class="fa-solid fa-location-dot" style="color:var(--gold);"></i> Breda • 4-3-2026 (07:45)</div>
+                                <div class="v-tag-list"><span class="v-tag">203133</span><span class="v-tag">203093</span><span class="v-tag">203134</span><span class="v-tag">200021</span></div>
+                            </div>
+                        </div>
+                        <div class="list-item p2">
+                            <div class="item-main">
+                                <div class="item-title"><span class="badge badge-gold">P2</span> Brand - Buiten</div>
+                                <div class="item-sub"><i class="fa-solid fa-location-dot" style="color:var(--gold);"></i> Verbeetenstraat Breda • 5-3-2026 (04:12)</div>
+                                <div class="v-tag-list"><span class="v-tag">203132</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`
+            },
+            'wegafsluitingen': { w: 4, h: 6, title: 'Wegafsluitingen', short: 'Wegen', icon: 'fa-road-barrier', desc: 'Actuele wegafsluitingen', html: `
+                <div class="widget-header"><span class="widget-title">Wegafsluitingen</span><button class="delete-btn" onclick="removeWidget('wegafsluitingen')"><i class="fa-solid fa-xmark"></i></button></div>
+                <div class="scrollable" style="padding: 12px; background: #fafafa;">
+                    <div class="vehicle-card" style="padding: 0; overflow: hidden; border: 1px solid #ddd;">
+                        <img src="blob:https://kis.vrmwb.nl/9d4e2fc8-40aa-4771-99e3-f2155e955b17" onerror="this.src='https://placehold.co/600x400/eeeeee/888888?text=Kaart+niet+gevonden'" alt="Kaart" style="width: 100%; height: 180px; object-fit: cover; border-bottom: 2px solid var(--red-main);">
+                        <div style="padding: 15px;">
+                            <div class="item-title" style="font-size: 15px; margin-bottom: 8px;">Ploegstraat Breda <span class="badge badge-red" style="float: right;">Afgesloten</span></div>
+                            <div class="item-sub" style="margin-bottom: 12px;"><i class="fa-regular fa-calendar"></i> Wo, 11 maart 2026 (Fase 1 t/m 5)</div>
+                            <div style="font-size: 12px; font-weight: 700; color: var(--navy-dark); margin-bottom: 5px;">Herinrichting / onderhoud van Weg</div>
+                            <div class="item-sub" style="color: var(--red-main); font-weight: bold;"><i class="fa-solid fa-triangle-exclamation"></i> Geen doorgang mogelijk.</div>
+                        </div>
+                    </div>
+                </div>`
+            },
+            'ruimtes': { w: 4, h: 6, title: 'Ruimte Reserveringen', short: 'Ruimtes', icon: 'fa-calendar-check', desc: 'Overzicht bezetting', html: `
+                <div class="widget-header"><span class="widget-title">Reserveringen Breda</span><button class="delete-btn" onclick="removeWidget('ruimtes')"><i class="fa-solid fa-xmark"></i></button></div>
+                <div class="scrollable">
+                    <div class="widget-list">
+                        <div class="list-item">
+                            <div class="item-main">
+                                <div class="item-title">Breda 1.77 <span class="v-type">Hybride</span></div>
+                                <div class="v-tag-list"><span class="v-tag"><i class="fa-regular fa-clock"></i> 09:30 - 11:30</span><span class="v-tag"><i class="fa-regular fa-clock"></i> 13:00 - 14:00</span></div>
+                            </div>
+                            <div class="item-side"><span class="badge badge-red">Bezet</span></div>
+                        </div>
+                        <div class="list-item">
+                            <div class="item-main">
+                                <div class="item-title">Breda 2.26 <span class="v-type">Vergader</span></div>
+                                <div class="v-tag-list"><span class="v-tag"><i class="fa-regular fa-clock"></i> 08:00 - 12:00</span></div>
+                            </div>
+                            <div class="item-side"><span class="badge badge-red">Bezet</span></div>
+                        </div>
+                        <div class="list-item room-free">
+                            <div class="item-main">
+                                <div class="item-title">Breda 0.14 <span class="v-type">Vergader</span></div>
+                                <div class="item-sub">Geen reserveringen.</div>
+                            </div>
+                            <div class="item-side"><span class="badge badge-green">Vrij</span></div>
+                        </div>
+                    </div>
+                </div>`
+            },
+            'ploeg': { w: 4, h: 6, title: 'Ploegindeling', short: 'Ploeg', icon: 'fa-users', desc: 'Bezetting Breda', html: `
+                <div class="widget-header"><span class="widget-title">Ploegindeling</span><button class="delete-btn" onclick="removeWidget('ploeg')"><i class="fa-solid fa-xmark"></i></button></div>
+                <div class="scrollable kis-container">
+                    <h2 style="color:var(--navy-dark); border-bottom: 2px solid var(--gold); padding-bottom:5px; margin-top:0; font-size:1.4rem;">Bezetting Breda</h2>
+                    <div class="dyn-ploeg">Laden...</div>
+                </div>`
+            },
+            'voertuigen': { w: 12, h: 6, title: 'Status Voertuigen', short: 'Wagenpark', icon: 'fa-truck-fast', desc: 'Overzicht wagenpark', html: `
+                <div class="widget-header"><span class="widget-title">Status Voertuigen</span><button class="delete-btn" onclick="removeWidget('voertuigen')"><i class="fa-solid fa-xmark"></i></button></div>
+                <div class="scrollable">
+                    <div class="vehicle-grid">
+                        <div class="vehicle-card">
+                            <div class="v-header">
+                                <div class="v-title"><span class="v-dot red"></span> 203132 <span class="v-type">(TS)</span></div>
+                                <span class="badge badge-red">ov (10)</span>
+                            </div>
+                            <div class="v-details"><div><i class="fa-solid fa-warehouse"></i> BREDA_1</div><div><i class="fa-regular fa-clock"></i> 06:29</div></div>
+                            <div class="v-gauges">${renderProgressBar(98, 'blue', 'Water')}${renderProgressBar(63, 'lightblue', 'Schuim')}${renderProgressBar(100, 'gold', 'Brand')}</div>
+                        </div>
+                        <div class="vehicle-card">
+                            <div class="v-header">
+                                <div class="v-title"><span class="v-dot red"></span> 203133 <span class="v-type">(TS)</span></div>
+                                <span class="badge badge-red">ov (10)</span>
+                            </div>
+                            <div class="v-details"><div><i class="fa-solid fa-warehouse"></i> BREDA_1</div><div><i class="fa-regular fa-clock"></i> 06:29</div></div>
+                            <div class="v-gauges">${renderProgressBar(100, 'blue', 'Water')}${renderProgressBar(96, 'lightblue', 'Schuim')}${renderProgressBar(90, 'gold', 'Brand')}</div>
+                        </div>
+                    </div>
+                </div>`
+            },
+            'weather': { w: 4, h: 4, title: 'Actueel Weer', short: 'Weer', icon: 'fa-cloud-sun', desc: 'Lokale weersverwachting', html: `
+                <div class="widget-header"><span class="widget-title">Actueel Weer</span><button class="delete-btn" onclick="removeWidget('weather')"><i class="fa-solid fa-xmark"></i></button></div>
+                <div class="weather-box"><div class="weather-loc">Tramsingel 71, Breda</div><div class="weather-temp dyn-temp">--°C</div><div class="dyn-desc" style="font-weight:600; color:#555">Laden...</div></div>` 
+            },
+            'werk': { w: 6, h: 6, title: 'Werkzaamheden', short: 'Taken', icon: 'fa-list-check', desc: 'Dagelijkse taken', html: `
+                <div class="widget-header"><span class="widget-title">Werkzaamheden</span><button class="delete-btn" onclick="removeWidget('werk')"><i class="fa-solid fa-xmark"></i></button></div>
+                <div class="scrollable"><div class="kis-container"><h1 class="kis-title">Alg. Werkzaamheden</h1><p class="kis-date dyn-werk-date">Vandaag</p><div class="dyn-worklist">Laden...</div></div></div>`
             }
         };
 
-        window.toggleTask = function(index) {
-            appData['werk'][index].completed = !appData['werk'][index].completed;
-            saveLocalData(); 
-        };
+        const workData = [
+            { id: 1, title: "Boodschappen & Koken", performers: ["Patrick Evers"], author: "Paul van der Heijden" },
+            { id: 2, title: "Sport", performers: ["Geert Tuerlings"], author: "Paul van der Heijden" }
+        ];
 
-        // ==========================================
-        // 5. INITIALISATIE & LAYOUT
-        // ==========================================
+        const ploegData = [
+            { name: "Arjan Otjens", chip: "TS 1 : BV" },
+            { name: "Jurgen Bakx", chip: "TS 1 : Ch" },
+            { name: "Dennis Meijers", chip: "TS 1 : 111" },
+            { name: "Joost Hoekstra", chip: "TS 1 : 112" }
+        ];
+
+        // --- 2. INITIALIZATION FUNCTION ---
         let grid;
         const DEFAULT_LAYOUT = [
-            { id: 'alarmen', x: 0, y: 0, w: 6, h: 4 }, { id: 'topdesk', x: 6, y: 0, w: 6, h: 4 },
-            { id: 'ruimtes', x: 0, y: 4, w: 4, h: 6 }, { id: 'ploeg', x: 4, y: 4, w: 4, h: 6 },
-            { id: 'wegafsluitingen', x: 8, y: 4, w: 4, h: 6 }, { id: 'voertuigen', x: 0, y: 10, w: 12, h: 6 }
+            { id: 'topdesk', x: 0, y: 0, w: 6, h: 4 },
+            { id: 'alarmen', x: 6, y: 0, w: 6, h: 4 },
+            { id: 'ruimtes', x: 0, y: 4, w: 4, h: 6 },
+            { id: 'ploeg', x: 4, y: 4, w: 4, h: 6 },
+            { id: 'wegafsluitingen', x: 8, y: 4, w: 4, h: 6 },
+            { id: 'voertuigen', x: 0, y: 10, w: 12, h: 6 }
         ];
 
         function initGridStackDashboard() {
             grid = GridStack.init({ cellHeight: 70, margin: 15, staticGrid: true, animate: true });
-            
-            const saved = localStorage.getItem('bredaDashboardLayoutGrid_v15');
+            loadLayout();
+            grid.on('change added removed', saveLayout);
+            setupDrawer();
+            setupEditMode();
+        }
+
+        // --- 3. LAYOUT MANAGEMENT ---
+        function loadLayout() {
+            const saved = localStorage.getItem('bredaDashboardLayoutV9');
             let layoutToLoad = saved ? JSON.parse(saved) : DEFAULT_LAYOUT;
             
             grid.removeAll();
             layoutToLoad.forEach(item => {
-                if (WIDGET_DEF[item.id]) {
-                    grid.addWidget({ id: item.id, x: item.x, y: item.y, w: item.w, h: item.h, content: buildHTML(item.id, false) });
+                if (WIDGET_LIB[item.id]) {
+                    grid.addWidget({ id: item.id, x: item.x, y: item.y, w: item.w, h: item.h, content: WIDGET_LIB[item.id].html });
+                    populateWidgetData(item.id);
                 }
             });
+            updateDrawer();
+        }
+
+        function saveLayout() {
+            const currentLayout = grid.engine.nodes.map(node => ({ id: node.id, x: node.x, y: node.y, w: node.w, h: node.h }));
+            localStorage.setItem('bredaDashboardLayoutV9', JSON.stringify(currentLayout));
+            updateDrawer();
+        }
+
+        window.removeWidget = function(id) { const el = document.querySelector(`.grid-stack-item[gs-id="${id}"]`); if (el) grid.removeWidget(el); };
+
+        // --- 4. POPULATE WIDGET DATA (Aangepast voor classes) ---
+        function populateWidgetData(id) {
+            if (id === 'weather') {
+                fetch('https://api.open-meteo.com/v1/forecast?latitude=51.5896&longitude=4.7694&current_weather=true').then(res => res.json()).then(data => {
+                    document.querySelectorAll('.dyn-temp').forEach(el => el.innerText = `${Math.round(data.current_weather.temperature)}°C`);
+                    document.querySelectorAll('.dyn-desc').forEach(el => el.innerText = "Actueel gemeten");
+                }).catch(e => console.log(e));
+            }
+            if (id === 'werk') {
+                const dateStr = new Date().toLocaleDateString('nl-NL', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                document.querySelectorAll('.dyn-werk-date').forEach(el => el.innerText = dateStr);
+                const htmlStr = workData.map(item => `<div class="work-item"><button class="kis-checkbox"><i class="fa-solid fa-square-check"></i></button><div class="work-details"><div class="task-title">${item.title}</div><div>Uitvoerende: ${item.performers.map(p => `<span class="performer-tag">${p}</span>`).join('')}</div><div class="meta-info subtext">Auteur: ${item.author}</div></div></div>`).join('');
+                document.querySelectorAll('.dyn-worklist').forEach(el => el.innerHTML = htmlStr);
+            }
+            if (id === 'ploeg') {
+                const htmlStr = ploegData.map(p => `
+                    <div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid #eee; align-items:center;">
+                        <span style="font-weight:700;">${p.name}</span>
+                        <span style="background:var(--red-main); color:white; padding:4px 10px; border-radius:6px; font-size:11px; font-weight:bold;">${p.chip}</span>
+                    </div>`).join('');
+                document.querySelectorAll('.dyn-ploeg').forEach(el => el.innerHTML = htmlStr);
+            }
+        }
+
+        // --- 5. IOS WIDGET DRAWER (Desktop) ---
+        function setupDrawer() {
+            const overlay = document.getElementById('widget-overlay'); const drawer = document.getElementById('widget-drawer');
+            const oldBtn = document.getElementById('open-widget-panel'); const newBtn = oldBtn.cloneNode(true);
+            oldBtn.parentNode.replaceChild(newBtn, oldBtn);
             
-            grid.on('change added removed', () => {
-                const currentLayout = grid.engine.nodes.map(n => ({ id: n.id, x: n.x, y: n.y, w: n.w, h: n.h }));
-                localStorage.setItem('bredaDashboardLayoutGrid_v15', JSON.stringify(currentLayout));
-                setupDrawerUI();
-            });
-
-            setupDrawerUI();
-            setupEditMode();
-            renderAllWidgets();
+            newBtn.addEventListener('click', () => { updateDrawer(); overlay.classList.add('active'); drawer.classList.add('active'); });
+            const closePanel = () => { overlay.classList.remove('active'); drawer.classList.remove('active'); };
+            document.getElementById('close-drawer').addEventListener('click', closePanel);
+            overlay.addEventListener('click', closePanel);
         }
 
-        window.removeWidgetFromGrid = function(id) { 
-            const el = document.querySelector(`.grid-stack-item[gs-id="${id}"]`); 
-            if (el) grid.removeWidget(el); 
-        };
-
-        function setupDrawerUI() {
-            const activeIds = grid ? grid.engine.nodes.map(n => n.id) : [];
-            const drawerGrid = document.getElementById('drawer-grid');
-            if(!drawerGrid) return;
+        function updateDrawer() {
+            const activeIds = grid.engine.nodes.map(n => n.id); const drawerGrid = document.getElementById('drawer-grid');
             drawerGrid.innerHTML = '';
-            Object.keys(WIDGET_DEF).forEach(id => {
+            Object.keys(WIDGET_LIB).forEach(id => {
                 if (!activeIds.includes(id)) {
-                    const w = WIDGET_DEF[id];
-                    drawerGrid.innerHTML += `<div class="widget-card" onclick="addWidgetToGrid('${id}')"><i class="fa-solid ${w.icon}"></i><h3>${w.title}</h3></div>`;
+                    const w = WIDGET_LIB[id];
+                    drawerGrid.innerHTML += `<div class="widget-card" onclick="addWidgetFromDrawer('${id}')"><i class="fa-solid ${w.icon}"></i><h3>${w.title}</h3><p>${w.desc}</p></div>`;
                 }
             });
+            if (drawerGrid.innerHTML === '') drawerGrid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color:#888;">Geen widgets meer beschikbaar.</p>';
         }
 
-        window.addWidgetToGrid = function(id) {
-            grid.addWidget({ id: id, w: WIDGET_DEF[id].noAdd ? 4 : 6, h: 6, content: buildHTML(id, false) });
-            document.getElementById('close-drawer').click(); 
+        window.addWidgetFromDrawer = function(id) {
+            const w = WIDGET_LIB[id]; grid.addWidget({ id: id, w: w.w, h: w.h, content: w.html });
+            populateWidgetData(id); document.getElementById('close-drawer').click(); 
         };
 
-        document.getElementById('open-widget-panel').addEventListener('click', () => { setupDrawerUI(); document.getElementById('widget-overlay').classList.add('active'); document.getElementById('widget-drawer').classList.add('active'); });
-        document.getElementById('close-drawer').addEventListener('click', () => { document.getElementById('widget-overlay').classList.remove('active'); document.getElementById('widget-drawer').classList.remove('active'); });
-
+        // --- 6. EDIT MODE TOGGLE (Desktop) ---
         function setupEditMode() {
-            const toggleBtn = document.getElementById('toggle-edit');
+            const toggleBtn = document.getElementById('toggle-edit'); const newToggle = toggleBtn.cloneNode(true);
+            toggleBtn.parentNode.replaceChild(newToggle, toggleBtn);
             let isEditMode = false;
-            toggleBtn.addEventListener('click', () => {
-                isEditMode = !isEditMode; 
-                grid.setStatic(!isEditMode); 
-                document.body.classList.toggle('edit-mode', isEditMode);
-                
-                if(isEditMode) {
-                    toggleBtn.innerHTML = '<i class="fa-solid fa-lock-open"></i> Klaar met bewerken';
-                    toggleBtn.classList.add('active');
-                    document.getElementById('status-label').innerHTML = `Layout: <strong>Je kunt nu alles toevoegen, verwijderen en verslepen.</strong>`;
-                } else {
-                    toggleBtn.innerHTML = '<i class="fa-solid fa-pen"></i> Edit Mode';
-                    toggleBtn.classList.remove('active');
-                    document.getElementById('status-label').innerHTML = `Layout: <strong>Vergrendeld</strong>`;
-                }
+            newToggle.addEventListener('click', () => {
+                isEditMode = !isEditMode; grid.setStatic(!isEditMode); document.body.classList.toggle('edit-mode', isEditMode);
+                newToggle.textContent = isEditMode ? 'Klaar' : 'Edit Mode'; newToggle.classList.toggle('active', isEditMode);
+                document.getElementById('status-label').innerHTML = `Layout: <strong>${isEditMode ? 'Ontgrendeld' : 'Vergrendeld'}</strong>`;
             });
         }
 
-        // ==========================================
-        // 6. MOBIELE WEERGAVE (iOS App Grid)
-        // ==========================================
+        // =========================================================
+        // NIEUW: MOBIELE APPS LOGICA (iOS STIJL)
+        // =========================================================
         function renderMobileApps() {
             const mobileContainer = document.getElementById('mobile-home-screen');
             if (!mobileContainer) return;
+            
             mobileContainer.innerHTML = '';
+            
+            // Kleurenpalet voor de app-icoontjes (blauw, rood, goud, groen)
             const colors = ['', 'color-red', 'color-gold', 'color-green'];
             let colorIndex = 0;
-            
-            Object.keys(WIDGET_DEF).forEach(id => {
-                const w = WIDGET_DEF[id];
-                mobileContainer.innerHTML += `
+
+            Object.keys(WIDGET_LIB).forEach(id => {
+                const w = WIDGET_LIB[id];
+                const appHTML = `
                     <div class="app-icon-wrap" onclick="openMobileApp('${id}')">
-                        <div class="app-icon ${colors[colorIndex % colors.length]}"><i class="fa-solid ${w.icon}"></i></div>
+                        <div class="app-icon ${colors[colorIndex % colors.length]}">
+                            <i class="fa-solid ${w.icon}"></i>
+                        </div>
                         <div class="app-label">${w.short}</div>
-                    </div>`;
+                    </div>
+                `;
+                mobileContainer.innerHTML += appHTML;
                 colorIndex++;
             });
         }
 
         window.openMobileApp = function(id) {
-            document.getElementById('mobile-app-view').setAttribute('data-active-app', id);
-            document.getElementById('mobile-app-title').innerText = WIDGET_DEF[id].title;
+            const w = WIDGET_LIB[id];
+            document.getElementById('mobile-app-title').innerText = w.title;
             
-            let actionContainer = document.getElementById('mobile-app-actions');
-            actionContainer.innerHTML = '';
-            // Op mobiel mag je altijd toevoegen, mits de widget dat toelaat
-            if(!WIDGET_DEF[id].noAdd) {
-                actionContainer.innerHTML = `<button class="add-data-btn" style="display:flex; background:var(--gold); color:var(--navy-dark);" onclick="openModal('${id}')"><i class="fa-solid fa-plus"></i></button>`;
-            }
-
-            // Aanzetten van 'edit-mode' tijdelijk op mobiel zodat verwijderknoppen werken
-            document.body.classList.add('edit-mode');
-
-            document.getElementById('mobile-app-content').innerHTML = buildHTML(id, true);
+            const contentDiv = document.getElementById('mobile-app-content');
+            contentDiv.innerHTML = w.html; // Injecteer de widget HTML
+            
+            populateWidgetData(id); // Haal live data op of vul in
+            
+            // Schuif het appscherm in beeld
             document.getElementById('mobile-app-view').classList.add('active');
         };
 
+        // Sluit mobiele app
         document.getElementById('mobile-back-btn').addEventListener('click', () => {
             document.getElementById('mobile-app-view').classList.remove('active');
-            document.getElementById('mobile-app-view').removeAttribute('data-active-app');
-            document.body.classList.remove('edit-mode'); // Reset edit mode
+            // Wis de content na de slide-animatie (300ms)
             setTimeout(() => { document.getElementById('mobile-app-content').innerHTML = ''; }, 300);
-            renderAllWidgets(); 
         });
 
-        // ==========================================
-        // START PUNT
-        // ==========================================
-        document.addEventListener('DOMContentLoaded', () => { 
-            loadLocalData();
-            initGridStackDashboard(); 
-            renderMobileApps();
-        });
+        // --- START PUNT ---
+        document.addEventListener('DOMContentLoaded', () => { checkAuth(); });
 
     </script>
 </body>
