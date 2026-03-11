@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Breda KIS Dashboard - Cloud Sync Pro</title>
+    <title>Breda KIS Dashboard - Export/Import Editie</title>
     <link href="https://cdn.jsdelivr.net/npm/gridstack@10.0/dist/gridstack.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -44,7 +44,7 @@
         .header-bar { position: relative; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding: 15px 25px; background: rgba(18, 32, 83, 0.95); border-bottom: 3px solid var(--red-main); border-radius: 12px; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.3); backdrop-filter: blur(10px); }
         .clock-container { font-size: 1.5rem; font-weight: 800; color: var(--gold); display: flex; align-items: center; gap: 10px; }
         .header-logo { position: absolute; left: 50%; transform: translateX(-50%); height: 40px; object-fit: contain; }
-        .controls { display: flex; gap: 12px; align-items: center; }
+        .controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; justify-content: flex-end;}
         .btn { padding: 10px 15px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 12px; transition: all 0.2s; display: flex; align-items: center; gap: 6px;}
         
         #toggle-edit { background: var(--gold); color: var(--navy-dark); }
@@ -52,8 +52,9 @@
         #open-widget-panel { background: var(--navy-bright); color: white; display: none; }
         body.edit-mode #open-widget-panel { display: flex; }
         
-        #sync-btn { background: #17a2b8; color: white; }
-        #link-btn { background: #2d7a2d; color: white; }
+        #export-btn { background: var(--navy-bright); color: white; }
+        #export-btn:hover { background: var(--navy-dark); }
+        #import-btn { background: var(--status-groen); color: white; }
 
         /* --- Widget Core Styling --- */
         .grid-stack-item-content { background-color: var(--widget-bg) !important; border: 1px solid #e0e0e0; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
@@ -183,7 +184,7 @@
             .app-icon-wrap { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
             .app-icon { width: 65px; height: 65px; border-radius: 22%; display: flex; justify-content: center; align-items: center; font-size: 28px; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.2); margin-bottom: 8px; background: linear-gradient(135deg, var(--navy-bright), var(--navy-dark)); transition: transform 0.1s; }
             .app-icon-wrap:active .app-icon { transform: scale(0.9); }
-            .app-icon.color-red { background: linear-gradient(135deg, #ff4b4b, var(--rood-main)); }
+            .app-icon.color-red { background: linear-gradient(135deg, #ff4b4b, var(--red-main)); }
             .app-icon.color-gold { background: linear-gradient(135deg, #ffe57f, var(--gold)); }
             .app-icon.color-green { background: linear-gradient(135deg, #4ade80, var(--green-check)); }
             .app-label { font-size: 11px; color: white; font-weight: 600; text-align: center; text-shadow: 0 1px 3px rgba(0,0,0,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
@@ -213,9 +214,11 @@
             <img src="img/logo.png" alt="VRMWB Logo" class="header-logo">
             
             <div class="controls">
-                <button id="sync-btn" class="btn" title="Start Cloud Sync"><i class="fa-solid fa-cloud-arrow-up"></i> Deel (Sync)</button>
-                <button id="link-btn" class="btn" title="Koppel een bestaand dashboard"><i class="fa-solid fa-link"></i> Koppel Apparaat</button>
+                <button id="export-btn" class="btn" title="Download data als bestand"><i class="fa-solid fa-download"></i> Exporteer</button>
+                <button id="import-btn" class="btn" title="Laad data in via bestand"><i class="fa-solid fa-upload"></i> Importeer</button>
                 
+                <input type="file" id="import-file" accept=".json" style="display:none;">
+
                 <span id="status-label" style="margin: 0 10px; font-size: 13px;">Layout: <strong>Vergrendeld</strong></span>
                 
                 <button id="open-widget-panel" class="btn"><i class="fa-solid fa-plus"></i> Widgets Toevoegen</button>
@@ -270,91 +273,73 @@
         setInterval(() => { document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('nl-NL'); }, 1000);
 
         // ==========================================
-        // 2. CLOUD SYNC (Vernieuwd via npoint.io)
+        // 2. EXPORT / IMPORT LOGICA (JSON Bestand)
         // ==========================================
-        let syncId = new URLSearchParams(window.location.search).get('sync') || localStorage.getItem('vrmwb_syncId');
-
-        async function loadData() {
-            if (syncId) {
-                try {
-                    let res = await fetch(`https://api.npoint.io/${syncId}`);
-                    if(res.ok) {
-                        appData = await res.json();
-                        localStorage.setItem('vrmwb_syncId', syncId); // Onthoud gekoppeld apparaat
-                        updateSyncUI();
-                        console.log("Succesvol gesynchroniseerd met Cloud.");
-                        return;
-                    }
-                } catch(e) { console.error("Cloud load error", e); }
-            }
-            // Fallback lokaal
-            let local = localStorage.getItem('vrmwb_appData_v14');
+        function loadLocalData() {
+            let local = localStorage.getItem('vrmwb_appData_v15');
             if (local) appData = JSON.parse(local);
         }
 
-        async function saveDataToCloud() {
-            localStorage.setItem('vrmwb_appData_v14', JSON.stringify(appData));
-            
-            if (syncId) {
-                // Sla op in de cloud zonder auth (npoint.io)
-                fetch(`https://api.npoint.io/${syncId}`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(appData)
-                }).catch(e => console.error("Cloud save failed", e));
-            }
+        function saveLocalData() {
+            localStorage.setItem('vrmwb_appData_v15', JSON.stringify(appData));
             renderAllWidgets(); 
         }
 
-        function updateSyncUI() {
-            if(syncId) {
-                document.getElementById('sync-btn').innerHTML = '<i class="fa-solid fa-cloud"></i> Actief (Code: ' + syncId.substring(0,4) + '...)';
-                document.getElementById('sync-btn').style.background = "var(--status-groen)";
-            }
-        }
-
-        function setupSyncButtons() {
-            // DEEL / SYNC AANZETTEN
-            document.getElementById('sync-btn').addEventListener('click', async () => {
-                if (syncId) {
-                    alert(`Jouw dashboard is al gekoppeld met de Cloud!\n\nDeel deze Code met een ander apparaat om mee te kijken:\n\nCODE: ${syncId}`);
-                } else {
-                    document.getElementById('sync-btn').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Bezig...';
-                    try {
-                        let res = await fetch('https://api.npoint.io/', {
-                            method: 'POST',
-                            headers: {'Content-Type': 'application/json'},
-                            body: JSON.stringify(appData)
-                        });
-                        let data = await res.json();
-                        if (data && data.url) {
-                            syncId = data.url.split('/').pop();
-                            localStorage.setItem('vrmwb_syncId', syncId);
-                            window.history.replaceState(null, null, '?sync=' + syncId);
-                            updateSyncUI();
-                            alert(`Cloud Sync is geactiveerd!\n\nWil je dit dashboard op je telefoon zien?\n1. Open dit dashboard op je telefoon.\n2. Klik op 'Koppel Apparaat'.\n3. Vul deze code in:\n\n${syncId}`);
-                        }
-                    } catch(e) {
-                        alert("Fout bij aanmaken Cloud Sync. Controleer je internetverbinding.");
-                        document.getElementById('sync-btn').innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Deel (Sync)';
-                    }
-                }
-            });
-
-            // KOPPEL APPARAAT
-            document.getElementById('link-btn').addEventListener('click', async () => {
-                let code = prompt("Koppel met een ander dashboard.\n\nVul de Sync-Code in die je op het andere scherm ziet:");
-                if (code && code.trim() !== '') {
-                    syncId = code.trim();
-                    window.history.replaceState(null, null, '?sync=' + syncId);
-                    await loadData();
-                    renderAllWidgets();
-                    alert("Succesvol gekoppeld!");
-                }
-            });
+        // Exporteer functie
+        document.getElementById('export-btn').addEventListener('click', () => {
+            const layout = JSON.parse(localStorage.getItem('bredaDashboardLayoutGrid_v15')) || DEFAULT_LAYOUT;
+            const exportObj = {
+                appData: appData,
+                layout: layout
+            };
             
-            updateSyncUI();
-        }
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj, null, 2));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            
+            // Genereer datum voor de bestandsnaam
+            const dateStr = new Date().toISOString().slice(0,10);
+            downloadAnchorNode.setAttribute("download", `brandweer_dashboard_backup_${dateStr}.json`);
+            
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        });
+
+        // Importeer functie
+        document.getElementById('import-btn').addEventListener('click', () => {
+            document.getElementById('import-file').click();
+        });
+
+        document.getElementById('import-file').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedObj = JSON.parse(e.target.result);
+                    
+                    if (importedObj.appData) {
+                        appData = importedObj.appData;
+                        localStorage.setItem('vrmwb_appData_v15', JSON.stringify(appData));
+                    }
+                    if (importedObj.layout) {
+                        localStorage.setItem('bredaDashboardLayoutGrid_v15', JSON.stringify(importedObj.layout));
+                    }
+                    
+                    alert("Data succesvol geïmporteerd! Het dashboard wordt nu herladen.");
+                    location.reload(); // Herlaad de pagina zodat GridStack de nieuwe layout pakt
+                } catch (err) {
+                    alert("Fout bij het importeren van het bestand. Is het een geldig JSON back-up bestand?");
+                    console.error(err);
+                }
+            };
+            reader.readAsText(file);
+            
+            // Reset input field, zodat hetzelfde bestand eventueel nog een keer geselecteerd kan worden
+            event.target.value = ""; 
+        });
 
         // ==========================================
         // 3. WIDGET DEFINITIES
@@ -620,20 +605,20 @@
             if(!appData[currentModalWidget]) appData[currentModalWidget] = [];
             appData[currentModalWidget].push(newItem);
             
-            saveDataToCloud();
+            saveLocalData();
             closeModal();
         };
 
         window.deleteItem = function(widgetId, index) {
             if(confirm("Weet je zeker dat je dit wilt wissen?")) {
                 appData[widgetId].splice(index, 1);
-                saveDataToCloud();
+                saveLocalData();
             }
         };
 
         window.toggleTask = function(index) {
             appData['werk'][index].completed = !appData['werk'][index].completed;
-            saveDataToCloud(); 
+            saveLocalData(); 
         };
 
         // ==========================================
@@ -649,7 +634,7 @@
         function initGridStackDashboard() {
             grid = GridStack.init({ cellHeight: 70, margin: 15, staticGrid: true, animate: true });
             
-            const saved = localStorage.getItem('bredaDashboardLayoutGrid_v14');
+            const saved = localStorage.getItem('bredaDashboardLayoutGrid_v15');
             let layoutToLoad = saved ? JSON.parse(saved) : DEFAULT_LAYOUT;
             
             grid.removeAll();
@@ -661,7 +646,7 @@
             
             grid.on('change added removed', () => {
                 const currentLayout = grid.engine.nodes.map(n => ({ id: n.id, x: n.x, y: n.y, w: n.w, h: n.h }));
-                localStorage.setItem('bredaDashboardLayoutGrid_v14', JSON.stringify(currentLayout));
+                localStorage.setItem('bredaDashboardLayoutGrid_v15', JSON.stringify(currentLayout));
                 setupDrawerUI();
             });
 
@@ -745,10 +730,10 @@
             actionContainer.innerHTML = '';
             // Op mobiel mag je altijd toevoegen, mits de widget dat toelaat
             if(!WIDGET_DEF[id].noAdd) {
-                actionContainer.innerHTML = `<button class="add-data-btn" style="display:flex; background:var(--goud); color:var(--navy-dark);" onclick="openModal('${id}')"><i class="fa-solid fa-plus"></i></button>`;
+                actionContainer.innerHTML = `<button class="add-data-btn" style="display:flex; background:var(--gold); color:var(--navy-dark);" onclick="openModal('${id}')"><i class="fa-solid fa-plus"></i></button>`;
             }
 
-            // Aanzetten van 'edit-mode' tijdelijk op mobiel zodat verwijderknoppen werken als je iets toevoegt
+            // Aanzetten van 'edit-mode' tijdelijk op mobiel zodat verwijderknoppen werken
             document.body.classList.add('edit-mode');
 
             document.getElementById('mobile-app-content').innerHTML = buildHTML(id, true);
@@ -766,10 +751,8 @@
         // ==========================================
         // START PUNT
         // ==========================================
-        document.addEventListener('DOMContentLoaded', async () => { 
-            await loadData();
-            setupSyncButtons();
-            
+        document.addEventListener('DOMContentLoaded', () => { 
+            loadLocalData();
             initGridStackDashboard(); 
             renderMobileApps();
         });
