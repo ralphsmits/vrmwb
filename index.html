@@ -17,9 +17,9 @@
   --red:#D2100B;--navy:#17428C;--gold:#CC9933;
   --card-bg:#FFFFFF;--card-border:#E2E4E9;
   --card-shadow:0 2px 14px rgba(0,0,0,.10),0 1px 3px rgba(0,0,0,.05);
-  --text:#1A1C22;--text-sub:#6B6F7A;--text-light:#9DA3B0;
+  --text:#1E1E1E;--text-sub:#707172;--text-light:#9DA3B0;
   --divider:#ECEEF3;--input-bg:#F4F5F8;
-  --radius:24px;--topbar-h:52px;
+  --radius:10px;--topbar-h:52px;
 }
 html,body{height:100%;overflow:hidden}
 body{font-family:'Frutiger',sans-serif;background:#0A0C10;color:var(--text);display:flex;flex-direction:column}
@@ -101,7 +101,7 @@ body.edit-mode .grid-stack-item:hover .widget{outline-color:rgba(23,66,140,.5)}
 .wh{flex:0 0 auto;height:46px;padding:0 10px 0 14px;display:flex;align-items:center;gap:7px;border-bottom:2px solid var(--divider);user-select:none;cursor:default}
 body.edit-mode .wh{cursor:grab}
 body.edit-mode .wh:active{cursor:grabbing}
-.wh-title{flex:1;font-size:14px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;letter-spacing:.5px}
+.wh-title{flex:1;font-size:24px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;letter-spacing:.5px}
 .wh-acts{display:flex;gap:1px;flex-shrink:0}
 .wb{width:26px;height:26px;border:none;border-radius:6px;background:transparent;cursor:pointer;font-size:11px;color:var(--text-sub);display:flex;align-items:center;justify-content:center;transition:all .12s}
 .wb:hover{background:var(--input-bg);color:var(--text)}
@@ -120,12 +120,12 @@ body.edit-mode .wb.edit-btn,body.edit-mode .wb.del{display:flex}
 .btmbar{
   flex:0 0 80px;background:var(--card-bg);border-top:1px solid var(--divider);
   display:flex;align-items:center;justify-content:space-between;
-  padding:0 40px;z-index:50;
+  padding:0 50px;z-index:50;
   box-shadow:0 -3px 14px rgba(0,0,0,.1);
   position:relative; /* Nodig voor het perfect centreren van de knop */
 }
-.bb-logo strong{font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text);letter-spacing:.3px}
-.bb-logo span{display:block;font-size:12px;font-weight:400;color:var(--text);text-transform:uppercase;letter-spacing:.3px;margin-top:2px}
+.bb-logo strong{font-size:14px;font-weight:700;text-transform:uppercase;color:var(--text);letter-spacing:.3px}
+.bb-logo span{display:block;font-size:14px;font-weight:400;color:var(--text);text-transform:uppercase;letter-spacing:.3px;margin-top:2px}
 
 .bb-add{
   position:absolute; /* Zorgt dat hij in het absolute midden blijft staan */
@@ -141,7 +141,7 @@ body.edit-mode .wb.edit-btn,body.edit-mode .wb.del{display:flex}
 }
 .bb-add:hover{opacity:.75}
 
-.bb-datetime{font-size:18px;font-weight:300;color:var(--text);letter-spacing:.2px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.bb-datetime{font-size:22px;font-weight:400;color:var(--text-sub);letter-spacing:.2px;font-variant-numeric:tabular-nums;white-space:nowrap}
 
 /* WIDGET CONTENT */
 .acc{border-left:3px solid var(--red);background:var(--input-bg);border-radius:0 8px 8px 0;padding:9px 11px;margin-bottom:8px}
@@ -179,20 +179,36 @@ body.edit-mode .wb.edit-btn,body.edit-mode .wb.del{display:flex}
 /* MODALS */
 .mov{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
 .mov.open{opacity:1;pointer-events:all}
-.mbox{background:var(--card-bg);border-radius:16px;padding:26px 26px 22px;width:480px;max-width:95vw;max-height:88vh;overflow-y:auto;box-shadow:0 24px 70px rgba(0,0,0,.4);border:1px solid var(--card-border);animation:min .2s cubic-bezier(.2,.8,.4,1)}
+.mbox{background:var(--card-bg);border-radius:16px;padding:0;width:520px;max-width:96vw;max-height:90vh;overflow-y:auto;box-shadow:0 24px 70px rgba(0,0,0,.4);border:1px solid var(--card-border);animation:min .2s cubic-bezier(.2,.8,.4,1)}
 @keyframes min{from{transform:scale(.9) translateY(10px)}to{transform:none}}
-.mh{font-size:16px;font-weight:900;text-transform:uppercase;letter-spacing:.8px;color:var(--text);margin-bottom:18px}
-.flbl{display:block;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sub);margin:13px 0 5px}
+.mh{font-size:17px;font-weight:900;text-transform:uppercase;letter-spacing:.8px;color:var(--text);padding:22px 24px 18px;border-bottom:1.5px solid var(--divider)}
+#embody,#wpgrid{padding:20px 24px 0}
+.macts{display:flex;gap:10px;justify-content:flex-end;padding:18px 24px 22px;border-top:1.5px solid var(--divider);margin-top:20px}
+.flbl{display:block;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.6px;color:var(--text-sub);margin:18px 0 6px}
 .flbl:first-of-type{margin-top:0}
-.finp,.fta{width:100%;background:var(--input-bg);border:1px solid var(--card-border);border-radius:8px;padding:10px 12px;font-family:'Frutiger',sans-serif;font-size:14px;font-weight:700;color:var(--text);outline:none;transition:border-color .15s}
-.finp:focus,.fta:focus{border-color:var(--navy)}
-.fta{resize:vertical;min-height:100px;line-height:1.55}
-.fhint{font-size:12px;color:var(--text-sub);margin-top:5px;line-height:1.5;font-weight:700}
-.fhint code{font-family:monospace;background:var(--input-bg);padding:1px 5px;border-radius:3px;font-size:11px}
-.macts{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
-.bprim{background:var(--navy);color:#fff;border:none;padding:10px 22px;border-radius:25px;font-family:'Frutiger',sans-serif;font-weight:900;font-size:13px;cursor:pointer;transition:background .15s;text-transform:uppercase;letter-spacing:.4px}
+.finp,.fta{width:100%;background:#fff;border:1.5px solid var(--card-border);border-radius:8px;padding:11px 13px;font-family:'Frutiger',sans-serif;font-size:15px;font-weight:400;color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s}
+.finp:focus,.fta:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(23,66,140,.1)}
+.fta{resize:vertical;min-height:120px;line-height:1.65;font-size:14px}
+.fhint{font-size:12px;color:var(--text-sub);margin-top:9px;line-height:1.6;font-weight:400;background:var(--input-bg);border:1px solid var(--divider);border-radius:8px;padding:9px 12px}
+.fhint code{font-family:monospace;background:rgba(23,66,140,.08);color:var(--navy);padding:2px 6px;border-radius:4px;font-size:12px;font-weight:700}
+.bprim{background:var(--navy);color:#fff;border:none;padding:11px 26px;border-radius:8px;font-family:'Frutiger',sans-serif;font-weight:900;font-size:13px;cursor:pointer;transition:background .15s;text-transform:uppercase;letter-spacing:.4px}
 .bprim:hover{background:#1a4fa8}
-.bsec{background:transparent;border:none;color:var(--text-sub);font-size:13px;font-weight:700;cursor:pointer;font-family:'Frutiger',sans-serif;text-decoration:underline}
+.bsec{background:transparent;border:1.5px solid var(--card-border);color:var(--text-sub);font-size:13px;font-weight:700;cursor:pointer;font-family:'Frutiger',sans-serif;padding:11px 20px;border-radius:8px;transition:border-color .15s,color .15s}
+.bsec:hover{border-color:var(--text-sub);color:var(--text)}
+/* Form builder rows */
+.frow{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+.frow2{display:flex;gap:7px;margin-bottom:7px}
+.frow .finp,.frow2 .finp,.frow select.finp,.frow2 select.finp{flex:1;min-width:0}
+.frow input[type=checkbox]{flex:0 0 18px;width:18px;height:18px;cursor:pointer;accent-color:var(--navy);margin:0}
+.frow-del{flex:0 0 32px;width:32px;height:36px;border:none;background:var(--input-bg);border-radius:7px;color:var(--text-sub);font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;flex-shrink:0}
+.frow-del:hover{background:var(--red);color:#fff}
+.fcard{border:1.5px solid var(--divider);border-radius:10px;padding:13px 13px 10px;margin-bottom:10px}
+.fcard-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px}
+.fcard-num{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.6px;color:var(--text-sub)}
+.fcard>.finp{margin-bottom:7px;display:block}
+.fadd{width:100%;margin-top:2px;padding:11px;background:none;border:1.5px dashed var(--card-border);border-radius:8px;color:var(--navy);font-family:'Frutiger',sans-serif;font-size:13px;font-weight:900;cursor:pointer;transition:all .15s;text-transform:uppercase;letter-spacing:.4px}
+.fadd:hover{border-color:var(--navy);background:rgba(23,66,140,.04)}
+select.finp{cursor:pointer}
 .wgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .wpick{background:var(--input-bg);border:1.5px solid var(--card-border);border-radius:10px;padding:13px 10px 11px;text-align:center;cursor:pointer;transition:all .15s;font-family:'Frutiger',sans-serif}
 .wpick:hover{border-color:var(--navy);background:rgba(23,66,140,.04)}
@@ -204,6 +220,37 @@ body.edit-mode .wb.edit-btn,body.edit-mode .wb.del{display:flex}
 /* Toast */
 .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(10px);background:#1A1C22;color:#fff;padding:9px 20px;border-radius:20px;font-weight:700;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.3);opacity:0;transition:all .25s;pointer-events:none;z-index:9999}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── MOBILE HOME ── */
+.mob-home{flex:1;display:none;overflow-y:auto;overflow-x:hidden;position:relative;z-index:5;padding:20px 16px}
+.mob-home::-webkit-scrollbar{width:4px}
+.mob-home::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:4px}
+.mob-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px 6px;max-width:380px;margin:0 auto;padding-top:16px}
+.mob-app{display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;-webkit-tap-highlight-color:transparent;border:none;background:none;font-family:'Frutiger',sans-serif;transition:transform .1s,opacity .1s}
+.mob-app:active{transform:scale(.86);opacity:.75}
+.mob-ico{width:66px;height:66px;border-radius:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(0,0,0,.45)}
+.mob-ico svg{width:30px;height:30px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.mob-lbl{font-size:11px;font-weight:700;color:#fff;text-align:center;text-shadow:0 1px 5px rgba(0,0,0,.9);letter-spacing:.1px;line-height:1.3;word-break:break-word;max-width:72px}
+/* App overlay */
+.mob-appview{position:fixed;inset:0;z-index:600;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .38s cubic-bezier(.25,.46,.45,.94);will-change:transform;background:var(--card-bg)}
+.mob-appview.open{transform:translateY(0)}
+.mob-appnav{flex:0 0 56px;background:var(--card-bg);border-bottom:1.5px solid var(--divider);display:flex;align-items:center;padding:0 8px;position:relative;flex-shrink:0}
+.mob-appnav-title{position:absolute;left:50%;transform:translateX(-50%);font-size:15px;font-weight:900;color:var(--text);text-transform:uppercase;letter-spacing:.5px;pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%}
+.mob-back-btn{background:none;border:none;color:var(--navy);font-family:'Frutiger',sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:2px;padding:10px 14px 10px 4px;border-radius:8px;-webkit-tap-highlight-color:transparent}
+.mob-back-btn:active{opacity:.6}
+.mob-back-btn svg{width:20px;height:20px;stroke:var(--navy);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.mob-appbody{flex:1;overflow-y:auto;padding:16px}
+.mob-appbody::-webkit-scrollbar{width:3px}
+.mob-appbody::-webkit-scrollbar-thumb{background:var(--divider);border-radius:3px}
+@media(max-width:768px){
+  .canvas{display:none!important}
+  .mob-home{display:block!important}
+  .tb-layout,#editbtn,#savebtn,.tb-left{display:none!important}
+  .btmbar{padding:0 20px}
+  .bb-add{display:none!important}
+  .bb-datetime{font-size:14px}
+  .toast{bottom:100px}
+}
 </style>
 </head>
 <body>
@@ -228,13 +275,30 @@ body.edit-mode .wb.edit-btn,body.edit-mode .wb.del{display:flex}
   <div class="grid-stack" id="grid"></div>
 </main>
 
+<!-- Mobile home screen -->
+<div class="mob-home" id="mob-home">
+  <div class="mob-grid" id="mob-grid"></div>
+</div>
+
+<!-- Mobile app view (slides up from bottom) -->
+<div class="mob-appview" id="mob-appview">
+  <div class="mob-appnav">
+    <button class="mob-back-btn" onclick="closeApp()">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      Terug
+    </button>
+    <div class="mob-appnav-title" id="mob-app-title"></div>
+  </div>
+  <div class="mob-appbody" id="mob-app-body"></div>
+</div>
+
 <footer class="btmbar">
   <div class="bb-logo">
-    <strong>Ploegcommandant</strong>
+    <strong>PLOEGLEIDER</strong>
     <span>Dashboard</span>
   </div>
   <button class="bb-add" onclick="openModal('add-modal')">+</button>
-  <div class="bb-datetime" id="bbdatetime">—</div>
+  <div class="bb-datetime"><span id="bbdate">—</span>&nbsp;&nbsp;<span id="bbtime"></span></div>
 </footer>
 
 <div class="mov" id="add-modal">
@@ -275,6 +339,22 @@ const I={
 };
 
 function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function v(id){return document.getElementById(id)?.value||'';}
+function delRow(btn){btn.closest('.frow,.fcard').remove();}
+function addFormRow(type){
+  const c=document.getElementById('f-rows');if(!c)return;
+  const n=c.querySelectorAll('.frow,.fcard').length+1;
+  const h={
+    werkzaamheden:`<div class="frow"><input type="checkbox" class="f-done"><input class="finp f-task" placeholder="Taakomschrijving" style="flex:2"><input class="finp f-meta" placeholder="Notitie"><button class="frow-del" onclick="delRow(this)" type="button">×</button></div>`,
+    voertuigen:`<div class="frow"><input class="finp f-cs" placeholder="Callsign" style="flex:0 0 80px"><input class="finp f-vtype" placeholder="Type voertuig"><select class="finp f-status" style="flex:0 0 135px"><option value="ok">Operationeel</option><option value="warn">Onderhoud</option><option value="err">Uitval</option></select><button class="frow-del" onclick="delRow(this)" type="button">×</button></div>`,
+    reserveringen:`<div class="frow"><input class="finp f-time" placeholder="09:00" style="flex:0 0 72px"><input class="finp f-loc" placeholder="Locatie"><input class="finp f-desc" placeholder="Omschrijving" style="flex:2"><button class="frow-del" onclick="delRow(this)" type="button">×</button></div>`,
+    ploegindeling:`<div class="frow"><input class="finp f-rank" placeholder="Rang" style="flex:0 0 65px"><input class="finp f-name" placeholder="Naam" style="flex:2"><input class="finp f-role" placeholder="Functie"><button class="frow-del" onclick="delRow(this)" type="button">×</button></div>`,
+    wegafsluiting:`<div class="fcard"><div class="fcard-head"><span class="fcard-num">Afsluiting ${n}</span><button class="frow-del" onclick="delRow(this)" type="button">×</button></div><div class="frow2"><input class="finp f-weg" placeholder="Wegnaam"><select class="finp f-status" style="flex:0 0 130px"><option value="AFGESLOTEN">Afgesloten</option><option value="BEPERKT">Beperkt</option></select></div><input class="finp f-date" placeholder="Datum"><input class="finp f-desc" placeholder="Omschrijving"><input class="finp f-warn" placeholder="Waarschuwing (optioneel)"></div>`,
+    topdesk:`<div class="fcard"><div class="fcard-head"><span class="fcard-num">Melding ${n}</span><button class="frow-del" onclick="delRow(this)" type="button">×</button></div><div class="frow2"><input class="finp f-num" placeholder="Meldingsnummer"><select class="finp f-status" style="flex:0 0 150px"><option value="AFGEHANDELD">Afgehandeld</option><option value="OPEN">Open</option><option value="IN BEHANDELING">In behandeling</option></select></div><input class="finp f-title" placeholder="Titel"><div class="frow2"><input class="finp f-loc" placeholder="Locatie (optioneel)"><input class="finp f-dl" placeholder="Streefdatum" style="flex:0 0 95px"></div><div class="frow2"><input class="finp f-date" placeholder="Aangemaakt op"><input class="finp f-person" placeholder="Verantwoordelijke"></div></div>`,
+    p2000:`<div class="fcard"><div class="fcard-head"><span class="fcard-num">Incident ${n}</span><button class="frow-del" onclick="delRow(this)" type="button">×</button></div><div class="frow2"><input class="finp f-time" placeholder="11:34" style="flex:0 0 72px"><select class="finp f-prio" style="flex:0 0 110px"><option value="p1">PRIO 1</option><option value="p2">PRIO 2</option><option value="p3">PRIO 3</option></select><input class="finp f-units" placeholder="Eenheden (bijv. TS31 HV31)"></div><textarea class="fta f-msg" rows="2" style="min-height:58px" placeholder="Meldingtekst..."></textarea></div>`,
+  };
+  if(h[type])c.insertAdjacentHTML('beforeend',h[type]);
+}
 
 // ── TYPES ──
 const T={
@@ -291,11 +371,22 @@ const T={
         <input type="checkbox" class="tcb" ${item.d?'checked':''} onchange="toggleTask(${wid},${i},this.checked)">
         <div class="tc"><div class="tlabel">${esc(item.t)}</div>${item.m?`<div class="tmeta">${esc(item.m)}</div>`:''}</div>
       </div>`).join('');},
-    editForm(d){return`<label class="flbl">Taken (één per regel)</label>
-      <textarea class="fta" id="f0" style="min-height:140px">${d.items.map(i=>(i.d?'[x] ':'[ ] ')+i.t+(i.m?' | '+i.m:'')).join('\n')}</textarea>
-      <div class="fhint">Formaat: <code>[ ] Taak | Notitie</code> &nbsp; Afgevinkt: <code>[x] Taak</code></div>`;},
-    parseForm(){const ls=document.getElementById('f0').value.split('\n').filter(l=>l.trim());
-      return{items:ls.map(l=>{const d=l.startsWith('[x]');const r=l.replace(/^\[.\]\s*/,'');const[t,m]=r.split('|').map(s=>s.trim());return{t,m:m||'',d};})};},
+    editForm(d){return`
+      <label class="flbl">Taken</label>
+      <div id="f-rows">${d.items.map(item=>`
+        <div class="frow">
+          <input type="checkbox" class="f-done" ${item.d?'checked':''}>
+          <input class="finp f-task" value="${esc(item.t)}" placeholder="Taakomschrijving" style="flex:2">
+          <input class="finp f-meta" value="${esc(item.m)}" placeholder="Notitie">
+          <button class="frow-del" onclick="delRow(this)" type="button">×</button>
+        </div>`).join('')}</div>
+      <button class="fadd" onclick="addFormRow('werkzaamheden')" type="button">+ Taak toevoegen</button>`;},
+    parseForm(){
+      return{items:[...document.querySelectorAll('#f-rows .frow')].map(r=>({
+        d:r.querySelector('.f-done').checked,
+        t:r.querySelector('.f-task').value,
+        m:r.querySelector('.f-meta').value,
+      }))};},
   },
   weather:{label:'Actueel Weer',ico:'cloud',
     def:{loc:'TRAMSINGEL 71, BREDA',temp:'11',desc:'Gedeeltelijk bewolkt',wind:'18 km/h ZW',hum:'74%',pres:'1018 hPa',vis:'12 km'},
@@ -319,7 +410,7 @@ const T={
       <label class="flbl">Luchtvochtigheid</label><input class="finp" id="f4" value="${esc(d.hum)}">
       <label class="flbl">Luchtdruk</label><input class="finp" id="f5" value="${esc(d.pres)}">
       <label class="flbl">Zichtbaarheid</label><input class="finp" id="f6" value="${esc(d.vis)}">`;},
-    parseForm(){return{loc:document.getElementById('f0').value,temp:document.getElementById('f1').value,desc:document.getElementById('f2').value,wind:document.getElementById('f3').value,hum:document.getElementById('f4').value,pres:document.getElementById('f5').value,vis:document.getElementById('f6').value};},
+    parseForm(){return{loc:v('f0'),temp:v('f1'),desc:v('f2'),wind:v('f3'),hum:v('f4'),pres:v('f5'),vis:v('f6')};},
   },
   voertuigen:{label:'Status Voertuigen',ico:'truck',
     def:{vehicles:[
@@ -331,13 +422,28 @@ const T={
     ]},
     render(d){const L={ok:'Operationeel',warn:'Onderhoud',err:'Uitruk'};const C={ok:'green',warn:'gold',err:'red'};
       return`<table class="wtbl"><thead><tr><th>Callsign</th><th>Type</th><th>Status</th></tr></thead><tbody>${
-        d.vehicles.map(v=>`<tr><td style="font-weight:800">${esc(v.cs)}</td><td style="color:var(--text-sub);font-size:12px">${esc(v.type)}</td><td><span class="pill ${C[v.s]||'grey'}">${L[v.s]||v.s}</span></td></tr>`).join('')
+        d.vehicles.map(vv=>`<tr><td style="font-weight:800">${esc(vv.cs)}</td><td style="color:var(--text-sub);font-size:12px">${esc(vv.type)}</td><td><span class="pill ${C[vv.s]||'grey'}">${L[vv.s]||vv.s}</span></td></tr>`).join('')
       }</tbody></table>`;},
-    editForm(d){return`<label class="flbl">Voertuigen (één per regel)</label>
-      <textarea class="fta" id="f0" style="min-height:130px">${d.vehicles.map(v=>`${v.cs} | ${v.type} | ${v.s}`).join('\n')}</textarea>
-      <div class="fhint">Formaat: <code>Callsign | Type | ok / warn / err</code></div>`;},
-    parseForm(){const ls=document.getElementById('f0').value.split('\n').filter(l=>l.trim());
-      return{vehicles:ls.map(l=>{const[cs,type,s]=l.split('|').map(x=>x.trim());return{cs,type,s};})};},
+    editForm(d){return`
+      <label class="flbl">Voertuigen</label>
+      <div id="f-rows">${d.vehicles.map(vv=>`
+        <div class="frow">
+          <input class="finp f-cs" value="${esc(vv.cs)}" placeholder="Callsign" style="flex:0 0 80px">
+          <input class="finp f-vtype" value="${esc(vv.type)}" placeholder="Type voertuig">
+          <select class="finp f-status" style="flex:0 0 135px">
+            <option value="ok" ${vv.s==='ok'?'selected':''}>Operationeel</option>
+            <option value="warn" ${vv.s==='warn'?'selected':''}>Onderhoud</option>
+            <option value="err" ${vv.s==='err'?'selected':''}>Uitval</option>
+          </select>
+          <button class="frow-del" onclick="delRow(this)" type="button">×</button>
+        </div>`).join('')}</div>
+      <button class="fadd" onclick="addFormRow('voertuigen')" type="button">+ Voertuig toevoegen</button>`;},
+    parseForm(){
+      return{vehicles:[...document.querySelectorAll('#f-rows .frow')].map(r=>({
+        cs:r.querySelector('.f-cs').value,
+        type:r.querySelector('.f-vtype').value,
+        s:r.querySelector('.f-status').value,
+      }))};},
   },
   reserveringen:{label:'Reserveringen Topdesk',ico:'cal',
     def:{items:[
@@ -351,11 +457,22 @@ const T={
         <div style="font-size:16px;font-weight:900;color:var(--navy);min-width:44px;flex-shrink:0">${esc(r.time)}</div>
         <div><div style="font-size:13px;font-weight:700;color:var(--text)">${esc(r.desc)}</div><div style="font-size:11px;color:var(--text-sub);margin-top:2px">${esc(r.loc)}</div></div>
       </div>`).join('');},
-    editForm(d){return`<label class="flbl">Reserveringen (één per regel)</label>
-      <textarea class="fta" id="f0" style="min-height:110px">${d.items.map(r=>`${r.time} | ${r.loc} | ${r.desc}`).join('\n')}</textarea>
-      <div class="fhint">Formaat: <code>HH:MM | Locatie | Omschrijving</code></div>`;},
-    parseForm(){const ls=document.getElementById('f0').value.split('\n').filter(l=>l.trim());
-      return{items:ls.map(l=>{const[time,loc,desc]=l.split('|').map(s=>s.trim());return{time,loc,desc};})};},
+    editForm(d){return`
+      <label class="flbl">Reserveringen</label>
+      <div id="f-rows">${d.items.map(r=>`
+        <div class="frow">
+          <input class="finp f-time" value="${esc(r.time)}" placeholder="09:00" style="flex:0 0 72px">
+          <input class="finp f-loc" value="${esc(r.loc)}" placeholder="Locatie">
+          <input class="finp f-desc" value="${esc(r.desc)}" placeholder="Omschrijving" style="flex:2">
+          <button class="frow-del" onclick="delRow(this)" type="button">×</button>
+        </div>`).join('')}</div>
+      <button class="fadd" onclick="addFormRow('reserveringen')" type="button">+ Reservering toevoegen</button>`;},
+    parseForm(){
+      return{items:[...document.querySelectorAll('#f-rows .frow')].map(r=>({
+        time:r.querySelector('.f-time').value,
+        loc:r.querySelector('.f-loc').value,
+        desc:r.querySelector('.f-desc').value,
+      }))};},
   },
   ploegindeling:{label:'Ploegindeling',ico:'users',
     def:{ploeg:'B-Ploeg',members:[
@@ -373,12 +490,26 @@ const T={
         d.members.map(m=>`<tr><td><span class="pill blue">${esc(m.rank)}</span></td><td style="font-weight:700">${esc(m.name)}</td><td style="color:var(--text-sub);font-size:12px">${esc(m.role)}</td></tr>`).join('')
       }</tbody></table>`;},
     editForm(d){return`
-      <label class="flbl">Ploegnaam</label><input class="finp" id="f0" value="${esc(d.ploeg)}">
-      <label class="flbl">Leden (één per regel)</label>
-      <textarea class="fta" id="f1" style="min-height:130px">${d.members.map(m=>`${m.rank} | ${m.name} | ${m.role}`).join('\n')}</textarea>
-      <div class="fhint">Formaat: <code>Rang | Naam | Functie</code></div>`;},
-    parseForm(){const ls=document.getElementById('f1').value.split('\n').filter(l=>l.trim());
-      return{ploeg:document.getElementById('f0').value,members:ls.map(l=>{const[rank,name,role]=l.split('|').map(s=>s.trim());return{rank,name,role};})};},
+      <label class="flbl">Ploegnaam</label>
+      <input class="finp" id="f-ploeg" value="${esc(d.ploeg)}">
+      <label class="flbl">Leden</label>
+      <div id="f-rows">${d.members.map(m=>`
+        <div class="frow">
+          <input class="finp f-rank" value="${esc(m.rank)}" placeholder="Rang" style="flex:0 0 65px">
+          <input class="finp f-name" value="${esc(m.name)}" placeholder="Naam" style="flex:2">
+          <input class="finp f-role" value="${esc(m.role)}" placeholder="Functie">
+          <button class="frow-del" onclick="delRow(this)" type="button">×</button>
+        </div>`).join('')}</div>
+      <button class="fadd" onclick="addFormRow('ploegindeling')" type="button">+ Lid toevoegen</button>`;},
+    parseForm(){
+      return{
+        ploeg:document.getElementById('f-ploeg').value,
+        members:[...document.querySelectorAll('#f-rows .frow')].map(r=>({
+          rank:r.querySelector('.f-rank').value,
+          name:r.querySelector('.f-name').value,
+          role:r.querySelector('.f-role').value,
+        }))
+      };},
   },
   wegafsluiting:{label:'Wegafsluitingen',ico:'road',
     def:{items:[
@@ -400,11 +531,34 @@ const T={
           ${w.warn?`<div class="warnrow">${esc(w.warn)}</div>`:''}
         </div>
       </div>`).join('');},
-    editForm(d){return`<label class="flbl">Wegafsluitingen (gescheiden door ---)</label>
-      <textarea class="fta" id="f0" style="min-height:150px">${d.items.map(w=>`${w.weg} | ${w.status} | ${w.date}\n${w.desc}\n${w.warn||''}`).join('\n---\n')}</textarea>
-      <div class="fhint">Regel 1: <code>Wegnaam | AFGESLOTEN of BEPERKT | Datum</code><br>Regel 2: Omschrijving<br>Regel 3: Waarschuwing (optioneel)</div>`;},
-    parseForm(){const bs=document.getElementById('f0').value.split('---').map(b=>b.trim()).filter(Boolean);
-      return{items:bs.map(b=>{const lns=b.split('\n');const[weg,status,date]=lns[0].split('|').map(s=>s.trim());return{weg,status,date,desc:(lns[1]||'').trim(),warn:(lns[2]||'').trim()};})};},
+    editForm(d){return`
+      <label class="flbl">Wegafsluitingen</label>
+      <div id="f-rows">${d.items.map((w,i)=>`
+        <div class="fcard">
+          <div class="fcard-head">
+            <span class="fcard-num">Afsluiting ${i+1}</span>
+            <button class="frow-del" onclick="delRow(this)" type="button">×</button>
+          </div>
+          <div class="frow2">
+            <input class="finp f-weg" value="${esc(w.weg)}" placeholder="Wegnaam">
+            <select class="finp f-status" style="flex:0 0 130px">
+              <option value="AFGESLOTEN" ${w.status==='AFGESLOTEN'?'selected':''}>Afgesloten</option>
+              <option value="BEPERKT" ${w.status==='BEPERKT'?'selected':''}>Beperkt</option>
+            </select>
+          </div>
+          <input class="finp f-date" value="${esc(w.date)}" placeholder="Datum">
+          <input class="finp f-desc" value="${esc(w.desc)}" placeholder="Omschrijving">
+          <input class="finp f-warn" value="${esc(w.warn)}" placeholder="Waarschuwing (optioneel)">
+        </div>`).join('')}</div>
+      <button class="fadd" onclick="addFormRow('wegafsluiting')" type="button">+ Afsluiting toevoegen</button>`;},
+    parseForm(){
+      return{items:[...document.querySelectorAll('#f-rows .fcard')].map(c=>({
+        weg:c.querySelector('.f-weg').value,
+        status:c.querySelector('.f-status').value,
+        date:c.querySelector('.f-date').value,
+        desc:c.querySelector('.f-desc').value,
+        warn:c.querySelector('.f-warn').value,
+      }))};},
   },
   topdesk:{label:'Topdesk Meldingen',ico:'ticket',
     def:{items:[
@@ -426,11 +580,43 @@ const T={
           <div style="font-size:11px;color:var(--text-sub)">${esc(t.num)} &bull; Aangemaakt: ${esc(t.date)} &bull; Streefdatum: ${esc(t.dl)}</div>
           <div style="font-size:11px;color:var(--text-sub);text-align:right;margin-top:1px">${esc(t.person)}</div>
         </div>`).join('');},
-    editForm(d){return`<label class="flbl">Meldingen (gescheiden door ---)</label>
-      <textarea class="fta" id="f0" style="min-height:170px">${d.items.map(t=>`${t.num} | ${t.title} | ${t.loc} | ${t.status} | ${t.date} | ${t.dl} | ${t.person}`).join('\n---\n')}</textarea>
-      <div class="fhint">Formaat: <code>Nummer | Titel | Locatie | Status | Datum | Streefdatum | Persoon</code><br>Status: <code>AFGEHANDELD / OPEN / IN BEHANDELING</code></div>`;},
-    parseForm(){const ls=document.getElementById('f0').value.split('---').map(b=>b.trim()).filter(Boolean);
-      return{items:ls.map(l=>{const[num,title,loc,status,date,dl,person]=l.split('|').map(s=>s.trim());return{num,title,loc,status,date,dl,person};})};},
+    editForm(d){return`
+      <label class="flbl">Meldingen</label>
+      <div id="f-rows">${d.items.map((t,i)=>`
+        <div class="fcard">
+          <div class="fcard-head">
+            <span class="fcard-num">Melding ${i+1}</span>
+            <button class="frow-del" onclick="delRow(this)" type="button">×</button>
+          </div>
+          <div class="frow2">
+            <input class="finp f-num" value="${esc(t.num)}" placeholder="Meldingsnummer">
+            <select class="finp f-status" style="flex:0 0 150px">
+              <option value="AFGEHANDELD" ${t.status==='AFGEHANDELD'?'selected':''}>Afgehandeld</option>
+              <option value="OPEN" ${t.status==='OPEN'?'selected':''}>Open</option>
+              <option value="IN BEHANDELING" ${t.status==='IN BEHANDELING'?'selected':''}>In behandeling</option>
+            </select>
+          </div>
+          <input class="finp f-title" value="${esc(t.title)}" placeholder="Titel">
+          <div class="frow2">
+            <input class="finp f-loc" value="${esc(t.loc)}" placeholder="Locatie (optioneel)">
+            <input class="finp f-dl" value="${esc(t.dl)}" placeholder="Streefdatum" style="flex:0 0 95px">
+          </div>
+          <div class="frow2">
+            <input class="finp f-date" value="${esc(t.date)}" placeholder="Aangemaakt op">
+            <input class="finp f-person" value="${esc(t.person)}" placeholder="Verantwoordelijke">
+          </div>
+        </div>`).join('')}</div>
+      <button class="fadd" onclick="addFormRow('topdesk')" type="button">+ Melding toevoegen</button>`;},
+    parseForm(){
+      return{items:[...document.querySelectorAll('#f-rows .fcard')].map(c=>({
+        num:c.querySelector('.f-num').value,
+        title:c.querySelector('.f-title').value,
+        loc:c.querySelector('.f-loc').value,
+        status:c.querySelector('.f-status').value,
+        date:c.querySelector('.f-date').value,
+        dl:c.querySelector('.f-dl').value,
+        person:c.querySelector('.f-person').value,
+      }))};},
   },
   p2000:{label:'P2000 Incidenten',ico:'bell',
     def:{items:[
@@ -449,11 +635,33 @@ const T={
           <div style="font-size:12px;font-weight:700;color:var(--text);line-height:1.5">${esc(i.msg).replace(/\n/g,'<br>')}</div>
           ${i.units?`<div style="font-size:11px;font-weight:800;color:var(--navy);margin-top:5px">${esc(i.units)}</div>`:''}
         </div>`).join('');},
-    editForm(d){return`<label class="flbl">Meldingen (gescheiden door ---)</label>
-      <textarea class="fta" id="f0" style="min-height:170px">${d.items.map(i=>`${i.time} | ${i.prio} | ${i.units}\n${i.msg}`).join('\n---\n')}</textarea>
-      <div class="fhint">Regel 1: <code>HH:MM | p1 / p2 / p3 | Eenheden</code><br>Dan meldingstekst. Blokken scheiden met <code>---</code></div>`;},
-    parseForm(){const bs=document.getElementById('f0').value.split('---').map(b=>b.trim()).filter(Boolean);
-      return{items:bs.map(b=>{const[fl,...rest]=b.split('\n');const[time,prio,units]=fl.split('|').map(s=>s.trim());return{time,prio,units,msg:rest.join('\n').trim()};})};},
+    editForm(d){return`
+      <label class="flbl">Incidenten</label>
+      <div id="f-rows">${d.items.map((item,i)=>`
+        <div class="fcard">
+          <div class="fcard-head">
+            <span class="fcard-num">Incident ${i+1}</span>
+            <button class="frow-del" onclick="delRow(this)" type="button">×</button>
+          </div>
+          <div class="frow2">
+            <input class="finp f-time" value="${esc(item.time)}" placeholder="11:34" style="flex:0 0 72px">
+            <select class="finp f-prio" style="flex:0 0 110px">
+              <option value="p1" ${item.prio==='p1'?'selected':''}>PRIO 1</option>
+              <option value="p2" ${item.prio==='p2'?'selected':''}>PRIO 2</option>
+              <option value="p3" ${item.prio==='p3'?'selected':''}>PRIO 3</option>
+            </select>
+            <input class="finp f-units" value="${esc(item.units)}" placeholder="Eenheden (bijv. TS31 HV31)">
+          </div>
+          <textarea class="fta f-msg" rows="2" style="min-height:58px">${esc(item.msg)}</textarea>
+        </div>`).join('')}</div>
+      <button class="fadd" onclick="addFormRow('p2000')" type="button">+ Incident toevoegen</button>`;},
+    parseForm(){
+      return{items:[...document.querySelectorAll('#f-rows .fcard')].map(c=>({
+        time:c.querySelector('.f-time').value,
+        prio:c.querySelector('.f-prio').value,
+        units:c.querySelector('.f-units').value,
+        msg:c.querySelector('.f-msg').value,
+      }))};},
   },
 };
 
@@ -474,11 +682,13 @@ const DEFAULT=[
 // ── CLOCK ──
 const DAYS=['Zo','Ma','Di','Wo','Do','Vr','Za'];
 const MONTHS=['januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december'];
+let _lastDate='',_lastTime='';
 function tick(){
   const d=new Date(),p=n=>String(n).padStart(2,'0');
   const dateStr=`${DAYS[d.getDay()]}, ${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
   const timeStr=`${p(d.getHours())}:${p(d.getMinutes())}`;
-  document.getElementById('bbdatetime').textContent=`${dateStr}\u00a0\u00a0\u00a0\u00a0${timeStr}`;
+  if(dateStr!==_lastDate){document.getElementById('bbdate').textContent=dateStr;_lastDate=dateStr;}
+  if(timeStr!==_lastTime){document.getElementById('bbtime').textContent=timeStr;_lastTime=timeStr;}
 }
 setInterval(tick,1000);tick();
 
@@ -536,6 +746,7 @@ function removeWidget(id){
   if(el)grid.removeWidget(el);
   widgets=widgets.filter(w=>w.id!==id);
   saveState();
+  buildMobileHome();
 }
 
 function toggleTask(wid,idx,checked){
@@ -562,6 +773,7 @@ function addWidget(type){
   renderWidget(w);
   closeModal('add-modal');
   saveState();
+  buildMobileHome();
   showToast(`${T[type].label} toegevoegd`);
 }
 
@@ -663,9 +875,51 @@ async function init(){
 
   // 3. Only NOW attach the change listener
   grid.on('change',saveState);
+
+  buildMobileHome();
 }
 
 document.querySelectorAll('.mov').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
+
+// ── MOBILE ──
+const APP_COLOR={
+  werkzaamheden:['#007AFF','#0055D4'],
+  weather:['#32ADE6','#0A7AC4'],
+  voertuigen:['#FF9F0A','#CC7700'],
+  reserveringen:['#FF6B35','#CC4415'],
+  ploegindeling:['#5E5CE6','#3634A3'],
+  wegafsluiting:['#30D158','#1A8C38'],
+  topdesk:['#FF375F','#CC1035'],
+  p2000:['#D2100B','#8B0707'],
+};
+
+function buildMobileHome(){
+  const g=document.getElementById('mob-grid');
+  if(!g)return;
+  g.innerHTML='';
+  widgets.forEach(w=>{
+    const def=T[w.type];
+    const c=APP_COLOR[w.type]||['#636366','#3A3A3C'];
+    const btn=document.createElement('button');
+    btn.className='mob-app';
+    btn.onclick=()=>openApp(w.id);
+    btn.innerHTML=`<div class="mob-ico" style="background:linear-gradient(145deg,${c[0]},${c[1]})">${I[def.ico]||''}</div><div class="mob-lbl">${def.label}</div>`;
+    g.appendChild(btn);
+  });
+}
+
+function openApp(id){
+  const w=widgets.find(x=>x.id===id);if(!w)return;
+  const def=T[w.type];
+  document.getElementById('mob-app-title').textContent=def.label;
+  document.getElementById('mob-app-body').innerHTML=def.render(w.data,id);
+  document.getElementById('mob-appview').classList.add('open');
+}
+
+function closeApp(){
+  document.getElementById('mob-appview').classList.remove('open');
+}
+
 window.addEventListener('load',init);
 </script>
 </body>
