@@ -52,6 +52,11 @@ body{font-family:'Frutiger',sans-serif;background:#0A0C10;color:var(--text);disp
 .tb-btn.gold.active{background:#fff;color:var(--red)}
 .tb-btn.white{background:#fff;color:var(--red);text-decoration:none;display:inline-flex;align-items:center}
 .tb-btn.white:hover{background:rgba(255,255,255,.85)}
+.save-btn{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.35)}
+.save-btn:hover{background:rgba(255,255,255,.25)}
+.save-btn.saving{opacity:.6;pointer-events:none}
+.save-btn.ok{background:#16a34a;color:#fff;border-color:#16a34a}
+.save-btn.err{background:var(--red);color:#fff;border-color:var(--red)}
 .tb-layout{font-size:11px;color:rgba(255,255,255,.7);font-weight:700;white-space:nowrap;letter-spacing:.3px;text-transform:uppercase}
 .tb-layout strong{color:#fff;font-weight:900}
 
@@ -213,6 +218,7 @@ body.edit-mode .wb.edit-btn,body.edit-mode .wb.del{display:flex}
     <img src="img/logo.png" alt="VRMWB Brandweer" class="tb-logo-img">
   </div>
   <div class="tb-right">
+    <button class="tb-btn save-btn" id="savebtn" onclick="manualSave()">Opslaan</button>
     <div class="tb-layout" id="layout-lbl">Layout: <strong>Vergrendeld</strong></div>
     <button class="tb-btn gold" id="editbtn" onclick="toggleEditMode()">Edit Mode</button>
   </div>
@@ -592,18 +598,27 @@ async function saveState(){
   syncPositions();
   const payload=JSON.stringify({widgets,nextId});
   if(FIREBASE_URL){
-    try{
-      await fetch(`${FIREBASE_URL}/state.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:payload});
-      return;
-    }catch(e){}
+    const r=await fetch(`${FIREBASE_URL.replace(/\/+$/,'')}/state.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:payload});
+    if(r.ok)return true;
+    return false;
   }
   try{localStorage.setItem('vrmwb4-w',JSON.stringify(widgets));localStorage.setItem('vrmwb4-id',String(nextId));}catch(e){}
+  return true;
+}
+
+async function manualSave(){
+  const btn=document.getElementById('savebtn');
+  btn.textContent='Opslaan…';btn.className='tb-btn save-btn saving';
+  const ok=await saveState();
+  btn.className=`tb-btn save-btn ${ok?'ok':'err'}`;
+  btn.textContent=ok?'Opgeslagen ✓':'Fout — check console';
+  setTimeout(()=>{btn.className='tb-btn save-btn';btn.textContent='Opslaan';},2500);
 }
 
 async function loadState(){
   if(FIREBASE_URL){
     try{
-      const r=await fetch(`${FIREBASE_URL}/state.json`);
+      const r=await fetch(`${FIREBASE_URL.replace(/\/+$/,'')}/state.json`);
       if(r.ok){
         const s=await r.json();
         if(s&&s.widgets&&s.widgets.length){
