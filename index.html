@@ -40,6 +40,7 @@ body{font-family:'Frutiger',sans-serif;background:#0A0C10;color:var(--text);disp
 }
 .tb-logos{position:absolute;left:0;right:0;display:flex;align-items:center;justify-content:center;pointer-events:none;height:var(--topbar-h)}
 .tb-logo-img{height:36px;width:auto;object-fit:contain;display:block;pointer-events:auto}
+.tb-left{display:flex;align-items:center;gap:8px}
 .tb-right{display:flex;align-items:center;gap:8px;margin-left:auto;justify-content:flex-end}
 .tb-btn{
   border:none;height:32px;padding:0 16px;border-radius:25px;
@@ -49,6 +50,8 @@ body{font-family:'Frutiger',sans-serif;background:#0A0C10;color:var(--text);disp
 .tb-btn.gold{background:var(--gold);color:#1A1C22}
 .tb-btn.gold:hover{background:#d9a830}
 .tb-btn.gold.active{background:#fff;color:var(--red)}
+.tb-btn.white{background:#fff;color:var(--red);text-decoration:none;display:inline-flex;align-items:center}
+.tb-btn.white:hover{background:rgba(255,255,255,.85)}
 .tb-layout{font-size:11px;color:rgba(255,255,255,.7);font-weight:700;white-space:nowrap;letter-spacing:.3px;text-transform:uppercase}
 .tb-layout strong{color:#fff;font-weight:900}
 
@@ -203,6 +206,9 @@ body.edit-mode .wb.edit-btn,body.edit-mode .wb.del{display:flex}
 <div class="estrip"></div>
 
 <header class="topbar">
+  <div class="tb-left">
+    <a href="https://rvanbroekhoven.github.io/ODj-VRMWB/" target="_blank" class="tb-btn white">ODj Beheer</a>
+  </div>
   <div class="tb-logos">
     <img src="img/logo.png" alt="VRMWB Brandweer" class="tb-logo-img">
   </div>
@@ -568,6 +574,11 @@ function saveEdit(){
 }
 
 // ── PERSIST ──
+// Paste your Firebase Realtime Database URL here to enable cross-device sync.
+// Example: 'https://your-project-default-rtdb.europe-west1.firebasedatabase.app'
+// Leave empty ('') to use localStorage only (single device).
+const FIREBASE_URL = 'https://vrmwb-a9db4-default-rtdb.europe-west1.firebasedatabase.app/';
+
 function syncPositions(){
   if(!grid)return;
   grid.engine.nodes.forEach(node=>{
@@ -577,12 +588,33 @@ function syncPositions(){
   });
 }
 
-function saveState(){
+async function saveState(){
   syncPositions();
+  const payload=JSON.stringify({widgets,nextId});
+  if(FIREBASE_URL){
+    try{
+      await fetch(`${FIREBASE_URL}/state.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:payload});
+      return;
+    }catch(e){}
+  }
   try{localStorage.setItem('vrmwb4-w',JSON.stringify(widgets));localStorage.setItem('vrmwb4-id',String(nextId));}catch(e){}
 }
 
-function loadState(){
+async function loadState(){
+  if(FIREBASE_URL){
+    try{
+      const r=await fetch(`${FIREBASE_URL}/state.json`);
+      if(r.ok){
+        const s=await r.json();
+        if(s&&s.widgets&&s.widgets.length){
+          widgets=s.widgets;nextId=s.nextId||widgets.length+1;
+          widgets.forEach(w=>renderWidget(w));
+          return true;
+        }
+      }
+    }catch(e){}
+    return false;
+  }
   try{
     const s=localStorage.getItem('vrmwb4-w');const sid=localStorage.getItem('vrmwb4-id');
     if(s){
@@ -595,7 +627,7 @@ function loadState(){
 }
 
 // ── INIT ──
-function init(){
+async function init(){
   const canvas=document.getElementById('canvas');
   const totalRows=8;
   const margin=10;
@@ -615,7 +647,7 @@ function init(){
 
   grid.on('change',saveState);
 
-  const loaded=loadState();
+  const loaded=await loadState();
   if(!loaded){
     DEFAULT.forEach(d=>{
       const w={id:nextId++,type:d.type,x:d.x,y:d.y,w:d.w,h:d.h,data:JSON.parse(JSON.stringify(T[d.type].def))};
