@@ -580,10 +580,7 @@ function saveEdit(){
 }
 
 // ── PERSIST ──
-// Paste your Firebase Realtime Database URL here to enable cross-device sync.
-// Example: 'https://your-project-default-rtdb.europe-west1.firebasedatabase.app'
-// Leave empty ('') to use localStorage only (single device).
-const FIREBASE_URL = 'https://vrmwb-a9db4-default-rtdb.europe-west1.firebasedatabase.app/';
+const DB_URL = 'https://vrmwb-a9db4-default-rtdb.europe-west1.firebasedatabase.app';
 
 function syncPositions(){
   if(!grid)return;
@@ -597,13 +594,12 @@ function syncPositions(){
 async function saveState(){
   syncPositions();
   const payload=JSON.stringify({widgets,nextId});
-  if(FIREBASE_URL){
-    const r=await fetch(`${FIREBASE_URL.replace(/\/+$/,'')}/state.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:payload});
-    if(r.ok)return true;
-    return false;
-  }
-  try{localStorage.setItem('vrmwb4-w',JSON.stringify(widgets));localStorage.setItem('vrmwb4-id',String(nextId));}catch(e){}
-  return true;
+  try{
+    const r=await fetch(`${DB_URL}/state.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:payload});
+    if(!r.ok){console.error('Firebase save failed',r.status,await r.text());return false;}
+    return true;
+  }catch(e){console.error('Firebase save error',e);}
+  return false;
 }
 
 async function manualSave(){
@@ -611,34 +607,8 @@ async function manualSave(){
   btn.textContent='Opslaan…';btn.className='tb-btn save-btn saving';
   const ok=await saveState();
   btn.className=`tb-btn save-btn ${ok?'ok':'err'}`;
-  btn.textContent=ok?'Opgeslagen ✓':'Fout — check console';
-  setTimeout(()=>{btn.className='tb-btn save-btn';btn.textContent='Opslaan';},2500);
-}
-
-async function loadState(){
-  if(FIREBASE_URL){
-    try{
-      const r=await fetch(`${FIREBASE_URL.replace(/\/+$/,'')}/state.json`);
-      if(r.ok){
-        const s=await r.json();
-        if(s&&s.widgets&&s.widgets.length){
-          widgets=s.widgets;nextId=s.nextId||widgets.length+1;
-          widgets.forEach(w=>renderWidget(w));
-          return true;
-        }
-      }
-    }catch(e){}
-    return false;
-  }
-  try{
-    const s=localStorage.getItem('vrmwb4-w');const sid=localStorage.getItem('vrmwb4-id');
-    if(s){
-      widgets=JSON.parse(s);nextId=parseInt(sid)||widgets.length+1;
-      widgets.forEach(w=>renderWidget(w));
-      return true;
-    }
-  }catch(e){}
-  return false;
+  btn.textContent=ok?'Opgeslagen ✓':'Fout — open console (F12)';
+  setTimeout(()=>{btn.className='tb-btn save-btn';btn.textContent='Opslaan';},3000);
 }
 
 // ── INIT ──
@@ -660,16 +630,39 @@ async function init(){
     resizable:{handles:'se'}
   });
 
-  grid.on('change',saveState);
+  // 1. Fetch from Firebase BEFORE attaching change listener
+  //    so addWidget calls during render don't trigger saveState
+  let loaded=false;
+  try{
+    const r=await fetch(`${DB_URL}/state.json`);
+    if(r.ok){
+      const s=await r.json();
+      if(s&&s.widgets&&s.widgets.length){
+        widgets=s.widgets;
+        nextId=s.nextId||widgets.length+1;
+        widgets.forEach(w=>renderWidget(w));
+        loaded=true;
+      }else{
+        console.log('Firebase: no saved state yet, loading defaults');
+      }
+    }else{
+      console.error('Firebase load error:',r.status,await r.text());
+    }
+  }catch(e){
+    console.error('Firebase fetch error:',e);
+  }
 
-  const loaded=await loadState();
+  // 2. Fall back to defaults if nothing in Firebase
   if(!loaded){
     DEFAULT.forEach(d=>{
       const w={id:nextId++,type:d.type,x:d.x,y:d.y,w:d.w,h:d.h,data:JSON.parse(JSON.stringify(T[d.type].def))};
       widgets.push(w);renderWidget(w);
     });
-    saveState();
+    saveState(); // Save defaults to Firebase so next load has data
   }
+
+  // 3. Only NOW attach the change listener
+  grid.on('change',saveState);
 }
 
 document.querySelectorAll('.mov').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
