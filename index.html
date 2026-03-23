@@ -792,8 +792,6 @@ function saveEdit(){
 }
 
 // ── PERSIST ──
-const DB_URL = 'https://vrmwb-a9db4-default-rtdb.europe-west1.firebasedatabase.app';
-
 function syncPositions(){
   if(!grid)return;
   grid.engine.nodes.forEach(node=>{
@@ -807,10 +805,10 @@ async function saveState(){
   syncPositions();
   const payload=JSON.stringify({widgets,nextId});
   try{
-    const r=await fetch(`${DB_URL}/state.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:payload});
-    if(!r.ok){console.error('Firebase save failed',r.status,await r.text());return false;}
+    const r=await fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json'},body:payload});
+    if(!r.ok){console.error('Save failed',r.status,await r.text());return false;}
     return true;
-  }catch(e){console.error('Firebase save error',e);}
+  }catch(e){console.error('Save error',e);}
   return false;
 }
 
@@ -842,11 +840,11 @@ async function init(){
     resizable:{handles:'se'}
   });
 
-  // 1. Fetch from Firebase BEFORE attaching change listener
+  // 1. Fetch from local server BEFORE attaching change listener
   //    so addWidget calls during render don't trigger saveState
   let loaded=false;
   try{
-    const r=await fetch(`${DB_URL}/state.json`);
+    const r=await fetch('/api/state');
     if(r.ok){
       const s=await r.json();
       if(s&&s.widgets&&s.widgets.length){
@@ -855,22 +853,22 @@ async function init(){
         widgets.forEach(w=>renderWidget(w));
         loaded=true;
       }else{
-        console.log('Firebase: no saved state yet, loading defaults');
+        console.log('Geen opgeslagen staat gevonden, standaardwaarden laden');
       }
     }else{
-      console.error('Firebase load error:',r.status,await r.text());
+      console.error('Laden mislukt:',r.status,await r.text());
     }
   }catch(e){
-    console.error('Firebase fetch error:',e);
+    console.error('Laad fout:',e);
   }
 
-  // 2. Fall back to defaults if nothing in Firebase
+  // 2. Fall back to defaults if nothing saved locally
   if(!loaded){
     DEFAULT.forEach(d=>{
       const w={id:nextId++,type:d.type,x:d.x,y:d.y,w:d.w,h:d.h,data:JSON.parse(JSON.stringify(T[d.type].def))};
       widgets.push(w);renderWidget(w);
     });
-    saveState(); // Save defaults to Firebase so next load has data
+    saveState(); // Save defaults locally so next load has data
   }
 
   // 3. Only NOW attach the change listener
