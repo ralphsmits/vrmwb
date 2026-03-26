@@ -57,6 +57,10 @@ body{font-family:'Frutiger',sans-serif;background:#0A0C10;color:var(--text);disp
 .save-btn.saving{opacity:.6;pointer-events:none}
 .save-btn.ok{background:#16a34a;color:#fff;border-color:#16a34a}
 .save-btn.err{background:var(--red);color:#fff;border-color:var(--red)}
+.load-btn{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.35)}
+.load-btn:hover{background:rgba(255,255,255,.25)}
+.load-btn.ok{background:#16a34a;color:#fff;border-color:#16a34a}
+.load-btn.err{background:var(--red);color:#fff;border-color:var(--red)}
 .tb-layout{font-size:11px;color:rgba(255,255,255,.7);font-weight:700;white-space:nowrap;letter-spacing:.3px;text-transform:uppercase}
 .tb-layout strong{color:#fff;font-weight:900}
 
@@ -266,6 +270,8 @@ select.finp{cursor:pointer}
   </div>
   <div class="tb-right">
     <button class="tb-btn save-btn" id="savebtn" onclick="manualSave()">Opslaan</button>
+    <button class="tb-btn load-btn" id="loadbtn" onclick="triggerLoad()">Laden</button>
+    <input type="file" id="loadfile" accept=".json" style="display:none" onchange="loadFromFile(event)">
     <div class="tb-layout" id="layout-lbl">Layout: <strong>Vergrendeld</strong></div>
     <button class="tb-btn gold" id="editbtn" onclick="toggleEditMode()">Edit Mode</button>
   </div>
@@ -349,8 +355,8 @@ function addFormRow(type){
     voertuigen:`<div class="frow"><input class="finp f-cs" placeholder="Callsign" style="flex:0 0 80px"><input class="finp f-vtype" placeholder="Type voertuig"><select class="finp f-status" style="flex:0 0 135px"><option value="ok">Operationeel</option><option value="warn">Onderhoud</option><option value="err">Uitval</option></select><button class="frow-del" onclick="delRow(this)" type="button">×</button></div>`,
     reserveringen:`<div class="frow"><input class="finp f-time" placeholder="09:00" style="flex:0 0 72px"><input class="finp f-loc" placeholder="Locatie"><input class="finp f-desc" placeholder="Omschrijving" style="flex:2"><button class="frow-del" onclick="delRow(this)" type="button">×</button></div>`,
     ploegindeling:`<div class="frow"><input class="finp f-rank" placeholder="Rang" style="flex:0 0 65px"><input class="finp f-name" placeholder="Naam" style="flex:2"><input class="finp f-role" placeholder="Functie"><button class="frow-del" onclick="delRow(this)" type="button">×</button></div>`,
-    wegafsluiting:`<div class="fcard"><div class="fcard-head"><span class="fcard-num">Afsluiting ${n}</span><button class="frow-del" onclick="delRow(this)" type="button">×</button></div><div class="frow2"><input class="finp f-weg" placeholder="Wegnaam"><select class="finp f-status" style="flex:0 0 130px"><option value="AFGESLOTEN">Afgesloten</option><option value="BEPERKT">Beperkt</option></select></div><input class="finp f-date" placeholder="Datum"><input class="finp f-desc" placeholder="Omschrijving"><input class="finp f-warn" placeholder="Waarschuwing (optioneel)"></div>`,
     topdesk:`<div class="fcard"><div class="fcard-head"><span class="fcard-num">Melding ${n}</span><button class="frow-del" onclick="delRow(this)" type="button">×</button></div><div class="frow2"><input class="finp f-num" placeholder="Meldingsnummer"><select class="finp f-status" style="flex:0 0 150px"><option value="AFGEHANDELD">Afgehandeld</option><option value="OPEN">Open</option><option value="IN BEHANDELING">In behandeling</option></select></div><input class="finp f-title" placeholder="Titel"><div class="frow2"><input class="finp f-loc" placeholder="Locatie (optioneel)"><input class="finp f-dl" placeholder="Streefdatum" style="flex:0 0 95px"></div><div class="frow2"><input class="finp f-date" placeholder="Aangemaakt op"><input class="finp f-person" placeholder="Verantwoordelijke"></div></div>`,
+    wegafsluiting:`<div class="fcard"><div class="fcard-head"><span class="fcard-num">Afsluiting ${n}</span><button class="frow-del" onclick="delRow(this)" type="button">×</button></div><div class="frow2"><input class="finp f-weg" placeholder="Wegnaam"><select class="finp f-status" style="flex:0 0 130px"><option value="AFGESLOTEN">Afgesloten</option><option value="BEPERKT">Beperkt</option></select></div><input class="finp f-date" placeholder="Datum"><input class="finp f-desc" placeholder="Omschrijving"><input class="finp f-warn" placeholder="Waarschuwing (optioneel)"></div>`,
     p2000:`<div class="fcard"><div class="fcard-head"><span class="fcard-num">Incident ${n}</span><button class="frow-del" onclick="delRow(this)" type="button">×</button></div><div class="frow2"><input class="finp f-time" placeholder="11:34" style="flex:0 0 72px"><select class="finp f-prio" style="flex:0 0 110px"><option value="p1">PRIO 1</option><option value="p2">PRIO 2</option><option value="p3">PRIO 3</option></select><input class="finp f-units" placeholder="Eenheden (bijv. TS31 HV31)"></div><textarea class="fta f-msg" rows="2" style="min-height:58px" placeholder="Meldingtekst..."></textarea></div>`,
   };
   if(h[type])c.insertAdjacentHTML('beforeend',h[type]);
@@ -389,9 +395,34 @@ const T={
       }))};},
   },
   weather:{label:'Actueel Weer',ico:'cloud',
-    def:{loc:'TRAMSINGEL 71, BREDA',temp:'11',desc:'Gedeeltelijk bewolkt',wind:'18 km/h ZW',hum:'74%',pres:'1018 hPa',vis:'12 km'},
-    render(d){return`
-      <div style="text-align:center;padding:8px 0 14px">
+    def:{loc:'TRAMSINGEL 71, BREDA',temp:'—',desc:'Laden…',wind:'—',hum:'—',pres:'—',vis:'—',rain:[]},
+    render(d){
+      // Rain chart SVG (next 12 hours)
+      let rainChart='';
+      if(d.rain&&d.rain.length){
+        const bars=d.rain.slice(0,12);
+        const VW=240, BAR_H=50, LABEL_Y=68, TOTAL_H=74;
+        const W=VW/bars.length;
+        const barsHTML=bars.map((b,i)=>{
+          const h=Math.max(2,Math.round((b.prob/100)*BAR_H));
+          const col=b.prob>70?'#17428C':b.prob>30?'#4A7EC7':'#BFCFE8';
+          const x=i*W;
+          const hourNum=b.hour.slice(0,2); // just "13", "14" etc
+          const lbl=i%2===0?`<text x="${x+W/2}" y="${LABEL_Y}" text-anchor="middle" font-size="8" fill="#9DA3B0">${hourNum}</text>`:'';
+          const mmLbl=b.mm>=0.2?`<text x="${x+W/2}" y="${BAR_H-h-3}" text-anchor="middle" font-size="7" fill="#17428C">${b.mm.toFixed(1)}</text>`:'';
+          return`<rect x="${x+W*0.15}" y="${BAR_H-h}" width="${W*0.7}" height="${h}" fill="${col}" rx="2"/>${mmLbl}${lbl}`;
+        }).join('');
+        rainChart=`
+        <div style="margin-top:12px">
+          <div style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sub);margin-bottom:4px">Neerslag komende 12 uur</div>
+          <svg viewBox="0 0 ${VW} ${TOTAL_H}" style="width:100%;display:block">
+            <line x1="0" y1="${BAR_H}" x2="${VW}" y2="${BAR_H}" stroke="#ECEEF3" stroke-width="1"/>
+            ${barsHTML}
+          </svg>
+        </div>`;
+      }
+      return`
+      <div style="text-align:center;padding:8px 0 10px">
         <div style="font-size:11px;font-weight:800;letter-spacing:1.4px;color:var(--red);margin-bottom:10px">${esc(d.loc)}</div>
         <div style="font-size:52px;font-weight:900;color:var(--text);line-height:1.05">${esc(d.temp)}°C</div>
         <div style="font-size:13px;font-weight:600;color:var(--text-sub);margin-top:7px">${esc(d.desc)}</div>
@@ -401,16 +432,10 @@ const T={
         <div class="scell"><div class="sl">Vochtigheid</div><div class="sv">${esc(d.hum)}</div></div>
         <div class="scell"><div class="sl">Luchtdruk</div><div class="sv">${esc(d.pres)}</div></div>
         <div class="scell"><div class="sl">Zichtbaarheid</div><div class="sv">${esc(d.vis)}</div></div>
-      </div>`;},
-    editForm(d){return`
-      <label class="flbl">Locatienaam</label><input class="finp" id="f0" value="${esc(d.loc)}">
-      <label class="flbl">Temperatuur (°C)</label><input class="finp" id="f1" value="${esc(d.temp)}">
-      <label class="flbl">Beschrijving</label><input class="finp" id="f2" value="${esc(d.desc)}">
-      <label class="flbl">Wind</label><input class="finp" id="f3" value="${esc(d.wind)}">
-      <label class="flbl">Luchtvochtigheid</label><input class="finp" id="f4" value="${esc(d.hum)}">
-      <label class="flbl">Luchtdruk</label><input class="finp" id="f5" value="${esc(d.pres)}">
-      <label class="flbl">Zichtbaarheid</label><input class="finp" id="f6" value="${esc(d.vis)}">`;},
-    parseForm(){return{loc:v('f0'),temp:v('f1'),desc:v('f2'),wind:v('f3'),hum:v('f4'),pres:v('f5'),vis:v('f6')};},
+      </div>
+      ${rainChart}`;},
+    editForm(){return`<div style="color:var(--text-sub);padding:8px;font-size:13px">Weer wordt automatisch opgehaald via Open-Meteo.</div>`;},
+    parseForm(){return{};},
   },
   voertuigen:{label:'Status Voertuigen',ico:'truck',
     def:{vehicles:[
@@ -511,55 +536,6 @@ const T={
         }))
       };},
   },
-  wegafsluiting:{label:'Wegafsluitingen',ico:'road',
-    def:{items:[
-      {weg:'Ploegstraat Breda',status:'AFGESLOTEN',date:'Wo, 11 maart 2026 (Fase 1 t/m 5)',desc:'Herinrichting / onderhoud van Weg',warn:'Geen doorgang mogelijk.'},
-      {weg:'A58 richting Breda – km 14',status:'BEPERKT',date:'Ma, 16 maart 2026',desc:'Wegwerkzaamheden rijstrook 1+2, omleiding via N282',warn:''},
-    ]},
-    render(d){return d.items.map(w=>`
-      <div style="border:1px solid var(--card-border);border-radius:10px;overflow:hidden;margin-bottom:10px">
-        <div style="background:var(--input-bg);height:56px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--card-border)">
-          <span style="font-size:12px;font-weight:600;color:var(--text-light)">Kaart niet beschikbaar</span>
-        </div>
-        <div style="padding:10px 12px">
-          <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px">
-            <span style="font-size:13px;font-weight:700">${esc(w.weg)}</span>
-            <span class="pill ${w.status==='AFGESLOTEN'?'red':'gold'}">${esc(w.status)}</span>
-          </div>
-          <div style="font-size:11px;color:var(--text-sub);margin-bottom:4px">&#128197; ${esc(w.date)}</div>
-          <div style="font-size:12px;font-weight:600;color:var(--text)">${esc(w.desc)}</div>
-          ${w.warn?`<div class="warnrow">${esc(w.warn)}</div>`:''}
-        </div>
-      </div>`).join('');},
-    editForm(d){return`
-      <label class="flbl">Wegafsluitingen</label>
-      <div id="f-rows">${d.items.map((w,i)=>`
-        <div class="fcard">
-          <div class="fcard-head">
-            <span class="fcard-num">Afsluiting ${i+1}</span>
-            <button class="frow-del" onclick="delRow(this)" type="button">×</button>
-          </div>
-          <div class="frow2">
-            <input class="finp f-weg" value="${esc(w.weg)}" placeholder="Wegnaam">
-            <select class="finp f-status" style="flex:0 0 130px">
-              <option value="AFGESLOTEN" ${w.status==='AFGESLOTEN'?'selected':''}>Afgesloten</option>
-              <option value="BEPERKT" ${w.status==='BEPERKT'?'selected':''}>Beperkt</option>
-            </select>
-          </div>
-          <input class="finp f-date" value="${esc(w.date)}" placeholder="Datum">
-          <input class="finp f-desc" value="${esc(w.desc)}" placeholder="Omschrijving">
-          <input class="finp f-warn" value="${esc(w.warn)}" placeholder="Waarschuwing (optioneel)">
-        </div>`).join('')}</div>
-      <button class="fadd" onclick="addFormRow('wegafsluiting')" type="button">+ Afsluiting toevoegen</button>`;},
-    parseForm(){
-      return{items:[...document.querySelectorAll('#f-rows .fcard')].map(c=>({
-        weg:c.querySelector('.f-weg').value,
-        status:c.querySelector('.f-status').value,
-        date:c.querySelector('.f-date').value,
-        desc:c.querySelector('.f-desc').value,
-        warn:c.querySelector('.f-warn').value,
-      }))};},
-  },
   topdesk:{label:'Topdesk Meldingen',ico:'ticket',
     def:{items:[
       {num:'M2603 156',title:'Verstopping',loc:'BREDA',status:'AFGEHANDELD',date:'Di, 3 mrt 2026',dl:'04/03',person:'Meijers, Dennis'},
@@ -626,11 +602,14 @@ const T={
       {time:'09:12',prio:'p2',msg:'GASL Gaslek aanrijding\nSpoorlaan 142, Tilburg',units:'TS31 TS32'},
     ]},
     render(d){const PC={p1:'red',p2:'gold',p3:'green'};const PL={p1:'PRIO 1',p2:'PRIO 2',p3:'PRIO 3'};const BC={p1:'var(--red)',p2:'var(--gold)',p3:'#16a34a'};
+      const SC={AMBU:'#0ea5e9',BRW:'#f97316',POL:'#8b5cf6',P2000:'#6b7280'};
+      if(!d.items||!d.items.length) return`<div style="color:var(--text-sub);font-size:13px;padding:12px">${d.empty?'Geen recente meldingen':'Incidenten laden…'}</div>`;
       return d.items.map(i=>`
-        <div style="border-left:3px solid ${BC[i.prio]||'var(--red)'};background:var(--input-bg);border-radius:0 8px 8px 0;padding:9px 11px;margin-bottom:8px">
+        <div style="border-left:3px solid ${BC[i.prio]||'#6b7280'};background:var(--input-bg);border-radius:0 8px 8px 0;padding:9px 11px;margin-bottom:8px">
           <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px">
-            <span class="pill ${PC[i.prio]||'grey'}">${PL[i.prio]||'?'}</span>
-            <span style="font-size:11px;font-weight:700;color:var(--text-sub)">${esc(i.time)}</span>
+            <span class="pill ${PC[i.prio]||'grey'}">${PL[i.prio]||'P?'}</span>
+            ${i.service?`<span style="font-size:10px;font-weight:800;color:#fff;background:${SC[i.service]||SC.P2000};border-radius:4px;padding:1px 6px">${esc(i.service)}</span>`:''}
+            <span style="font-size:11px;font-weight:700;color:var(--text-sub)">${i.date?esc(i.date)+' ':''} ${esc(i.time)}</span>
           </div>
           <div style="font-size:12px;font-weight:700;color:var(--text);line-height:1.5">${esc(i.msg).replace(/\n/g,'<br>')}</div>
           ${i.units?`<div style="font-size:11px;font-weight:800;color:var(--navy);margin-top:5px">${esc(i.units)}</div>`:''}
@@ -663,6 +642,55 @@ const T={
         msg:c.querySelector('.f-msg').value,
       }))};},
   },
+  wegafsluiting:{label:'Wegafsluitingen',ico:'road',
+    def:{items:[
+      {weg:'Ploegstraat Breda',status:'AFGESLOTEN',date:'Wo, 11 maart 2026 (Fase 1 t/m 5)',desc:'Herinrichting / onderhoud van Weg',warn:'Geen doorgang mogelijk.'},
+      {weg:'A58 richting Breda – km 14',status:'BEPERKT',date:'Ma, 16 maart 2026',desc:'Wegwerkzaamheden rijstrook 1+2, omleiding via N282',warn:''},
+    ]},
+    render(d){return d.items.map(w=>`
+      <div style="border:1px solid var(--card-border);border-radius:10px;overflow:hidden;margin-bottom:10px">
+        <div style="background:var(--input-bg);height:56px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--card-border)">
+          <span style="font-size:12px;font-weight:600;color:var(--text-light)">Kaart niet beschikbaar</span>
+        </div>
+        <div style="padding:10px 12px">
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px">
+            <span style="font-size:13px;font-weight:700">${esc(w.weg)}</span>
+            <span class="pill ${w.status==='AFGESLOTEN'?'red':'gold'}">${esc(w.status)}</span>
+          </div>
+          <div style="font-size:11px;color:var(--text-sub);margin-bottom:4px">&#128197; ${esc(w.date)}</div>
+          <div style="font-size:12px;font-weight:600;color:var(--text)">${esc(w.desc)}</div>
+          ${w.warn?`<div class="warnrow">${esc(w.warn)}</div>`:''}
+        </div>
+      </div>`).join('');},
+    editForm(d){return`
+      <label class="flbl">Wegafsluitingen</label>
+      <div id="f-rows">${d.items.map((w,i)=>`
+        <div class="fcard">
+          <div class="fcard-head">
+            <span class="fcard-num">Afsluiting ${i+1}</span>
+            <button class="frow-del" onclick="delRow(this)" type="button">×</button>
+          </div>
+          <div class="frow2">
+            <input class="finp f-weg" value="${esc(w.weg)}" placeholder="Wegnaam">
+            <select class="finp f-status" style="flex:0 0 130px">
+              <option value="AFGESLOTEN" ${w.status==='AFGESLOTEN'?'selected':''}>Afgesloten</option>
+              <option value="BEPERKT" ${w.status==='BEPERKT'?'selected':''}>Beperkt</option>
+            </select>
+          </div>
+          <input class="finp f-date" value="${esc(w.date)}" placeholder="Datum">
+          <input class="finp f-desc" value="${esc(w.desc)}" placeholder="Omschrijving">
+          <input class="finp f-warn" value="${esc(w.warn)}" placeholder="Waarschuwing (optioneel)">
+        </div>`).join('')}</div>
+      <button class="fadd" onclick="addFormRow('wegafsluiting')" type="button">+ Afsluiting toevoegen</button>`;},
+    parseForm(){
+      return{items:[...document.querySelectorAll('#f-rows .fcard')].map(c=>({
+        weg:c.querySelector('.f-weg').value,
+        status:c.querySelector('.f-status').value,
+        date:c.querySelector('.f-date').value,
+        desc:c.querySelector('.f-desc').value,
+        warn:c.querySelector('.f-warn').value,
+      }))};},
+  },
 };
 
 // ── STATE ──
@@ -693,6 +721,108 @@ function tick(){
 setInterval(tick,1000);tick();
 
 
+// ── WEATHER API (Open-Meteo) ──
+const WEATHER_LAT = 51.5719;   // Breda
+const WEATHER_LNG = 4.7683;
+const WEATHER_LOC = 'Tramsingel 71, Breda';
+
+const WMO_DESC = {
+  0:'Helder',1:'Vrijwel helder',2:'Gedeeltelijk bewolkt',3:'Bewolkt',
+  45:'Mist',48:'Rijpige mist',
+  51:'Lichte motregen',53:'Motregen',55:'Zware motregen',
+  61:'Lichte regen',63:'Regen',65:'Zware regen',
+  71:'Lichte sneeuw',73:'Sneeuw',75:'Zware sneeuw',
+  77:'Ijskorrels',80:'Lichte buien',81:'Buien',82:'Zware buien',
+  85:'Sneeuwbuien',86:'Zware sneeuwbuien',
+  95:'Onweer',96:'Onweer met hagel',99:'Zwaar onweer met hagel'
+};
+
+function windDir(deg){
+  const d=['N','NNO','NO','ONO','O','OZO','ZO','ZZO','Z','ZZW','ZW','WZW','W','WNW','NW','NNW'];
+  return d[Math.round(deg/22.5)%16];
+}
+
+async function fetchWeather(){
+  try{
+    const url=`https://api.open-meteo.com/v1/forecast?latitude=${WEATHER_LAT}&longitude=${WEATHER_LNG}`
+      +`&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,wind_direction_10m,surface_pressure,visibility`
+      +`&hourly=precipitation,precipitation_probability&forecast_hours=12`
+      +`&wind_speed_unit=kmh&timezone=Europe/Amsterdam`;
+    const r=await fetch(url);
+    if(!r.ok)return;
+    const j=await r.json();
+    const c=j.current;
+
+    // Build 12-hour rain array
+    const rain=(j.hourly?.time||[]).map((t,i)=>({
+      hour:t.slice(11,16), // "HH:MM"
+      prob:j.hourly.precipitation_probability[i]??0,
+      mm:j.hourly.precipitation[i]??0,
+    }));
+
+    const data={
+      loc:WEATHER_LOC,
+      temp:Math.round(c.temperature_2m).toString(),
+      desc:WMO_DESC[c.weather_code]??'Onbekend',
+      wind:`${Math.round(c.wind_speed_10m)} km/h ${windDir(c.wind_direction_10m)}`,
+      hum:`${c.relative_humidity_2m}%`,
+      pres:`${Math.round(c.surface_pressure)} hPa`,
+      vis:`${Math.round(c.visibility/1000)} km`,
+      rain,
+    };
+    widgets.filter(w=>w.type==='weather').forEach(w=>{w.data=data;refreshWidget(w.id);});
+  }catch(e){console.error('Weather fetch fout:',e);}
+}
+
+
+// ── P2000 LIVE FEED – alarmeringen.nl all.rss (Midden en West Brabant) ──
+// all.rss = 100 items, ~24h, all services (ambulance, brandweer, politie)
+const P2000_FEED = 'https://alarmeringen.nl/feeds/region/midden-en-west-brabant/all.rss';
+const P2000_24H  = 24 * 60 * 60 * 1000;
+
+async function fetchP2000(){
+  try{
+    const enc = encodeURIComponent(P2000_FEED);
+    let r = await fetch('https://api.codetabs.com/v1/proxy/?quest=' + enc);
+    if(!r.ok) r = await fetch('https://api.allorigins.win/raw?url=' + enc);
+    if(!r.ok) return;
+
+    const xml = await r.text();
+    const doc = new DOMParser().parseFromString(xml, 'text/xml');
+    const now = Date.now();
+    const items = [];
+
+    for(const node of doc.querySelectorAll('item')){
+      const title   = node.querySelector('title')?.textContent?.trim() || '';
+      const desc    = node.querySelector('description')?.textContent?.trim() || '';
+      const pubDate = node.querySelector('pubDate')?.textContent?.trim() || '';
+      const dt = new Date(pubDate);
+      if(isNaN(dt.getTime()) || now - dt.getTime() > P2000_24H) continue;
+
+      const time = dt.toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Amsterdam'});
+      const date = dt.toLocaleDateString('nl-NL',{day:'2-digit',month:'2-digit',timeZone:'Europe/Amsterdam'});
+
+      const u = title.toUpperCase();
+      let prio = 'p3';
+      if(/^(A1|B1)\b/.test(u) || /^P\s?1\b/.test(u)) prio = 'p1';
+      else if(/^(A2|B2)\b/.test(u) || /^P\s?2\b/.test(u)) prio = 'p2';
+
+      let service = 'P2000';
+      if(/^(A1|A2|A3|B1|B2|B3)\b/.test(u)) service = 'AMBU';
+      else if(u.includes('BZB')) service = 'BRW';
+      else if(u.includes('POLITIE')) service = 'POL';
+
+      items.push({ts: dt.getTime(), time, date, prio, msg: desc || title, service});
+    }
+
+    widgets.filter(w=>w.type==='p2000').forEach(w=>{
+      w.data = items.length ? {items} : {items:[], empty:true};
+      refreshWidget(w.id);
+    });
+  }catch(e){console.error('P2000 fetch fout:',e);}
+}
+
+
 // ── EDIT MODE ──
 function toggleEditMode(){
   editMode=!editMode;
@@ -717,7 +847,7 @@ function widgetHTML(w){
     <div class="wh">
       <div class="wh-title">${def.label}</div>
       <div class="wh-acts">
-        <button class="wb edit-btn" onclick="openEditWid(${w.id})" title="Bewerken">${I.pencil}</button>
+        ${!['weather','p2000'].includes(w.type)?`<button class="wb edit-btn" onclick="openEditWid(${w.id})" title="Bewerken">${I.pencil}</button>`:''}
         <button class="wb del" onclick="removeWidget(${w.id})" title="Verwijderen">${I.x}</button>
       </div>
     </div>
@@ -801,28 +931,65 @@ function syncPositions(){
   });
 }
 
-async function saveState(){
+function saveState(){
   syncPositions();
   const payload=JSON.stringify({widgets,nextId});
   try{
-    const r=await fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json'},body:payload});
-    if(!r.ok){console.error('Save failed',r.status,await r.text());return false;}
+    localStorage.setItem('dashboardState',payload);
     return true;
-  }catch(e){console.error('Save error',e);}
+  }catch(e){console.error('Auto-save error',e);}
   return false;
 }
 
-async function manualSave(){
+function manualSave(){
+  syncPositions();
+  const payload={widgets,nextId};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='dashboard-instellingen.json';
+  a.click();
+  URL.revokeObjectURL(url);
   const btn=document.getElementById('savebtn');
-  btn.textContent='Opslaan…';btn.className='tb-btn save-btn saving';
-  const ok=await saveState();
-  btn.className=`tb-btn save-btn ${ok?'ok':'err'}`;
-  btn.textContent=ok?'Opgeslagen ✓':'Fout — open console (F12)';
+  btn.textContent='Gedownload ✓';btn.className='tb-btn save-btn ok';
   setTimeout(()=>{btn.className='tb-btn save-btn';btn.textContent='Opslaan';},3000);
 }
 
+function triggerLoad(){
+  document.getElementById('loadfile').value='';
+  document.getElementById('loadfile').click();
+}
+
+function loadFromFile(e){
+  const file=e.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    try{
+      const s=JSON.parse(ev.target.result);
+      if(!s||!s.widgets||!s.widgets.length)throw new Error('Ongeldig bestand');
+      // Clear current grid
+      grid.removeAll();
+      widgets=s.widgets.filter(w=>T[w.type]);
+      nextId=s.nextId||widgets.length+1;
+      widgets.forEach(w=>renderWidget(w));
+      saveState();
+      const btn=document.getElementById('loadbtn');
+      btn.textContent='Geladen ✓';btn.className='tb-btn load-btn ok';
+      setTimeout(()=>{btn.className='tb-btn load-btn';btn.textContent='Laden';},3000);
+    }catch(err){
+      console.error('Laad fout:',err);
+      const btn=document.getElementById('loadbtn');
+      btn.textContent='Fout';btn.className='tb-btn load-btn err';
+      setTimeout(()=>{btn.className='tb-btn load-btn';btn.textContent='Laden';},3000);
+    }
+  };
+  reader.readAsText(file);
+}
+
 // ── INIT ──
-async function init(){
+function init(){
   const canvas=document.getElementById('canvas');
   const totalRows=8;
   const margin=10;
@@ -840,23 +1007,25 @@ async function init(){
     resizable:{handles:'se'}
   });
 
-  // 1. Fetch from local server BEFORE attaching change listener
+  // 1. Load from localStorage BEFORE attaching change listener
   //    so addWidget calls during render don't trigger saveState
   let loaded=false;
   try{
-    const r=await fetch('/api/state');
-    if(r.ok){
-      const s=await r.json();
+    const saved=localStorage.getItem('dashboardState');
+    if(saved){
+      const s=JSON.parse(saved);
       if(s&&s.widgets&&s.widgets.length){
-        widgets=s.widgets;
+        // Filter out any widget types that no longer exist in T (e.g. from old experiments)
+        widgets=s.widgets.filter(w=>T[w.type]);
         nextId=s.nextId||widgets.length+1;
+        // Always reset live-feed widgets so stale data never shows
+        widgets.forEach(w=>{
+          if(w.type==='p2000') w.data={items:[]};
+          if(w.type==='weather') w.data=T.weather.def;
+        });
         widgets.forEach(w=>renderWidget(w));
         loaded=true;
-      }else{
-        console.log('Geen opgeslagen staat gevonden, standaardwaarden laden');
       }
-    }else{
-      console.error('Laden mislukt:',r.status,await r.text());
     }
   }catch(e){
     console.error('Laad fout:',e);
@@ -874,6 +1043,13 @@ async function init(){
   // 3. Only NOW attach the change listener
   grid.on('change',saveState);
 
+  // 4. Start live API feeds
+  fetchWeather();
+  setInterval(fetchWeather, 5*60*1000); // refresh every 5 min
+
+  fetchP2000();
+  setInterval(fetchP2000, 30*1000); // source updates ~every 30s
+
   buildMobileHome();
 }
 
@@ -886,9 +1062,9 @@ const APP_COLOR={
   voertuigen:['#FF9F0A','#CC7700'],
   reserveringen:['#FF6B35','#CC4415'],
   ploegindeling:['#5E5CE6','#3634A3'],
-  wegafsluiting:['#30D158','#1A8C38'],
   topdesk:['#FF375F','#CC1035'],
   p2000:['#D2100B','#8B0707'],
+  wegafsluiting:['#30D158','#1A8C38'],
 };
 
 function buildMobileHome(){
