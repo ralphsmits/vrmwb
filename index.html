@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ploegcommandant Dashboard – VRMWB</title>
+<title>ODj Widgetpagina – VRMWB</title>
 <link href="https://cdn.jsdelivr.net/npm/gridstack@10.0/dist/gridstack.min.css" rel="stylesheet"/>
 <style>
 @font-face{font-family:'Frutiger';src:url('font/Frutiger Light.ttf') format('truetype');font-weight:300;font-style:normal}
@@ -15,11 +15,12 @@
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --red:#D2100B;--navy:#17428C;--gold:#CC9933;
-  --card-bg:#FFFFFF;--card-border:#E2E4E9;
-  --card-shadow:0 2px 14px rgba(0,0,0,.10),0 1px 3px rgba(0,0,0,.05);
+  --card-bg:rgba(255,255,255,0.72);
+  --card-border:rgba(255,255,255,0.9);
+  --card-shadow:0 4px 24px rgba(0,0,0,.12),0 1px 4px rgba(0,0,0,.08);
   --text:#1E1E1E;--text-sub:#707172;--text-light:#9DA3B0;
-  --divider:#ECEEF3;--input-bg:#F4F5F8;
-  --radius:10px;--topbar-h:52px;
+  --divider:rgba(0,0,0,.08);--input-bg:rgba(0,0,0,.04);
+  --radius:10px;--topbar-h:64px;
 }
 html,body{height:100%;overflow:hidden}
 body{font-family:'Frutiger',sans-serif;background:#0A0C10;color:var(--text);display:flex;flex-direction:column}
@@ -28,18 +29,22 @@ body{font-family:'Frutiger',sans-serif;background:#0A0C10;color:var(--text);disp
 .bg{
   position:fixed;inset:0;z-index:0;
   background:url('img/odjbackdrop.png') center/cover no-repeat;
-  filter:blur(2px);transform:scale(1.04);
+}
+.bg::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(to bottom,rgba(245,245,245,1) 20%,transparent 65%);
+  pointer-events:none;
 }
 
 /* TOP BAR */
 .topbar{
-  flex:0 0 var(--topbar-h);background:var(--red);
+  flex:0 0 var(--topbar-h);
+  background:rgba(0,0,0,0);
   display:flex;align-items:center;padding:0 20px;
   z-index:100;position:relative;
-  box-shadow:0 2px 14px rgba(0,0,0,.4);
 }
 .tb-logos{position:absolute;left:0;right:0;display:flex;align-items:center;justify-content:center;pointer-events:none;height:var(--topbar-h)}
-.tb-logo-img{height:36px;width:auto;object-fit:contain;display:block;pointer-events:auto}
+.tb-logo-img{height:44px;width:auto;object-fit:contain;display:block;pointer-events:auto}
 .tb-left{display:flex;align-items:center;gap:8px}
 .tb-right{display:flex;align-items:center;gap:8px;margin-left:auto;justify-content:flex-end}
 .tb-btn{
@@ -47,22 +52,27 @@ body{font-family:'Frutiger',sans-serif;background:#0A0C10;color:var(--text);disp
   font-family:'Frutiger',sans-serif;font-size:12px;font-weight:900;cursor:pointer;
   transition:all .15s;white-space:nowrap;letter-spacing:.4px;text-transform:uppercase;
 }
-.tb-btn.gold{background:var(--gold);color:#1A1C22}
+.tb-btn.gold{background:var(--gold);color:#1A1C22;border:none}
 .tb-btn.gold:hover{background:#d9a830}
-.tb-btn.gold.active{background:#fff;color:var(--red)}
-.tb-btn.white{background:#fff;color:var(--red);text-decoration:none;display:inline-flex;align-items:center}
+.tb-btn.gold.active{background:#1A1C22;color:#fff;border:none}
+/* ODj Beheer – white with black border */
+.tb-btn.white{
+  background:#fff;color:#1A1C22;
+  border:1px solid rgba(0, 0, 0, 0.2);
+  text-decoration:none;display:inline-flex;align-items:center;
+}
 .tb-btn.white:hover{background:rgba(255,255,255,.85)}
-.save-btn{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.35)}
-.save-btn:hover{background:rgba(255,255,255,.25)}
-.save-btn.saving{opacity:.6;pointer-events:none}
+/* Opslaan / Laden – white with black border, edit-mode only */
+.save-btn{background:#fff;color:#1A1C22;border:1px solid rgba(0, 0, 0, 0.2);display:none}
+.save-btn:hover{background:rgba(255,255,255,.85)}
 .save-btn.ok{background:#16a34a;color:#fff;border-color:#16a34a}
-.save-btn.err{background:var(--red);color:#fff;border-color:var(--red)}
-.load-btn{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.35)}
-.load-btn:hover{background:rgba(255,255,255,.25)}
+.load-btn{background:#fff;color:#1A1C22;border:1px solid rgba(0, 0, 0, 0.2);display:none}
+.load-btn:hover{background:rgba(255,255,255,.85)}
 .load-btn.ok{background:#16a34a;color:#fff;border-color:#16a34a}
 .load-btn.err{background:var(--red);color:#fff;border-color:var(--red)}
-.tb-layout{font-size:11px;color:rgba(255,255,255,.7);font-weight:700;white-space:nowrap;letter-spacing:.3px;text-transform:uppercase}
-.tb-layout strong{color:#fff;font-weight:900}
+body.edit-mode .save-btn,body.edit-mode .load-btn{display:inline-flex;align-items:center}
+.tb-layout{font-size:11px;color:rgba(0,0,0,.55);font-weight:700;white-space:nowrap;letter-spacing:.3px;text-transform:uppercase}
+.tb-layout strong{color:#1A1C22;font-weight:900}
 
 /* Edit strip */
 .estrip{position:fixed;top:var(--topbar-h);left:0;right:0;height:2px;
@@ -75,80 +85,77 @@ body.edit-mode .estrip{opacity:1}
 /* CANVAS */
 .canvas{flex:1;position:relative;z-index:5;overflow-y:auto;overflow-x:hidden;min-height:0}
 .canvas::-webkit-scrollbar{width:4px}
-.canvas::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:4px}
+.canvas::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:4px}
 
 /* GRIDSTACK */
 .grid-stack{min-height:100%}
 .grid-stack-item-content{border-radius:var(--radius);overflow:hidden}
 .grid-stack-placeholder>.placeholder-content{
-  background:rgba(23,66,140,.12);
-  border:2px dashed rgba(23,66,140,.45);
+  background:rgba(23,66,140,.1);
+  border:2px dashed rgba(23,66,140,.4);
   border-radius:var(--radius);
 }
 
-/* WIDGET */
+/* WIDGET – glassmorphism */
 .widget{
   height:100%;
-  background:var(--card-bg);
-  border:1px solid var(--card-border);
+  background:rgba(255,255,255,0.68);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  /* border:1px solid rgba(0, 0, 0, 0.2); */
   border-radius:var(--radius);
-  box-shadow:var(--card-shadow);
+  box-shadow:0 4px 24px rgba(0,0,0,.10),0 1px 4px rgba(0,0,0,.06),inset 0 1px 0 rgba(255,255,255,.9);
   display:flex;flex-direction:column;
   overflow:hidden;
   animation:win .22s cubic-bezier(.2,.8,.4,1) both;
 }
 @keyframes win{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:none}}
-body.edit-mode .widget{outline:2px solid rgba(23,66,140,.25);outline-offset:1px}
-body.edit-mode .grid-stack-item:hover .widget{outline-color:rgba(23,66,140,.5)}
+body.edit-mode .widget{outline:2px solid rgba(23,66,140,.3);outline-offset:1px}
+body.edit-mode .grid-stack-item:hover .widget{outline-color:rgba(23,66,140,.6)}
 
 /* Widget header */
-.wh{flex:0 0 auto;height:46px;padding:0 10px 0 14px;display:flex;align-items:center;gap:7px;border-bottom:2px solid var(--divider);user-select:none;cursor:default}
+.wh{flex:0 0 auto;height:46px;padding:0 10px 0 14px;display:flex;align-items:center;gap:7px;border-bottom:1px solid rgba(0,0,0,.08);user-select:none;cursor:default;background:rgba(255,255,255,.3)}
 body.edit-mode .wh{cursor:grab}
 body.edit-mode .wh:active{cursor:grabbing}
 .wh-title{flex:1;font-size:24px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;letter-spacing:.5px}
 .wh-acts{display:flex;gap:1px;flex-shrink:0}
 .wb{width:26px;height:26px;border:none;border-radius:6px;background:transparent;cursor:pointer;font-size:11px;color:var(--text-sub);display:flex;align-items:center;justify-content:center;transition:all .12s}
-.wb:hover{background:var(--input-bg);color:var(--text)}
+.wb:hover{background:rgba(0,0,0,.07);color:var(--text)}
 .wb.del:hover{background:var(--red);color:#fff}
 .wb svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-/* Edit/delete only visible in edit mode */
 .wb.edit-btn,.wb.del{display:none}
 body.edit-mode .wb.edit-btn,body.edit-mode .wb.del{display:flex}
 
 /* Widget body */
 .wbody{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px 13px}
 .wbody::-webkit-scrollbar{width:3px}
-.wbody::-webkit-scrollbar-thumb{background:var(--divider);border-radius:3px}
+.wbody::-webkit-scrollbar-thumb{background:rgba(0,0,0,.12);border-radius:3px}
 
 /* BOTTOM BAR */
 .btmbar{
-  flex:0 0 80px;background:var(--card-bg);border-top:1px solid var(--divider);
+  flex:0 0 80px;background:rgba(255,255,255,.92);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-top:1px solid rgba(0,0,0,.08);
   display:flex;align-items:center;justify-content:space-between;
   padding:0 50px;z-index:50;
-  box-shadow:0 -3px 14px rgba(0,0,0,.1);
-  position:relative; /* Nodig voor het perfect centreren van de knop */
+  box-shadow:0 -3px 14px rgba(0,0,0,.08);
+  position:relative;
 }
 .bb-logo strong{font-size:14px;font-weight:700;text-transform:uppercase;color:var(--text);letter-spacing:.3px}
 .bb-logo span{display:block;font-size:14px;font-weight:400;color:var(--text);text-transform:uppercase;letter-spacing:.3px;margin-top:2px}
-
 .bb-add{
-  position:absolute; /* Zorgt dat hij in het absolute midden blijft staan */
-  left:50%;
-  transform:translateX(-50%);
-  background:var(--text);color:var(--card-bg);
-  height:81px;width:200px;
-  border:none;border-radius:28px;
-  font-family:'Frutiger',sans-serif;font-size:36px;font-weight:300;line-height:56px;
+  position:absolute;left:50%;transform:translateX(-50%);
+  background:var(--text);color:#fff;
+  height:81px;width:200px;border:none;border-radius:28px;
+  font-family:'Frutiger',sans-serif;font-size:36px;font-weight:300;
   cursor:pointer;transition:opacity .15s;
   display:flex;align-items:center;justify-content:center;
-  padding:0; /* Padding weggehaald zodat hij weer netjes zijn originele grootte heeft */
 }
 .bb-add:hover{opacity:.75}
-
 .bb-datetime{font-size:22px;font-weight:400;color:var(--text-sub);letter-spacing:.2px;font-variant-numeric:tabular-nums;white-space:nowrap}
 
 /* WIDGET CONTENT */
-.acc{border-left:3px solid var(--red);background:var(--input-bg);border-radius:0 8px 8px 0;padding:9px 11px;margin-bottom:8px}
+.acc{border-left:3px solid var(--red);background:rgba(0,0,0,.04);border-radius:0 8px 8px 0;padding:9px 11px;margin-bottom:8px}
 .acc:last-child{margin-bottom:0}
 .acc.blue{border-left-color:var(--navy)}
 .acc.gold{border-left-color:var(--gold)}
@@ -158,21 +165,20 @@ body.edit-mode .wb.edit-btn,body.edit-mode .wb.del{display:flex}
 .pill.blue{background:var(--navy);color:#fff}
 .pill.green{background:#16a34a;color:#fff}
 .pill.gold{background:var(--gold);color:#1A1C22}
-.pill.grey{background:var(--input-bg);color:var(--text-sub);border:1px solid var(--card-border)}
+.pill.grey{background:rgba(0,0,0,.06);color:var(--text-sub);border:1px solid rgba(0,0,0,.1)}
 .irow{display:flex;align-items:flex-start;justify-content:space-between;gap:7px;margin-bottom:3px}
 .irow-l{display:flex;align-items:center;gap:6px;flex-wrap:wrap;flex:1}
-.irow-r{flex-shrink:0;text-align:right}
 .sgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:12px}
-.scell{background:var(--input-bg);border-radius:8px;padding:8px 11px}
+.scell{background:rgba(0,0,0,.04);border-radius:8px;padding:8px 11px}
 .scell .sl{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sub)}
 .scell .sv{font-size:20px;font-weight:900;color:var(--text);margin-top:3px}
 .wtbl{width:100%;border-collapse:collapse;font-size:14px}
-.wtbl th{text-align:left;padding:5px 8px 9px;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sub);border-bottom:2px solid var(--divider)}
-.wtbl td{padding:10px 8px;border-bottom:1px solid var(--divider);font-weight:700;vertical-align:middle}
+.wtbl th{text-align:left;padding:5px 8px 9px;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sub);border-bottom:2px solid rgba(0,0,0,.08)}
+.wtbl td{padding:10px 8px;border-bottom:1px solid rgba(0,0,0,.06);font-weight:700;vertical-align:middle}
 .wtbl tr:last-child td{border-bottom:none}
-.trow{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--divider)}
+.trow{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid rgba(0,0,0,.06)}
 .trow:last-child{border-bottom:none}
-.tcb{width:16px;height:16px;border-radius:4px;border:2px solid var(--card-border);cursor:pointer;flex-shrink:0;margin-top:1.5px;appearance:none;background:var(--card-bg);transition:all .15s}
+.tcb{width:16px;height:16px;border-radius:4px;border:2px solid rgba(0,0,0,.15);cursor:pointer;flex-shrink:0;margin-top:1.5px;appearance:none;background:#fff;transition:all .15s}
 .tcb:checked{background:var(--navy);border-color:var(--navy);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 10 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 4l3 3 5-6' stroke='white' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:center;background-size:9px}
 .tlabel{font-size:14px;font-weight:700;color:var(--text);line-height:1.4;transition:color .15s}
 .tcb:checked~.tc .tlabel{text-decoration:line-through;color:var(--text-sub)}
@@ -180,72 +186,92 @@ body.edit-mode .wb.edit-btn,body.edit-mode .wb.del{display:flex}
 .warnrow{display:flex;align-items:flex-start;gap:5px;font-size:13px;font-weight:700;color:var(--red);margin-top:4px}
 .warnrow::before{content:'▲';font-size:9px;margin-top:2px;flex-shrink:0}
 
+/* Ploeg section divider */
+.ploeg-block{margin-bottom:18px}
+.ploeg-block:last-child{margin-bottom:0}
+.ploeg-block-hdr{
+  font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.7px;
+  color:#fff;padding:4px 10px;border-radius:5px;
+  display:inline-block;margin-bottom:8px;
+}
+
 /* MODALS */
-.mov{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.mov{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
 .mov.open{opacity:1;pointer-events:all}
-.mbox{background:var(--card-bg);border-radius:16px;padding:0;width:520px;max-width:96vw;max-height:90vh;overflow-y:auto;box-shadow:0 24px 70px rgba(0,0,0,.4);border:1px solid var(--card-border);animation:min .2s cubic-bezier(.2,.8,.4,1)}
-@keyframes min{from{transform:scale(.9) translateY(10px)}to{transform:none}}
-.mh{font-size:17px;font-weight:900;text-transform:uppercase;letter-spacing:.8px;color:var(--text);padding:22px 24px 18px;border-bottom:1.5px solid var(--divider)}
+.mbox{background:#fff;border-radius:16px;padding:0;width:560px;max-width:96vw;max-height:90vh;overflow-y:auto;box-shadow:0 24px 70px rgba(0,0,0,.3);border:1px solid rgba(0,0,0,.08);animation:mmin .2s cubic-bezier(.2,.8,.4,1)}
+@keyframes mmin{from{transform:scale(.9) translateY(10px)}to{transform:none}}
+.mh{font-size:17px;font-weight:900;text-transform:uppercase;letter-spacing:.8px;color:var(--text);padding:22px 24px 18px;border-bottom:1.5px solid rgba(0,0,0,.08)}
 #embody,#wpgrid{padding:20px 24px 0}
-.macts{display:flex;gap:10px;justify-content:flex-end;padding:18px 24px 22px;border-top:1.5px solid var(--divider);margin-top:20px}
+.macts{display:flex;gap:10px;justify-content:flex-end;padding:18px 24px 22px;border-top:1.5px solid rgba(0,0,0,.08);margin-top:20px}
 .flbl{display:block;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.6px;color:var(--text-sub);margin:18px 0 6px}
 .flbl:first-of-type{margin-top:0}
-.finp,.fta{width:100%;background:#fff;border:1.5px solid var(--card-border);border-radius:8px;padding:11px 13px;font-family:'Frutiger',sans-serif;font-size:15px;font-weight:400;color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s}
+.finp,.fta{width:100%;background:#f8f8f8;border:1.5px solid #e0e0e0;border-radius:8px;padding:11px 13px;font-family:'Frutiger',sans-serif;font-size:15px;font-weight:400;color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s}
 .finp:focus,.fta:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(23,66,140,.1)}
 .fta{resize:vertical;min-height:120px;line-height:1.65;font-size:14px}
-.fhint{font-size:12px;color:var(--text-sub);margin-top:9px;line-height:1.6;font-weight:400;background:var(--input-bg);border:1px solid var(--divider);border-radius:8px;padding:9px 12px}
+.fhint{font-size:12px;color:var(--text-sub);margin-top:9px;line-height:1.6;font-weight:400;background:#f4f5f8;border:1px solid #e8e8e8;border-radius:8px;padding:9px 12px}
 .fhint code{font-family:monospace;background:rgba(23,66,140,.08);color:var(--navy);padding:2px 6px;border-radius:4px;font-size:12px;font-weight:700}
 .bprim{background:var(--navy);color:#fff;border:none;padding:11px 26px;border-radius:8px;font-family:'Frutiger',sans-serif;font-weight:900;font-size:13px;cursor:pointer;transition:background .15s;text-transform:uppercase;letter-spacing:.4px}
 .bprim:hover{background:#1a4fa8}
-.bsec{background:transparent;border:1.5px solid var(--card-border);color:var(--text-sub);font-size:13px;font-weight:700;cursor:pointer;font-family:'Frutiger',sans-serif;padding:11px 20px;border-radius:8px;transition:border-color .15s,color .15s}
-.bsec:hover{border-color:var(--text-sub);color:var(--text)}
-/* Form builder rows */
+.bsec{background:transparent;border:1.5px solid #ddd;color:var(--text-sub);font-size:13px;font-weight:700;cursor:pointer;font-family:'Frutiger',sans-serif;padding:11px 20px;border-radius:8px;transition:border-color .15s,color .15s}
+.bsec:hover{border-color:#999;color:var(--text)}
 .frow{display:flex;align-items:center;gap:7px;margin-bottom:7px}
 .frow2{display:flex;gap:7px;margin-bottom:7px}
 .frow .finp,.frow2 .finp,.frow select.finp,.frow2 select.finp{flex:1;min-width:0}
 .frow input[type=checkbox]{flex:0 0 18px;width:18px;height:18px;cursor:pointer;accent-color:var(--navy);margin:0}
-.frow-del{flex:0 0 32px;width:32px;height:36px;border:none;background:var(--input-bg);border-radius:7px;color:var(--text-sub);font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;flex-shrink:0}
+.frow-del{flex:0 0 32px;width:32px;height:36px;border:none;background:#f0f0f0;border-radius:7px;color:#888;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;flex-shrink:0}
 .frow-del:hover{background:var(--red);color:#fff}
-.fcard{border:1.5px solid var(--divider);border-radius:10px;padding:13px 13px 10px;margin-bottom:10px}
+.fcard{border:1.5px solid #e8e8e8;border-radius:10px;padding:13px 13px 10px;margin-bottom:10px}
 .fcard-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px}
 .fcard-num{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.6px;color:var(--text-sub)}
 .fcard>.finp{margin-bottom:7px;display:block}
-.fadd{width:100%;margin-top:2px;padding:11px;background:none;border:1.5px dashed var(--card-border);border-radius:8px;color:var(--navy);font-family:'Frutiger',sans-serif;font-size:13px;font-weight:900;cursor:pointer;transition:all .15s;text-transform:uppercase;letter-spacing:.4px}
+.fadd{width:100%;margin-top:2px;padding:11px;background:none;border:1.5px dashed #ccc;border-radius:8px;color:var(--navy);font-family:'Frutiger',sans-serif;font-size:13px;font-weight:900;cursor:pointer;transition:all .15s;text-transform:uppercase;letter-spacing:.4px}
 .fadd:hover{border-color:var(--navy);background:rgba(23,66,140,.04)}
+.fadd.gold{color:var(--gold);border-color:var(--gold)}
+.fadd.gold:hover{background:rgba(204,153,51,.06);border-color:#a07820}
 select.finp{cursor:pointer}
 .wgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.wpick{background:var(--input-bg);border:1.5px solid var(--card-border);border-radius:10px;padding:13px 10px 11px;text-align:center;cursor:pointer;transition:all .15s;font-family:'Frutiger',sans-serif}
+.wpick{background:#f4f5f8;border:1.5px solid #e0e0e0;border-radius:10px;padding:13px 10px 11px;text-align:center;cursor:pointer;transition:all .15s;font-family:'Frutiger',sans-serif}
 .wpick:hover{border-color:var(--navy);background:rgba(23,66,140,.04)}
 .wpick.taken{opacity:.3;cursor:not-allowed;pointer-events:none}
-.wpick-ico{width:32px;height:32px;border-radius:7px;background:var(--card-bg);border:1px solid var(--card-border);margin:0 auto 7px;display:flex;align-items:center;justify-content:center}
+.wpick-ico{width:32px;height:32px;border-radius:7px;background:#fff;border:1px solid #e0e0e0;margin:0 auto 7px;display:flex;align-items:center;justify-content:center}
 .wpick-ico svg{width:15px;height:15px;stroke:var(--navy);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .wpick-name{font-size:12px;font-weight:900;color:var(--text);text-transform:uppercase;letter-spacing:.5px}
+.ploeg-fcard{border:2px solid var(--navy);border-radius:12px;padding:14px 14px 12px;margin-bottom:14px;position:relative}
+.ploeg-fcard-hdr{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.ploeg-fcard-hdr .finp{font-weight:700;font-size:14px}
+.ploeg-fcard-del{flex:0 0 32px;width:32px;height:34px;border:none;background:rgba(210,16,11,.08);border-radius:7px;color:var(--red);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.ploeg-fcard-del:hover{background:var(--red);color:#fff}
+.ploeg-members{display:flex;flex-direction:column;gap:0}
+.fadd-member{margin-top:8px;padding:9px;background:none;border:1.5px dashed #ccc;border-radius:7px;color:var(--navy);font-family:'Frutiger',sans-serif;font-size:12px;font-weight:900;cursor:pointer;transition:all .15s;text-transform:uppercase;letter-spacing:.4px;width:100%}
+.fadd-member:hover{border-color:var(--navy);background:rgba(23,66,140,.04)}
 
 /* Toast */
 .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(10px);background:#1A1C22;color:#fff;padding:9px 20px;border-radius:20px;font-weight:700;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.3);opacity:0;transition:all .25s;pointer-events:none;z-index:9999}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
+/* P2000 service badge */
+.svc-badge{font-size:10px;font-weight:800;color:#fff;border-radius:4px;padding:1px 6px;display:inline-block}
+
 /* ── MOBILE HOME ── */
 .mob-home{flex:1;display:none;overflow-y:auto;overflow-x:hidden;position:relative;z-index:5;padding:20px 16px}
 .mob-home::-webkit-scrollbar{width:4px}
-.mob-home::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:4px}
+.mob-home::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:4px}
 .mob-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px 6px;max-width:380px;margin:0 auto;padding-top:16px}
 .mob-app{display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;-webkit-tap-highlight-color:transparent;border:none;background:none;font-family:'Frutiger',sans-serif;transition:transform .1s,opacity .1s}
 .mob-app:active{transform:scale(.86);opacity:.75}
 .mob-ico{width:66px;height:66px;border-radius:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(0,0,0,.45)}
 .mob-ico svg{width:30px;height:30px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .mob-lbl{font-size:11px;font-weight:700;color:#fff;text-align:center;text-shadow:0 1px 5px rgba(0,0,0,.9);letter-spacing:.1px;line-height:1.3;word-break:break-word;max-width:72px}
-/* App overlay */
-.mob-appview{position:fixed;inset:0;z-index:600;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .38s cubic-bezier(.25,.46,.45,.94);will-change:transform;background:var(--card-bg)}
+.mob-appview{position:fixed;inset:0;z-index:600;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .38s cubic-bezier(.25,.46,.45,.94);will-change:transform;background:#fff}
 .mob-appview.open{transform:translateY(0)}
-.mob-appnav{flex:0 0 56px;background:var(--card-bg);border-bottom:1.5px solid var(--divider);display:flex;align-items:center;padding:0 8px;position:relative;flex-shrink:0}
+.mob-appnav{flex:0 0 56px;background:#fff;border-bottom:1.5px solid rgba(0,0,0,.08);display:flex;align-items:center;padding:0 8px;position:relative;flex-shrink:0}
 .mob-appnav-title{position:absolute;left:50%;transform:translateX(-50%);font-size:15px;font-weight:900;color:var(--text);text-transform:uppercase;letter-spacing:.5px;pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%}
 .mob-back-btn{background:none;border:none;color:var(--navy);font-family:'Frutiger',sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:2px;padding:10px 14px 10px 4px;border-radius:8px;-webkit-tap-highlight-color:transparent}
 .mob-back-btn:active{opacity:.6}
 .mob-back-btn svg{width:20px;height:20px;stroke:var(--navy);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
 .mob-appbody{flex:1;overflow-y:auto;padding:16px}
 .mob-appbody::-webkit-scrollbar{width:3px}
-.mob-appbody::-webkit-scrollbar-thumb{background:var(--divider);border-radius:3px}
+.mob-appbody::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);border-radius:3px}
 @media(max-width:768px){
   .canvas{display:none!important}
   .mob-home{display:block!important}
@@ -273,7 +299,7 @@ select.finp{cursor:pointer}
     <button class="tb-btn load-btn" id="loadbtn" onclick="triggerLoad()">Laden</button>
     <input type="file" id="loadfile" accept=".json" style="display:none" onchange="loadFromFile(event)">
     <div class="tb-layout" id="layout-lbl">Layout: <strong>Vergrendeld</strong></div>
-    <button class="tb-btn gold" id="editbtn" onclick="toggleEditMode()">Edit Mode</button>
+    <button class="tb-btn gold" id="editbtn" onclick="toggleEditMode()">Aanpassen</button>
   </div>
 </header>
 
@@ -281,12 +307,10 @@ select.finp{cursor:pointer}
   <div class="grid-stack" id="grid"></div>
 </main>
 
-<!-- Mobile home screen -->
 <div class="mob-home" id="mob-home">
   <div class="mob-grid" id="mob-grid"></div>
 </div>
 
-<!-- Mobile app view (slides up from bottom) -->
 <div class="mob-appview" id="mob-appview">
   <div class="mob-appnav">
     <button class="mob-back-btn" onclick="closeApp()">
@@ -300,8 +324,8 @@ select.finp{cursor:pointer}
 
 <footer class="btmbar">
   <div class="bb-logo">
-    <strong>PLOEGLEIDER</strong>
-    <span>Dashboard</span>
+    <strong>Operationeel Dagjournaal</strong>
+    <span>Widgetpagina</span>
   </div>
   <button class="bb-add" onclick="openModal('add-modal')">+</button>
   <div class="bb-datetime"><span id="bbdate">—</span>&nbsp;&nbsp;<span id="bbtime"></span></div>
@@ -330,7 +354,6 @@ select.finp{cursor:pointer}
 
 <script src="https://cdn.jsdelivr.net/npm/gridstack@10.0/dist/gridstack-all.js"></script>
 <script>
-// ── ICONS ──
 const I={
   pencil:`<svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`,
   x:`<svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
@@ -345,8 +368,32 @@ const I={
 };
 
 function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function v(id){return document.getElementById(id)?.value||'';}
-function delRow(btn){btn.closest('.frow,.fcard').remove();}
+function delRow(btn){btn.closest('.frow,.fcard,.ploeg-fcard').remove();}
+
+function addMemberRow(btn){
+  const members=btn.previousElementSibling;
+  if(!members||!members.classList.contains('ploeg-members'))return;
+  members.insertAdjacentHTML('beforeend',`
+    <div class="frow">
+      <input class="finp f-name" placeholder="Naam" style="flex:2">
+      <input class="finp f-rank" placeholder="Functie (BV/Ch/2...)" style="flex:0 0 110px">
+      <input class="finp f-extra" placeholder="Extra (WO : BV, ...)" style="flex:1;font-size:13px">
+      <button class="frow-del" onclick="delRow(this)" type="button">×</button>
+    </div>`);
+}
+
+function addPloegCard(container){
+  container.insertAdjacentHTML('beforeend',`
+    <div class="ploeg-fcard">
+      <div class="ploeg-fcard-hdr">
+        <input class="finp f-ploegnaam" placeholder="Voertuig (bijv. TS 1)" style="flex:1">
+        <button class="ploeg-fcard-del" onclick="delRow(this)" type="button">×</button>
+      </div>
+      <div class="ploeg-members"></div>
+      <button class="fadd-member" onclick="addMemberRow(this)" type="button">+ Lid toevoegen</button>
+    </div>`);
+}
+
 function addFormRow(type){
   const c=document.getElementById('f-rows');if(!c)return;
   const n=c.querySelectorAll('.frow,.fcard').length+1;
@@ -354,15 +401,12 @@ function addFormRow(type){
     werkzaamheden:`<div class="frow"><input type="checkbox" class="f-done"><input class="finp f-task" placeholder="Taakomschrijving" style="flex:2"><input class="finp f-meta" placeholder="Notitie"><button class="frow-del" onclick="delRow(this)" type="button">×</button></div>`,
     voertuigen:`<div class="frow"><input class="finp f-cs" placeholder="Callsign" style="flex:0 0 80px"><input class="finp f-vtype" placeholder="Type voertuig"><select class="finp f-status" style="flex:0 0 135px"><option value="ok">Operationeel</option><option value="warn">Onderhoud</option><option value="err">Uitval</option></select><button class="frow-del" onclick="delRow(this)" type="button">×</button></div>`,
     reserveringen:`<div class="frow"><input class="finp f-time" placeholder="09:00" style="flex:0 0 72px"><input class="finp f-loc" placeholder="Locatie"><input class="finp f-desc" placeholder="Omschrijving" style="flex:2"><button class="frow-del" onclick="delRow(this)" type="button">×</button></div>`,
-    ploegindeling:`<div class="frow"><input class="finp f-rank" placeholder="Rang" style="flex:0 0 65px"><input class="finp f-name" placeholder="Naam" style="flex:2"><input class="finp f-role" placeholder="Functie"><button class="frow-del" onclick="delRow(this)" type="button">×</button></div>`,
     topdesk:`<div class="fcard"><div class="fcard-head"><span class="fcard-num">Melding ${n}</span><button class="frow-del" onclick="delRow(this)" type="button">×</button></div><div class="frow2"><input class="finp f-num" placeholder="Meldingsnummer"><select class="finp f-status" style="flex:0 0 150px"><option value="AFGEHANDELD">Afgehandeld</option><option value="OPEN">Open</option><option value="IN BEHANDELING">In behandeling</option></select></div><input class="finp f-title" placeholder="Titel"><div class="frow2"><input class="finp f-loc" placeholder="Locatie (optioneel)"><input class="finp f-dl" placeholder="Streefdatum" style="flex:0 0 95px"></div><div class="frow2"><input class="finp f-date" placeholder="Aangemaakt op"><input class="finp f-person" placeholder="Verantwoordelijke"></div></div>`,
     wegafsluiting:`<div class="fcard"><div class="fcard-head"><span class="fcard-num">Afsluiting ${n}</span><button class="frow-del" onclick="delRow(this)" type="button">×</button></div><div class="frow2"><input class="finp f-weg" placeholder="Wegnaam"><select class="finp f-status" style="flex:0 0 130px"><option value="AFGESLOTEN">Afgesloten</option><option value="BEPERKT">Beperkt</option></select></div><input class="finp f-date" placeholder="Datum"><input class="finp f-desc" placeholder="Omschrijving"><input class="finp f-warn" placeholder="Waarschuwing (optioneel)"></div>`,
-    p2000:`<div class="fcard"><div class="fcard-head"><span class="fcard-num">Incident ${n}</span><button class="frow-del" onclick="delRow(this)" type="button">×</button></div><div class="frow2"><input class="finp f-time" placeholder="11:34" style="flex:0 0 72px"><select class="finp f-prio" style="flex:0 0 110px"><option value="p1">PRIO 1</option><option value="p2">PRIO 2</option><option value="p3">PRIO 3</option></select><input class="finp f-units" placeholder="Eenheden (bijv. TS31 HV31)"></div><textarea class="fta f-msg" rows="2" style="min-height:58px" placeholder="Meldingtekst..."></textarea></div>`,
   };
   if(h[type])c.insertAdjacentHTML('beforeend',h[type]);
 }
 
-// ── TYPES ──
 const T={
   werkzaamheden:{label:'Werkzaamheden',ico:'list',
     def:{items:[
@@ -387,56 +431,31 @@ const T={
           <button class="frow-del" onclick="delRow(this)" type="button">×</button>
         </div>`).join('')}</div>
       <button class="fadd" onclick="addFormRow('werkzaamheden')" type="button">+ Taak toevoegen</button>`;},
-    parseForm(){
-      return{items:[...document.querySelectorAll('#f-rows .frow')].map(r=>({
-        d:r.querySelector('.f-done').checked,
-        t:r.querySelector('.f-task').value,
-        m:r.querySelector('.f-meta').value,
-      }))};},
+    parseForm(){return{items:[...document.querySelectorAll('#f-rows .frow')].map(r=>({d:r.querySelector('.f-done').checked,t:r.querySelector('.f-task').value,m:r.querySelector('.f-meta').value}))};},
   },
+
   weather:{label:'Actueel Weer',ico:'cloud',
     def:{loc:'TRAMSINGEL 71, BREDA',temp:'—',desc:'Laden…',wind:'—',hum:'—',pres:'—',vis:'—',rain:[]},
     render(d){
-      // Rain chart SVG (next 12 hours)
       let rainChart='';
       if(d.rain&&d.rain.length){
         const bars=d.rain.slice(0,12);
-        const VW=240, BAR_H=50, LABEL_Y=68, TOTAL_H=74;
-        const W=VW/bars.length;
+        const VW=240,BAR_H=50,LABEL_Y=68,TOTAL_H=74,W=VW/bars.length;
         const barsHTML=bars.map((b,i)=>{
           const h=Math.max(2,Math.round((b.prob/100)*BAR_H));
           const col=b.prob>70?'#17428C':b.prob>30?'#4A7EC7':'#BFCFE8';
           const x=i*W;
-          const hourNum=b.hour.slice(0,2); // just "13", "14" etc
-          const lbl=i%2===0?`<text x="${x+W/2}" y="${LABEL_Y}" text-anchor="middle" font-size="8" fill="#9DA3B0">${hourNum}</text>`:'';
+          const lbl=i%2===0?`<text x="${x+W/2}" y="${LABEL_Y}" text-anchor="middle" font-size="8" fill="#9DA3B0">${b.hour.slice(0,2)}</text>`:'';
           const mmLbl=b.mm>=0.2?`<text x="${x+W/2}" y="${BAR_H-h-3}" text-anchor="middle" font-size="7" fill="#17428C">${b.mm.toFixed(1)}</text>`:'';
           return`<rect x="${x+W*0.15}" y="${BAR_H-h}" width="${W*0.7}" height="${h}" fill="${col}" rx="2"/>${mmLbl}${lbl}`;
         }).join('');
-        rainChart=`
-        <div style="margin-top:12px">
-          <div style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sub);margin-bottom:4px">Neerslag komende 12 uur</div>
-          <svg viewBox="0 0 ${VW} ${TOTAL_H}" style="width:100%;display:block">
-            <line x1="0" y1="${BAR_H}" x2="${VW}" y2="${BAR_H}" stroke="#ECEEF3" stroke-width="1"/>
-            ${barsHTML}
-          </svg>
-        </div>`;
+        rainChart=`<div style="margin-top:12px"><div style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sub);margin-bottom:4px">Neerslag komende 12 uur</div><svg viewBox="0 0 ${VW} ${TOTAL_H}" style="width:100%;display:block"><line x1="0" y1="${BAR_H}" x2="${VW}" y2="${BAR_H}" stroke="rgba(0,0,0,.08)" stroke-width="1"/>${barsHTML}</svg></div>`;
       }
-      return`
-      <div style="text-align:center;padding:8px 0 10px">
-        <div style="font-size:11px;font-weight:800;letter-spacing:1.4px;color:var(--red);margin-bottom:10px">${esc(d.loc)}</div>
-        <div style="font-size:52px;font-weight:900;color:var(--text);line-height:1.05">${esc(d.temp)}°C</div>
-        <div style="font-size:13px;font-weight:600;color:var(--text-sub);margin-top:7px">${esc(d.desc)}</div>
-      </div>
-      <div class="sgrid">
-        <div class="scell"><div class="sl">Wind</div><div class="sv">${esc(d.wind)}</div></div>
-        <div class="scell"><div class="sl">Vochtigheid</div><div class="sv">${esc(d.hum)}</div></div>
-        <div class="scell"><div class="sl">Luchtdruk</div><div class="sv">${esc(d.pres)}</div></div>
-        <div class="scell"><div class="sl">Zichtbaarheid</div><div class="sv">${esc(d.vis)}</div></div>
-      </div>
-      ${rainChart}`;},
+      return`<div style="text-align:center;padding:8px 0 10px"><div style="font-size:11px;font-weight:800;letter-spacing:1.4px;color:var(--red);margin-bottom:10px">${esc(d.loc)}</div><div style="font-size:52px;font-weight:900;color:var(--text);line-height:1.05">${esc(d.temp)}°C</div><div style="font-size:13px;font-weight:600;color:var(--text-sub);margin-top:7px">${esc(d.desc)}</div></div><div class="sgrid"><div class="scell"><div class="sl">Wind</div><div class="sv">${esc(d.wind)}</div></div><div class="scell"><div class="sl">Vochtigheid</div><div class="sv">${esc(d.hum)}</div></div><div class="scell"><div class="sl">Luchtdruk</div><div class="sv">${esc(d.pres)}</div></div><div class="scell"><div class="sl">Zichtbaarheid</div><div class="sv">${esc(d.vis)}</div></div></div>${rainChart}`;},
     editForm(){return`<div style="color:var(--text-sub);padding:8px;font-size:13px">Weer wordt automatisch opgehaald via Open-Meteo.</div>`;},
     parseForm(){return{};},
   },
+
   voertuigen:{label:'Status Voertuigen',ico:'truck',
     def:{vehicles:[
       {cs:'TS-31',type:'Tankautospuit',s:'ok'},
@@ -446,30 +465,11 @@ const T={
       {cs:'TS-32',type:'Tankautospuit',s:'err'},
     ]},
     render(d){const L={ok:'Operationeel',warn:'Onderhoud',err:'Uitruk'};const C={ok:'green',warn:'gold',err:'red'};
-      return`<table class="wtbl"><thead><tr><th>Callsign</th><th>Type</th><th>Status</th></tr></thead><tbody>${
-        d.vehicles.map(vv=>`<tr><td style="font-weight:800">${esc(vv.cs)}</td><td style="color:var(--text-sub);font-size:12px">${esc(vv.type)}</td><td><span class="pill ${C[vv.s]||'grey'}">${L[vv.s]||vv.s}</span></td></tr>`).join('')
-      }</tbody></table>`;},
-    editForm(d){return`
-      <label class="flbl">Voertuigen</label>
-      <div id="f-rows">${d.vehicles.map(vv=>`
-        <div class="frow">
-          <input class="finp f-cs" value="${esc(vv.cs)}" placeholder="Callsign" style="flex:0 0 80px">
-          <input class="finp f-vtype" value="${esc(vv.type)}" placeholder="Type voertuig">
-          <select class="finp f-status" style="flex:0 0 135px">
-            <option value="ok" ${vv.s==='ok'?'selected':''}>Operationeel</option>
-            <option value="warn" ${vv.s==='warn'?'selected':''}>Onderhoud</option>
-            <option value="err" ${vv.s==='err'?'selected':''}>Uitval</option>
-          </select>
-          <button class="frow-del" onclick="delRow(this)" type="button">×</button>
-        </div>`).join('')}</div>
-      <button class="fadd" onclick="addFormRow('voertuigen')" type="button">+ Voertuig toevoegen</button>`;},
-    parseForm(){
-      return{vehicles:[...document.querySelectorAll('#f-rows .frow')].map(r=>({
-        cs:r.querySelector('.f-cs').value,
-        type:r.querySelector('.f-vtype').value,
-        s:r.querySelector('.f-status').value,
-      }))};},
+      return`<table class="wtbl"><thead><tr><th>Callsign</th><th>Type</th><th>Status</th></tr></thead><tbody>${d.vehicles.map(vv=>`<tr><td style="font-weight:800">${esc(vv.cs)}</td><td style="color:var(--text-sub);font-size:12px">${esc(vv.type)}</td><td><span class="pill ${C[vv.s]||'grey'}">${L[vv.s]||vv.s}</span></td></tr>`).join('')}</tbody></table>`;},
+    editForm(d){return`<label class="flbl">Voertuigen</label><div id="f-rows">${d.vehicles.map(vv=>`<div class="frow"><input class="finp f-cs" value="${esc(vv.cs)}" placeholder="Callsign" style="flex:0 0 80px"><input class="finp f-vtype" value="${esc(vv.type)}" placeholder="Type voertuig"><select class="finp f-status" style="flex:0 0 135px"><option value="ok" ${vv.s==='ok'?'selected':''}>Operationeel</option><option value="warn" ${vv.s==='warn'?'selected':''}>Onderhoud</option><option value="err" ${vv.s==='err'?'selected':''}>Uitval</option></select><button class="frow-del" onclick="delRow(this)" type="button">×</button></div>`).join('')}</div><button class="fadd" onclick="addFormRow('voertuigen')" type="button">+ Voertuig toevoegen</button>`;},
+    parseForm(){return{vehicles:[...document.querySelectorAll('#f-rows .frow')].map(r=>({cs:r.querySelector('.f-cs').value,type:r.querySelector('.f-vtype').value,s:r.querySelector('.f-status').value}))};},
   },
+
   reserveringen:{label:'Reserveringen Topdesk',ico:'cal',
     def:{items:[
       {time:'09:00',loc:'Instructieruimte A',desc:'Ploegvergadering'},
@@ -477,65 +477,70 @@ const T={
       {time:'14:00',loc:'Kantine',desc:'Werkoverleg logistiek'},
       {time:'19:00',loc:'Kantine',desc:'Afscheid collega J. Vermeulen'},
     ]},
-    render(d){return d.items.map(r=>`
-      <div class="acc blue" style="display:flex;gap:11px;align-items:flex-start">
-        <div style="font-size:16px;font-weight:900;color:var(--navy);min-width:44px;flex-shrink:0">${esc(r.time)}</div>
-        <div><div style="font-size:13px;font-weight:700;color:var(--text)">${esc(r.desc)}</div><div style="font-size:11px;color:var(--text-sub);margin-top:2px">${esc(r.loc)}</div></div>
-      </div>`).join('');},
-    editForm(d){return`
-      <label class="flbl">Reserveringen</label>
-      <div id="f-rows">${d.items.map(r=>`
-        <div class="frow">
-          <input class="finp f-time" value="${esc(r.time)}" placeholder="09:00" style="flex:0 0 72px">
-          <input class="finp f-loc" value="${esc(r.loc)}" placeholder="Locatie">
-          <input class="finp f-desc" value="${esc(r.desc)}" placeholder="Omschrijving" style="flex:2">
-          <button class="frow-del" onclick="delRow(this)" type="button">×</button>
-        </div>`).join('')}</div>
-      <button class="fadd" onclick="addFormRow('reserveringen')" type="button">+ Reservering toevoegen</button>`;},
-    parseForm(){
-      return{items:[...document.querySelectorAll('#f-rows .frow')].map(r=>({
-        time:r.querySelector('.f-time').value,
-        loc:r.querySelector('.f-loc').value,
-        desc:r.querySelector('.f-desc').value,
-      }))};},
+    render(d){return d.items.map(r=>`<div class="acc blue" style="display:flex;gap:11px;align-items:flex-start"><div style="font-size:16px;font-weight:900;color:var(--navy);min-width:44px;flex-shrink:0">${esc(r.time)}</div><div><div style="font-size:13px;font-weight:700;color:var(--text)">${esc(r.desc)}</div><div style="font-size:11px;color:var(--text-sub);margin-top:2px">${esc(r.loc)}</div></div></div>`).join('');},
+    editForm(d){return`<label class="flbl">Reserveringen</label><div id="f-rows">${d.items.map(r=>`<div class="frow"><input class="finp f-time" value="${esc(r.time)}" placeholder="09:00" style="flex:0 0 72px"><input class="finp f-loc" value="${esc(r.loc)}" placeholder="Locatie"><input class="finp f-desc" value="${esc(r.desc)}" placeholder="Omschrijving" style="flex:2"><button class="frow-del" onclick="delRow(this)" type="button">×</button></div>`).join('')}</div><button class="fadd" onclick="addFormRow('reserveringen')" type="button">+ Reservering toevoegen</button>`;},
+    parseForm(){return{items:[...document.querySelectorAll('#f-rows .frow')].map(r=>({time:r.querySelector('.f-time').value,loc:r.querySelector('.f-loc').value,desc:r.querySelector('.f-desc').value}))};},
   },
+
   ploegindeling:{label:'Ploegindeling',ico:'users',
-    def:{ploeg:'B-Ploeg',members:[
-      {rank:'PC',name:'L. van den Berg',role:'Ploegcommandant'},
-      {rank:'OPC',name:'M. Jansen',role:'Ondersteuning'},
-      {rank:'HB',name:'A. de Vries',role:'Chauffeur TS-31'},
-      {rank:'HB',name:'K. Peeters',role:'Manschap TS-31'},
-      {rank:'HB',name:'S. Oosterbeek',role:'Chauffeur HV-31'},
-      {rank:'MN',name:'T. Brouwers',role:'Manschap HV-31'},
-      {rank:'MN',name:'F. Willems',role:'Manschap TS-31'},
+    def:{ploegen:[
+      {naam:'TS 1',members:[
+        {name:'Martijn Goos, M.',rank:'BV',extra:[]},
+        {name:'Joeri Seters, J. van',rank:'Ch',extra:[]},
+        {name:'Erik Smulders, E.J.M.',rank:'2',extra:['WO : ass']},
+        {name:'Arjan van Gurp, A.C.J.',rank:'3',extra:[]},
+        {name:'Julio Rivero González',rank:'4',extra:[]},
+      ]},
+      {naam:'TS 2',members:[
+        {name:'Joost Luit, J. van der',rank:'BV',extra:['WO : BV']},
+        {name:'Erik Beurden, E.R.K.',rank:'Ch',extra:['WO : Ch']},
+        {name:'Niels van Pomp, N.',rank:'1',extra:['WO : duiker2','Corvee : Sleutelronde']},
+        {name:'Serge Fransen, S.',rank:'2',extra:[]},
+        {name:'Bouke Kramer, B.',rank:'3',extra:['WO : duiker1']},
+      ]},
     ]},
-    render(d){return`
-      <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text-sub);margin-bottom:10px">${esc(d.ploeg)}</div>
-      <table class="wtbl"><thead><tr><th>Rang</th><th>Naam</th><th>Functie</th></tr></thead><tbody>${
-        d.members.map(m=>`<tr><td><span class="pill blue">${esc(m.rank)}</span></td><td style="font-weight:700">${esc(m.name)}</td><td style="color:var(--text-sub);font-size:12px">${esc(m.role)}</td></tr>`).join('')
-      }</tbody></table>`;},
-    editForm(d){return`
-      <label class="flbl">Ploegnaam</label>
-      <input class="finp" id="f-ploeg" value="${esc(d.ploeg)}">
-      <label class="flbl">Leden</label>
-      <div id="f-rows">${d.members.map(m=>`
-        <div class="frow">
-          <input class="finp f-rank" value="${esc(m.rank)}" placeholder="Rang" style="flex:0 0 65px">
-          <input class="finp f-name" value="${esc(m.name)}" placeholder="Naam" style="flex:2">
-          <input class="finp f-role" value="${esc(m.role)}" placeholder="Functie">
-          <button class="frow-del" onclick="delRow(this)" type="button">×</button>
-        </div>`).join('')}</div>
-      <button class="fadd" onclick="addFormRow('ploegindeling')" type="button">+ Lid toevoegen</button>`;},
+    render(d){
+      const ploegen=d.ploegen?d.ploegen:[{naam:d.ploeg||'Ploeg',members:(d.members||[]).map(m=>({name:m.name,rank:m.rank||m.role||'',extra:[]}))}];
+      function voertuigColor(naam){
+        const n=(naam||'').toUpperCase().replace(/\s/g,'');
+        if(/TS\s*1/.test(naam)||n==='TS1') return '#D2100B';
+        if(/TS\s*2/.test(naam)||n==='TS2') return '#7B0707';
+        if(/TS\s*3/.test(naam)||n==='TS3') return '#5C0505';
+        if(/^WO/i.test(naam))              return '#16a34a';
+        if(/^HV/i.test(naam))              return '#b45309';
+        if(/^LB/i.test(naam))              return '#1d4ed8';
+        return '#17428C';
+      }
+      function extraPillColor(text){
+        const t=(text||'').toUpperCase().trimStart();
+        if(t.startsWith('WO'))     return '#16a34a';
+        if(t.startsWith('SPEC'))   return '#60a5fa';
+        if(t.startsWith('CORVEE')) return '#9ca3af';
+        if(t.startsWith('HV'))     return '#b45309';
+        return '#6b7280';
+      }
+      function pillTextColor(bg){return bg==='#60a5fa'?'#1e3a5f':'#fff';}
+      const PILL='font-size:11px;font-weight:900;padding:3px 10px;border-radius:20px;white-space:nowrap;letter-spacing:.3px;display:inline-block';
+      return ploegen.map(p=>{
+        const pc=voertuigColor(p.naam);
+        return`<div class="ploeg-block"><div class="ploeg-block-hdr" style="background:${pc}">${esc(p.naam)}</div>${p.members.map(m=>{
+          const isOverig=/overig/i.test(p.naam);
+          const primaryPill=isOverig?'':`<span style="${PILL};background:${pc};color:#fff;text-transform:uppercase">${esc(p.naam)} : ${esc(m.rank)}</span>`;
+          const extraPills=(m.extra||[]).map(ex=>{const bg=extraPillColor(ex);return`<span style="${PILL};background:${bg};color:${pillTextColor(bg)}">${esc(ex)}</span>`;}).join('');
+          return`<div style="display:flex;align-items:flex-start;flex-wrap:wrap;gap:4px 8px;padding:9px 0;border-bottom:1px solid rgba(0,0,0,.06)"><span style="font-size:13px;font-weight:700;color:var(--text);flex:1 1 130px;min-width:0;padding-top:3px">${esc(m.name)}</span><div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;flex:0 1 auto">${primaryPill}${extraPills}</div></div>`;
+        }).join('')}</div>`;
+      }).join('');
+    },
+    editForm(d){
+      const ploegen=d.ploegen?d.ploegen:[{naam:d.ploeg||'Ploeg',members:(d.members||[]).map(m=>({name:m.name,rank:m.rank||m.role||'',extra:[]}))}];
+      const ploegCards=ploegen.map(p=>`<div class="ploeg-fcard"><div class="ploeg-fcard-hdr"><input class="finp f-ploegnaam" value="${esc(p.naam)}" placeholder="Voertuig (bijv. TS 1)" style="flex:1;font-weight:700"><button class="ploeg-fcard-del" onclick="delRow(this)" type="button">×</button></div><div class="ploeg-members">${p.members.map(m=>`<div class="frow"><input class="finp f-name" value="${esc(m.name)}" placeholder="Naam" style="flex:2"><input class="finp f-rank" value="${esc(m.rank)}" placeholder="Functie (BV/Ch/2…)" style="flex:0 0 110px"><input class="finp f-extra" value="${esc((m.extra||[]).join(', '))}" placeholder="Extra (WO : BV, …)" style="flex:1;font-size:13px"><button class="frow-del" onclick="delRow(this)" type="button">×</button></div>`).join('')}</div><button class="fadd-member" onclick="addMemberRow(this)" type="button">+ Lid toevoegen</button></div>`).join('');
+      return`<label class="flbl">Voertuiggroepen</label><div id="f-ploegen">${ploegCards}</div><button class="fadd gold" onclick="addPloegCard(document.getElementById('f-ploegen'))" type="button">+ Voertuig toevoegen</button><div class="fhint" style="margin-top:14px"><strong>Functie:</strong> BV, Ch, 1, 2, 3, 4 …<br><strong>Extra toewijzingen:</strong> kommagescheiden, bijv. <code>WO : BV, Corvee : Sleutelronde</code></div>`;
+    },
     parseForm(){
-      return{
-        ploeg:document.getElementById('f-ploeg').value,
-        members:[...document.querySelectorAll('#f-rows .frow')].map(r=>({
-          rank:r.querySelector('.f-rank').value,
-          name:r.querySelector('.f-name').value,
-          role:r.querySelector('.f-role').value,
-        }))
-      };},
+      return{ploegen:[...document.querySelectorAll('#f-ploegen .ploeg-fcard')].map(card=>({naam:card.querySelector('.f-ploegnaam').value,members:[...card.querySelectorAll('.ploeg-members .frow')].map(r=>({name:r.querySelector('.f-name').value,rank:r.querySelector('.f-rank').value,extra:r.querySelector('.f-extra').value.split(',').map(s=>s.trim()).filter(Boolean)}))}))};
+    },
   },
+
   topdesk:{label:'Topdesk Meldingen',ico:'ticket',
     def:{items:[
       {num:'M2603 156',title:'Verstopping',loc:'BREDA',status:'AFGEHANDELD',date:'Di, 3 mrt 2026',dl:'04/03',person:'Meijers, Dennis'},
@@ -544,170 +549,48 @@ const T={
       {num:'I-2026-4821',title:'Laadpaal voertuig HV-31 defect',loc:'',status:'IN BEHANDELING',date:'Di, 17 mrt 2026',dl:'20/03',person:'Jansen, M.'},
     ]},
     render(d){const SC={AFGEHANDELD:'green',OPEN:'red','IN BEHANDELING':'gold'};
-      return d.items.map(t=>`
-        <div class="acc" style="margin-bottom:9px">
-          <div class="irow">
-            <div class="irow-l">
-              <span style="font-size:13px;font-weight:700">${esc(t.title)}</span>
-              ${t.loc?`<span class="pill blue">${esc(t.loc)}</span>`:''}
-            </div>
-            <span class="pill ${SC[t.status]||'grey'}">${esc(t.status)}</span>
-          </div>
-          <div style="font-size:11px;color:var(--text-sub)">${esc(t.num)} &bull; Aangemaakt: ${esc(t.date)} &bull; Streefdatum: ${esc(t.dl)}</div>
-          <div style="font-size:11px;color:var(--text-sub);text-align:right;margin-top:1px">${esc(t.person)}</div>
-        </div>`).join('');},
-    editForm(d){return`
-      <label class="flbl">Meldingen</label>
-      <div id="f-rows">${d.items.map((t,i)=>`
-        <div class="fcard">
-          <div class="fcard-head">
-            <span class="fcard-num">Melding ${i+1}</span>
-            <button class="frow-del" onclick="delRow(this)" type="button">×</button>
-          </div>
-          <div class="frow2">
-            <input class="finp f-num" value="${esc(t.num)}" placeholder="Meldingsnummer">
-            <select class="finp f-status" style="flex:0 0 150px">
-              <option value="AFGEHANDELD" ${t.status==='AFGEHANDELD'?'selected':''}>Afgehandeld</option>
-              <option value="OPEN" ${t.status==='OPEN'?'selected':''}>Open</option>
-              <option value="IN BEHANDELING" ${t.status==='IN BEHANDELING'?'selected':''}>In behandeling</option>
-            </select>
-          </div>
-          <input class="finp f-title" value="${esc(t.title)}" placeholder="Titel">
-          <div class="frow2">
-            <input class="finp f-loc" value="${esc(t.loc)}" placeholder="Locatie (optioneel)">
-            <input class="finp f-dl" value="${esc(t.dl)}" placeholder="Streefdatum" style="flex:0 0 95px">
-          </div>
-          <div class="frow2">
-            <input class="finp f-date" value="${esc(t.date)}" placeholder="Aangemaakt op">
-            <input class="finp f-person" value="${esc(t.person)}" placeholder="Verantwoordelijke">
-          </div>
-        </div>`).join('')}</div>
-      <button class="fadd" onclick="addFormRow('topdesk')" type="button">+ Melding toevoegen</button>`;},
-    parseForm(){
-      return{items:[...document.querySelectorAll('#f-rows .fcard')].map(c=>({
-        num:c.querySelector('.f-num').value,
-        title:c.querySelector('.f-title').value,
-        loc:c.querySelector('.f-loc').value,
-        status:c.querySelector('.f-status').value,
-        date:c.querySelector('.f-date').value,
-        dl:c.querySelector('.f-dl').value,
-        person:c.querySelector('.f-person').value,
-      }))};},
+      return d.items.map(t=>`<div class="acc" style="margin-bottom:9px"><div class="irow"><div class="irow-l"><span style="font-size:13px;font-weight:700">${esc(t.title)}</span>${t.loc?`<span class="pill blue">${esc(t.loc)}</span>`:''}</div><span class="pill ${SC[t.status]||'grey'}">${esc(t.status)}</span></div><div style="font-size:11px;color:var(--text-sub)">${esc(t.num)} &bull; Aangemaakt: ${esc(t.date)} &bull; Streefdatum: ${esc(t.dl)}</div><div style="font-size:11px;color:var(--text-sub);text-align:right;margin-top:1px">${esc(t.person)}</div></div>`).join('');},
+    editForm(d){return`<label class="flbl">Meldingen</label><div id="f-rows">${d.items.map((t,i)=>`<div class="fcard"><div class="fcard-head"><span class="fcard-num">Melding ${i+1}</span><button class="frow-del" onclick="delRow(this)" type="button">×</button></div><div class="frow2"><input class="finp f-num" value="${esc(t.num)}" placeholder="Meldingsnummer"><select class="finp f-status" style="flex:0 0 150px"><option value="AFGEHANDELD" ${t.status==='AFGEHANDELD'?'selected':''}>Afgehandeld</option><option value="OPEN" ${t.status==='OPEN'?'selected':''}>Open</option><option value="IN BEHANDELING" ${t.status==='IN BEHANDELING'?'selected':''}>In behandeling</option></select></div><input class="finp f-title" value="${esc(t.title)}" placeholder="Titel"><div class="frow2"><input class="finp f-loc" value="${esc(t.loc)}" placeholder="Locatie (optioneel)"><input class="finp f-dl" value="${esc(t.dl)}" placeholder="Streefdatum" style="flex:0 0 95px"></div><div class="frow2"><input class="finp f-date" value="${esc(t.date)}" placeholder="Aangemaakt op"><input class="finp f-person" value="${esc(t.person)}" placeholder="Verantwoordelijke"></div></div>`).join('')}</div><button class="fadd" onclick="addFormRow('topdesk')" type="button">+ Melding toevoegen</button>`;},
+    parseForm(){return{items:[...document.querySelectorAll('#f-rows .fcard')].map(c=>({num:c.querySelector('.f-num').value,title:c.querySelector('.f-title').value,loc:c.querySelector('.f-loc').value,status:c.querySelector('.f-status').value,date:c.querySelector('.f-date').value,dl:c.querySelector('.f-dl').value,person:c.querySelector('.f-person').value}))};},
   },
-  p2000:{label:'P2000 Incidenten',ico:'bell',
-    def:{items:[
-      {time:'11:34',prio:'p1',msg:'BRAND Middelbrand industrieel gebouw\nIndustriestraat 14, Tilburg',units:'TS31 HV31 LB31 OVD'},
-      {time:'10:58',prio:'p2',msg:'VRK Verkeersongeval met beknelling\nA58 km 14.2 richting Breda',units:'HV31 TS32 OVD'},
-      {time:'09:45',prio:'p3',msg:'BUI Buitensluiting woning\nKanaalstraat 88, Tilburg',units:'TS31'},
-      {time:'09:12',prio:'p2',msg:'GASL Gaslek aanrijding\nSpoorlaan 142, Tilburg',units:'TS31 TS32'},
-    ]},
-    render(d){const PC={p1:'red',p2:'gold',p3:'green'};const PL={p1:'PRIO 1',p2:'PRIO 2',p3:'PRIO 3'};const BC={p1:'var(--red)',p2:'var(--gold)',p3:'#16a34a'};
-      const SC={AMBU:'#0ea5e9',BRW:'#f97316',POL:'#8b5cf6',P2000:'#6b7280'};
-      if(!d.items||!d.items.length) return`<div style="color:var(--text-sub);font-size:13px;padding:12px">${d.empty?'Geen recente meldingen':'Incidenten laden…'}</div>`;
-      return d.items.map(i=>`
-        <div style="border-left:3px solid ${BC[i.prio]||'#6b7280'};background:var(--input-bg);border-radius:0 8px 8px 0;padding:9px 11px;margin-bottom:8px">
-          <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px">
-            <span class="pill ${PC[i.prio]||'grey'}">${PL[i.prio]||'P?'}</span>
-            ${i.service?`<span style="font-size:10px;font-weight:800;color:#fff;background:${SC[i.service]||SC.P2000};border-radius:4px;padding:1px 6px">${esc(i.service)}</span>`:''}
-            <span style="font-size:11px;font-weight:700;color:var(--text-sub)">${i.date?esc(i.date)+' ':''} ${esc(i.time)}</span>
-          </div>
-          <div style="font-size:12px;font-weight:700;color:var(--text);line-height:1.5">${esc(i.msg).replace(/\n/g,'<br>')}</div>
-          ${i.units?`<div style="font-size:11px;font-weight:800;color:var(--navy);margin-top:5px">${esc(i.units)}</div>`:''}
-        </div>`).join('');},
-    editForm(d){return`
-      <label class="flbl">Incidenten</label>
-      <div id="f-rows">${d.items.map((item,i)=>`
-        <div class="fcard">
-          <div class="fcard-head">
-            <span class="fcard-num">Incident ${i+1}</span>
-            <button class="frow-del" onclick="delRow(this)" type="button">×</button>
-          </div>
-          <div class="frow2">
-            <input class="finp f-time" value="${esc(item.time)}" placeholder="11:34" style="flex:0 0 72px">
-            <select class="finp f-prio" style="flex:0 0 110px">
-              <option value="p1" ${item.prio==='p1'?'selected':''}>PRIO 1</option>
-              <option value="p2" ${item.prio==='p2'?'selected':''}>PRIO 2</option>
-              <option value="p3" ${item.prio==='p3'?'selected':''}>PRIO 3</option>
-            </select>
-            <input class="finp f-units" value="${esc(item.units)}" placeholder="Eenheden (bijv. TS31 HV31)">
-          </div>
-          <textarea class="fta f-msg" rows="2" style="min-height:58px">${esc(item.msg)}</textarea>
-        </div>`).join('')}</div>
-      <button class="fadd" onclick="addFormRow('p2000')" type="button">+ Incident toevoegen</button>`;},
-    parseForm(){
-      return{items:[...document.querySelectorAll('#f-rows .fcard')].map(c=>({
-        time:c.querySelector('.f-time').value,
-        prio:c.querySelector('.f-prio').value,
-        units:c.querySelector('.f-units').value,
-        msg:c.querySelector('.f-msg').value,
-      }))};},
+
+  p2000:{label:'Incidenten vorige dienst',ico:'bell',
+    def:{items:[],loading:true},
+    render(d){
+      const PC={p1:'red',p2:'gold',p3:'green'};
+      const PL={p1:'PRIO 1',p2:'PRIO 2',p3:'PRIO 3'};
+      const BC={p1:'var(--red)',p2:'var(--gold)',p3:'#16a34a'};
+      const SVC_BG={BRW:'#f97316',P2000:'#6b7280'};
+      if(d.loading)return`<div style="color:var(--text-sub);font-size:13px;padding:12px;display:flex;align-items:center;gap:8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite;flex-shrink:0"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg>Alarmeringen laden…</div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>`;
+      if(!d.items||!d.items.length)return`<div style="color:var(--text-sub);font-size:13px;padding:12px">${d.dateLabel?`<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">${esc(d.dateLabel)}</div>`:''}Geen Brandweer-alarmeringen gevonden.</div>`;
+      return`${d.dateLabel?`<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sub);margin-bottom:10px">${esc(d.dateLabel)}</div>`:''}${d.items.map(i=>`<div style="border-left:3px solid ${BC[i.prio]||'#6b7280'};background:rgba(0,0,0,.04);border-radius:0 8px 8px 0;padding:9px 11px;margin-bottom:8px"><div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><span class="pill ${PC[i.prio]||'grey'}">${PL[i.prio]||'P?'}</span><span class="svc-badge" style="background:${SVC_BG[i.service]||SVC_BG.P2000}">${esc(i.service)}</span><span style="font-size:11px;font-weight:700;color:var(--text-sub)">${esc(i.time)}</span></div><div style="font-size:12px;font-weight:700;color:var(--text);line-height:1.5">${esc(i.msg).replace(/\n/g,'<br>')}</div></div>`).join('')}`;
+    },
+    editForm(){return`<div style="color:var(--text-sub);padding:8px;font-size:13px">Incidenten worden automatisch opgehaald van alarmeringen.nl (gisteren, alleen Brandweer).</div>`;},
+    parseForm(){return{};},
   },
+
   wegafsluiting:{label:'Wegafsluitingen',ico:'road',
     def:{items:[
       {weg:'Ploegstraat Breda',status:'AFGESLOTEN',date:'Wo, 11 maart 2026 (Fase 1 t/m 5)',desc:'Herinrichting / onderhoud van Weg',warn:'Geen doorgang mogelijk.'},
       {weg:'A58 richting Breda – km 14',status:'BEPERKT',date:'Ma, 16 maart 2026',desc:'Wegwerkzaamheden rijstrook 1+2, omleiding via N282',warn:''},
     ]},
-    render(d){return d.items.map(w=>`
-      <div style="border:1px solid var(--card-border);border-radius:10px;overflow:hidden;margin-bottom:10px">
-        <div style="background:var(--input-bg);height:56px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--card-border)">
-          <span style="font-size:12px;font-weight:600;color:var(--text-light)">Kaart niet beschikbaar</span>
-        </div>
-        <div style="padding:10px 12px">
-          <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px">
-            <span style="font-size:13px;font-weight:700">${esc(w.weg)}</span>
-            <span class="pill ${w.status==='AFGESLOTEN'?'red':'gold'}">${esc(w.status)}</span>
-          </div>
-          <div style="font-size:11px;color:var(--text-sub);margin-bottom:4px">&#128197; ${esc(w.date)}</div>
-          <div style="font-size:12px;font-weight:600;color:var(--text)">${esc(w.desc)}</div>
-          ${w.warn?`<div class="warnrow">${esc(w.warn)}</div>`:''}
-        </div>
-      </div>`).join('');},
-    editForm(d){return`
-      <label class="flbl">Wegafsluitingen</label>
-      <div id="f-rows">${d.items.map((w,i)=>`
-        <div class="fcard">
-          <div class="fcard-head">
-            <span class="fcard-num">Afsluiting ${i+1}</span>
-            <button class="frow-del" onclick="delRow(this)" type="button">×</button>
-          </div>
-          <div class="frow2">
-            <input class="finp f-weg" value="${esc(w.weg)}" placeholder="Wegnaam">
-            <select class="finp f-status" style="flex:0 0 130px">
-              <option value="AFGESLOTEN" ${w.status==='AFGESLOTEN'?'selected':''}>Afgesloten</option>
-              <option value="BEPERKT" ${w.status==='BEPERKT'?'selected':''}>Beperkt</option>
-            </select>
-          </div>
-          <input class="finp f-date" value="${esc(w.date)}" placeholder="Datum">
-          <input class="finp f-desc" value="${esc(w.desc)}" placeholder="Omschrijving">
-          <input class="finp f-warn" value="${esc(w.warn)}" placeholder="Waarschuwing (optioneel)">
-        </div>`).join('')}</div>
-      <button class="fadd" onclick="addFormRow('wegafsluiting')" type="button">+ Afsluiting toevoegen</button>`;},
-    parseForm(){
-      return{items:[...document.querySelectorAll('#f-rows .fcard')].map(c=>({
-        weg:c.querySelector('.f-weg').value,
-        status:c.querySelector('.f-status').value,
-        date:c.querySelector('.f-date').value,
-        desc:c.querySelector('.f-desc').value,
-        warn:c.querySelector('.f-warn').value,
-      }))};},
+    render(d){
+      const IMG_MAP={'generaal maczekstraat':'/img/maczekstraat.jpeg','tolbrugstraat':'/img/tolbrugstraat.jpeg'};
+      return d.items.map(w=>{
+        const imgSrc=w.img||IMG_MAP[(w.weg||'').toLowerCase().trim()]||null;
+        const mapBlock=imgSrc
+          ?`<img src="${imgSrc}" style="width:100%;height:120px;object-fit:cover;display:block;border-bottom:1px solid rgba(0,0,0,.08)">`
+          :`<div style="background:rgba(0,0,0,.04);height:56px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid rgba(0,0,0,.08)"><span style="font-size:12px;font-weight:600;color:var(--text-light)">Kaart niet beschikbaar</span></div>`;
+        return`<div style="border:1px solid rgba(0,0,0,.1);border-radius:10px;overflow:hidden;margin-bottom:10px">${mapBlock}<div style="padding:10px 12px"><div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><span style="font-size:13px;font-weight:700">${esc(w.weg)}</span><span class="pill ${w.status==='AFGESLOTEN'?'red':'gold'}">${esc(w.status)}</span></div><div style="font-size:11px;color:var(--text-sub);margin-bottom:4px">&#128197; ${esc(w.date)}</div><div style="font-size:12px;font-weight:600;color:var(--text)">${esc(w.desc)}</div>${w.warn?`<div class="warnrow">${esc(w.warn)}</div>`:''}</div></div>`;
+      }).join('');},
+    editForm(d){return`<label class="flbl">Wegafsluitingen</label><div id="f-rows">${d.items.map((w,i)=>`<div class="fcard"><div class="fcard-head"><span class="fcard-num">Afsluiting ${i+1}</span><button class="frow-del" onclick="delRow(this)" type="button">×</button></div><div class="frow2"><input class="finp f-weg" value="${esc(w.weg)}" placeholder="Wegnaam"><select class="finp f-status" style="flex:0 0 130px"><option value="AFGESLOTEN" ${w.status==='AFGESLOTEN'?'selected':''}>Afgesloten</option><option value="BEPERKT" ${w.status==='BEPERKT'?'selected':''}>Beperkt</option></select></div><input class="finp f-date" value="${esc(w.date)}" placeholder="Datum"><input class="finp f-desc" value="${esc(w.desc)}" placeholder="Omschrijving"><input class="finp f-warn" value="${esc(w.warn)}" placeholder="Waarschuwing (optioneel)"></div>`).join('')}</div><button class="fadd" onclick="addFormRow('wegafsluiting')" type="button">+ Afsluiting toevoegen</button>`;},
+    parseForm(){return{items:[...document.querySelectorAll('#f-rows .fcard')].map(c=>({weg:c.querySelector('.f-weg').value,status:c.querySelector('.f-status').value,date:c.querySelector('.f-date').value,desc:c.querySelector('.f-desc').value,warn:c.querySelector('.f-warn').value}))};},
   },
 };
 
-// ── STATE ──
 let widgets=[],nextId=1,editMode=false,curEdit=null,grid=null;
+const PRESET_STATE={"widgets": [{"id": 1, "type": "topdesk", "x": 0, "y": 3, "w": 3, "h": 3, "data": {"items": [{"num": "M2603 1517", "title": "Het hek naar de binnenplaats, waar we naar binnen gaan, blijft open staan en gaat niet meer dicht.", "loc": "BREDA", "status": "AFGEHANDELD", "date": "Di, 26 mrt 2026", "dl": "25/03", "person": "Meijers, Dennis"}]}}, {"id": 2, "type": "voertuigen", "x": 6, "y": 0, "w": 3, "h": 4, "data": {"vehicles": [{"cs": "203132", "type": "TS", "s": "ok"}, {"cs": "203133", "type": "TS", "s": "ok"}, {"cs": "203151", "type": "HW", "s": "ok"}, {"cs": "203171", "type": "HW", "s": "ok"}, {"cs": "203171", "type": "HV-KR", "s": "ok"}, {"cs": "203111", "type": "WO", "s": "ok"}, {"cs": "200065", "type": "VNA", "s": "ok"}, {"cs": "203161", "type": "WT", "s": "ok"}, {"cs": "201171", "type": "HV", "s": "warn"}, {"cs": "203082", "type": "SBA", "s": "warn"}, {"cs": "200060", "type": "WBH", "s": "ok"}, {"cs": "200064", "type": "DB", "s": "ok"}, {"cs": "200084", "type": "ABH", "s": "warn"}]}}, {"id": 3, "type": "wegafsluiting", "x": 3, "y": 4, "w": 3, "h": 5, "data": {"items": [{"weg": "Generaal Maczekstraat", "status": "AFGESLOTEN", "date": "6 januari t/m 18 juli", "desc": "Herinrichting + onderhoud van weg", "warn": "Geen doorgang mogelijk."}, {"weg": "Tolbrugstraat", "status": "AFGESLOTEN", "date": "3 april t/m 22 april", "desc": "Afgesloten", "warn": "Geen doorgang mogelijk."}]}}, {"id": 4, "type": "p2000", "x": 9, "y": 0, "w": 3, "h": 9, "data": {"items": [{"ts": 1775673224000, "time": "20:33", "prio": "p1", "service": "BRW", "msg": "Woningbrand op Dorpsstraat in Goirle"}, {"ts": 1775669644000, "time": "19:34", "prio": "p1", "service": "BRW", "msg": "Ongeval met letsel op Ramgatseweg in Raamsdonksveer"}, {"ts": 1775668122000, "time": "19:08", "prio": "p1", "service": "BRW", "msg": "Bosbrand op Koolhovenlaan in Tilburg"}, {"ts": 1775667533000, "time": "18:58", "prio": "p1", "service": "BRW", "msg": "Ongeval met letsel op A58 in Oisterwijk"}, {"ts": 1775667533000, "time": "18:58", "prio": "p1", "service": "BRW", "msg": "Ongeval met letsel op A58 in Moergestel"}, {"ts": 1775657387000, "time": "16:09", "prio": "p1", "service": "BRW", "msg": "Ongeval met letsel op A58 in Roosendaal"}, {"ts": 1775656653000, "time": "15:57", "prio": "p1", "service": "BRW", "msg": "Gaslek op Buitenvaert in Kaatsheuvel"}], "dateLabel": "Wo 8 april 2026 — Brandweer alarmeringen", "loading": false}}, {"id": 5, "type": "weather", "x": 0, "y": 0, "w": 3, "h": 3, "data": {"loc": "Tramsingel 71, Breda", "temp": "20", "desc": "Gedeeltelijk bewolkt", "wind": "7 km/h Z", "hum": "51%", "pres": "1018 hPa", "vis": "29 km", "rain": [{"hour": "12:00", "prob": 0, "mm": 0}, {"hour": "13:00", "prob": 0, "mm": 0}, {"hour": "14:00", "prob": 0, "mm": 0}, {"hour": "15:00", "prob": 0, "mm": 0}, {"hour": "16:00", "prob": 0, "mm": 0}, {"hour": "17:00", "prob": 2, "mm": 0}, {"hour": "18:00", "prob": 19, "mm": 0}, {"hour": "19:00", "prob": 41, "mm": 0}, {"hour": "20:00", "prob": 59, "mm": 0}, {"hour": "21:00", "prob": 69, "mm": 0}, {"hour": "22:00", "prob": 74, "mm": 0}, {"hour": "23:00", "prob": 71, "mm": 0}]}}, {"id": 6, "type": "werkzaamheden", "x": 3, "y": 0, "w": 3, "h": 4, "data": {"items": [{"d": false, "t": "Boodschappen & Koken", "m": ""}, {"d": false, "t": "Werkplaats watervoerende armaturen", "m": ""}, {"d": false, "t": "Ademlucht/Duik Werkplaats", "m": "TFL: Albert Hartman"}, {"d": false, "t": "Koffiemachines kantine schoonmaken (met tablet) / bijvullen & voorraad pantry aanvullen", "m": ""}, {"d": false, "t": "Sport", "m": ""}, {"d": false, "t": "Werkplaats motorgereedschap", "m": ""}]}}, {"id": 7, "type": "ploegindeling", "x": 6, "y": 4, "w": 3, "h": 5, "data": {"ploeg": "B-Ploeg", "members": [{"rank": "PC", "name": "L. van den Berg", "role": "Ploegcommandant"}, {"rank": "OPC", "name": "M. Jansen", "role": "Ondersteuning"}, {"rank": "HB", "name": "A. de Vries", "role": "Chauffeur TS-31"}, {"rank": "HB", "name": "K. Peeters", "role": "Manschap TS-31"}, {"rank": "HB", "name": "S. Oosterbeek", "role": "Chauffeur HV-31"}, {"rank": "MN", "name": "T. Brouwers", "role": "Manschap HV-31"}, {"rank": "MN", "name": "F. Willems", "role": "Manschap TS-31"}], "ploegen": [{"naam": "TS 1", "members": [{"name": "Martijn Goos", "rank": "BV", "extra": []}, {"name": "Joeri Seters", "rank": "Ch", "extra": []}, {"name": "Erik Smulders", "rank": "2", "extra": ["WO : ass"]}, {"name": "Arjan van Gurp", "rank": "3", "extra": []}, {"name": "Julio Rivero González", "rank": "4", "extra": []}]}, {"naam": "TS 2", "members": [{"name": "Joost van der Luit", "rank": "BV", "extra": ["WO : BV"]}, {"name": "Erik van Beurden", "rank": "Ch", "extra": ["WO : Ch"]}, {"name": "Niels van Pomp", "rank": "1", "extra": ["WO : duiker2", "SPEC. voertuig : 1", "Corvee : Sleutel ronde"]}, {"name": "Serge Fransen", "rank": "2, Avond/Nacht", "extra": []}, {"name": "Michael Dansen", "rank": "2, Dag", "extra": []}, {"name": "Bouke Kramer", "rank": "3", "extra": ["WO : duiker1"]}, {"name": "Stefan de Jong", "rank": "4", "extra": []}]}, {"naam": "Overig", "members": [{"name": "Jop Jacob", "rank": "", "extra": ["SPEC. voertuig : BV Avond/Nacht"]}, {"name": "Jurgen Bakx", "rank": "", "extra": ["SPEC. voertuig : BV Dag"]}, {"name": "Danique Aanen", "rank": "", "extra": ["SPEC. voertuig : Ch"]}]}]}}, {"id": 9, "type": "reserveringen", "x": 0, "y": 6, "w": 3, "h": 3, "data": {"items": [{"time": "10:00", "loc": "Breda", "desc": "0.14 Vergader"}, {"time": "11:30", "loc": "Breda", "desc": "1.30 Vergader-hybride"}, {"time": "09:00", "loc": "Breda", "desc": "1.47 Vergader-hybride"}]}}], "nextId": 10};
 
-const DEFAULT=[
-  {type:'topdesk',      x:0,  y:0, w:4, h:4},
-  {type:'voertuigen',   x:4,  y:0, w:4, h:4},
-  {type:'wegafsluiting',x:8,  y:0, w:2, h:4},
-  {type:'p2000',        x:10, y:0, w:2, h:8},
-  {type:'weather',      x:0,  y:4, w:2, h:4},
-  {type:'werkzaamheden',x:2,  y:4, w:2, h:4},
-  {type:'ploegindeling',x:4,  y:4, w:4, h:4},
-  {type:'reserveringen',x:8,  y:4, w:2, h:4},
-];
-
-// ── CLOCK ──
 const DAYS=['Zo','Ma','Di','Wo','Do','Vr','Za'];
 const MONTHS=['januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december'];
 let _lastDate='',_lastTime='';
@@ -720,379 +603,190 @@ function tick(){
 }
 setInterval(tick,1000);tick();
 
-
-// ── WEATHER API (Open-Meteo) ──
-const WEATHER_LAT = 51.5719;   // Breda
-const WEATHER_LNG = 4.7683;
-const WEATHER_LOC = 'Tramsingel 71, Breda';
-
-const WMO_DESC = {
-  0:'Helder',1:'Vrijwel helder',2:'Gedeeltelijk bewolkt',3:'Bewolkt',
-  45:'Mist',48:'Rijpige mist',
-  51:'Lichte motregen',53:'Motregen',55:'Zware motregen',
-  61:'Lichte regen',63:'Regen',65:'Zware regen',
-  71:'Lichte sneeuw',73:'Sneeuw',75:'Zware sneeuw',
-  77:'Ijskorrels',80:'Lichte buien',81:'Buien',82:'Zware buien',
-  85:'Sneeuwbuien',86:'Zware sneeuwbuien',
-  95:'Onweer',96:'Onweer met hagel',99:'Zwaar onweer met hagel'
-};
-
-function windDir(deg){
-  const d=['N','NNO','NO','ONO','O','OZO','ZO','ZZO','Z','ZZW','ZW','WZW','W','WNW','NW','NNW'];
-  return d[Math.round(deg/22.5)%16];
-}
-
+const WEATHER_LAT=51.5719,WEATHER_LNG=4.7683,WEATHER_LOC='Tramsingel 71, Breda';
+const WMO_DESC={0:'Helder',1:'Vrijwel helder',2:'Gedeeltelijk bewolkt',3:'Bewolkt',45:'Mist',48:'Rijpige mist',51:'Lichte motregen',53:'Motregen',55:'Zware motregen',61:'Lichte regen',63:'Regen',65:'Zware regen',71:'Lichte sneeuw',73:'Sneeuw',75:'Zware sneeuw',77:'Ijskorrels',80:'Lichte buien',81:'Buien',82:'Zware buien',85:'Sneeuwbuien',86:'Zware sneeuwbuien',95:'Onweer',96:'Onweer met hagel',99:'Zwaar onweer met hagel'};
+function windDir(deg){const d=['N','NNO','NO','ONO','O','OZO','ZO','ZZO','Z','ZZW','ZW','WZW','W','WNW','NW','NNW'];return d[Math.round(deg/22.5)%16];}
 async function fetchWeather(){
   try{
-    const url=`https://api.open-meteo.com/v1/forecast?latitude=${WEATHER_LAT}&longitude=${WEATHER_LNG}`
-      +`&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,wind_direction_10m,surface_pressure,visibility`
-      +`&hourly=precipitation,precipitation_probability&forecast_hours=12`
-      +`&wind_speed_unit=kmh&timezone=Europe/Amsterdam`;
-    const r=await fetch(url);
-    if(!r.ok)return;
-    const j=await r.json();
-    const c=j.current;
-
-    // Build 12-hour rain array
-    const rain=(j.hourly?.time||[]).map((t,i)=>({
-      hour:t.slice(11,16), // "HH:MM"
-      prob:j.hourly.precipitation_probability[i]??0,
-      mm:j.hourly.precipitation[i]??0,
-    }));
-
-    const data={
-      loc:WEATHER_LOC,
-      temp:Math.round(c.temperature_2m).toString(),
-      desc:WMO_DESC[c.weather_code]??'Onbekend',
-      wind:`${Math.round(c.wind_speed_10m)} km/h ${windDir(c.wind_direction_10m)}`,
-      hum:`${c.relative_humidity_2m}%`,
-      pres:`${Math.round(c.surface_pressure)} hPa`,
-      vis:`${Math.round(c.visibility/1000)} km`,
-      rain,
-    };
+    const url=`https://api.open-meteo.com/v1/forecast?latitude=${WEATHER_LAT}&longitude=${WEATHER_LNG}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,wind_direction_10m,surface_pressure,visibility&hourly=precipitation,precipitation_probability&forecast_hours=12&wind_speed_unit=kmh&timezone=Europe/Amsterdam`;
+    const r=await fetch(url);if(!r.ok)return;
+    const j=await r.json();const c=j.current;
+    const rain=(j.hourly?.time||[]).map((t,i)=>({hour:t.slice(11,16),prob:j.hourly.precipitation_probability[i]??0,mm:j.hourly.precipitation[i]??0}));
+    const data={loc:WEATHER_LOC,temp:Math.round(c.temperature_2m).toString(),desc:WMO_DESC[c.weather_code]??'Onbekend',wind:`${Math.round(c.wind_speed_10m)} km/h ${windDir(c.wind_direction_10m)}`,hum:`${c.relative_humidity_2m}%`,pres:`${Math.round(c.surface_pressure)} hPa`,vis:`${Math.round(c.visibility/1000)} km`,rain};
     widgets.filter(w=>w.type==='weather').forEach(w=>{w.data=data;refreshWidget(w.id);});
   }catch(e){console.error('Weather fetch fout:',e);}
 }
 
-
-// ── P2000 LIVE FEED – alarmeringen.nl all.rss (Midden en West Brabant) ──
-// all.rss = 100 items, ~24h, all services (ambulance, brandweer, politie)
-const P2000_FEED = 'https://alarmeringen.nl/feeds/region/midden-en-west-brabant/all.rss';
-const P2000_24H  = 24 * 60 * 60 * 1000;
-
+const P2000_FEED='https://alarmeringen.nl/feeds/region/midden-en-west-brabant/all.rss';
+function yesterdayRange(){
+  const now=new Date();
+  return{start:new Date(now.getFullYear(),now.getMonth(),now.getDate()-1,0,0,0,0).getTime(),end:new Date(now.getFullYear(),now.getMonth(),now.getDate()-1,23,59,59,999).getTime()};
+}
+function formatYesterdayLabel(){
+  const d=new Date();const y=new Date(d.getFullYear(),d.getMonth(),d.getDate()-1);
+  return`${DAYS[y.getDay()]} ${y.getDate()} ${MONTHS[y.getMonth()]} ${y.getFullYear()} — Brandweer alarmeringen`;
+}
 async function fetchP2000(){
+  widgets.filter(w=>w.type==='p2000').forEach(w=>{w.data={loading:true};refreshWidget(w.id);});
   try{
-    const enc = encodeURIComponent(P2000_FEED);
-    let r = await fetch('https://api.codetabs.com/v1/proxy/?quest=' + enc);
-    if(!r.ok) r = await fetch('https://api.allorigins.win/raw?url=' + enc);
-    if(!r.ok) return;
-
-    const xml = await r.text();
-    const doc = new DOMParser().parseFromString(xml, 'text/xml');
-    const now = Date.now();
-    const items = [];
-
+    const enc=encodeURIComponent(P2000_FEED);
+    let r=await fetch('https://api.codetabs.com/v1/proxy/?quest='+enc);
+    if(!r.ok) r=await fetch('https://api.allorigins.win/raw?url='+enc);
+    if(!r.ok) throw new Error('Feed not reachable');
+    const xml=await r.text();
+    const doc=new DOMParser().parseFromString(xml,'text/xml');
+    const{start,end}=yesterdayRange();const items=[];
     for(const node of doc.querySelectorAll('item')){
-      const title   = node.querySelector('title')?.textContent?.trim() || '';
-      const desc    = node.querySelector('description')?.textContent?.trim() || '';
-      const pubDate = node.querySelector('pubDate')?.textContent?.trim() || '';
-      const dt = new Date(pubDate);
-      if(isNaN(dt.getTime()) || now - dt.getTime() > P2000_24H) continue;
-
-      const time = dt.toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Amsterdam'});
-      const date = dt.toLocaleDateString('nl-NL',{day:'2-digit',month:'2-digit',timeZone:'Europe/Amsterdam'});
-
-      const u = title.toUpperCase();
-      let prio = 'p3';
-      if(/^(A1|B1)\b/.test(u) || /^P\s?1\b/.test(u)) prio = 'p1';
-      else if(/^(A2|B2)\b/.test(u) || /^P\s?2\b/.test(u)) prio = 'p2';
-
-      let service = 'P2000';
-      if(/^(A1|A2|A3|B1|B2|B3)\b/.test(u)) service = 'AMBU';
-      else if(u.includes('BZB')) service = 'BRW';
-      else if(u.includes('POLITIE')) service = 'POL';
-
-      items.push({ts: dt.getTime(), time, date, prio, msg: desc || title, service});
+      const title=(node.querySelector('title')?.textContent||'').trim();
+      const desc=(node.querySelector('description')?.textContent||'').trim();
+      const pub=(node.querySelector('pubDate')?.textContent||'').trim();
+      const dt=new Date(pub);if(isNaN(dt.getTime()))continue;
+      const ts=dt.getTime();if(ts<start||ts>end)continue;
+      const u=title.toUpperCase();
+      let service='P2000';
+      if(/\bBZB\b/.test(u)||/^(BRAND|BRW|P\s?1|P\s?2)\b/.test(u)) service='BRW';
+      else if(/^(A1|A2|A3|B1|B2|B3)\b/.test(u)) service='AMBU';
+      else if(/\bPOLITIE\b/.test(u)) service='POL';
+      if(service==='AMBU'||service==='POL') continue;
+      const time=dt.toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Amsterdam'});
+      let prio='p3';
+      if(/^(A1|B1|P\s?1)\b/.test(u)||/PRIO\s?1/i.test(u)) prio='p1';
+      else if(/^(A2|B2|P\s?2)\b/.test(u)||/PRIO\s?2/i.test(u)) prio='p2';
+      items.push({ts,time,prio,service,msg:desc||title});
     }
-
-    widgets.filter(w=>w.type==='p2000').forEach(w=>{
-      w.data = items.length ? {items} : {items:[], empty:true};
-      refreshWidget(w.id);
-    });
-  }catch(e){console.error('P2000 fetch fout:',e);}
+    items.sort((a,b)=>b.ts-a.ts);
+    const dateLabel=formatYesterdayLabel();
+    widgets.filter(w=>w.type==='p2000').forEach(w=>{w.data={items,dateLabel,loading:false};refreshWidget(w.id);});
+  }catch(e){
+    const dateLabel=formatYesterdayLabel();
+    widgets.filter(w=>w.type==='p2000').forEach(w=>{w.data={items:[],dateLabel,loading:false};refreshWidget(w.id);});
+  }
 }
 
-
-// ── EDIT MODE ──
 function toggleEditMode(){
   editMode=!editMode;
   document.body.classList.toggle('edit-mode',editMode);
   const b=document.getElementById('editbtn');
   b.classList.toggle('active',editMode);
-  b.textContent=editMode?'Klaar':'Edit Mode';
+  b.textContent=editMode?'Klaar':'Aanpassen';
   document.getElementById('layout-lbl').innerHTML=editMode?'Layout: <strong>Bewerken</strong>':'Layout: <strong>Vergrendeld</strong>';
   if(grid)grid.setStatic(!editMode);
   if(editMode)showToast('Bewerkmodus actief – sleep en resize widgets');
 }
 
-// ── MODALS / TOAST ──
 function openModal(id){document.getElementById(id).classList.add('open');if(id==='add-modal')buildPicker();}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300);}
 
-// ── WIDGET HTML ──
 function widgetHTML(w){
-  const def=T[w.type];
-  return`<div class="widget" id="w${w.id}" data-id="${w.id}">
-    <div class="wh">
-      <div class="wh-title">${def.label}</div>
-      <div class="wh-acts">
-        ${!['weather','p2000'].includes(w.type)?`<button class="wb edit-btn" onclick="openEditWid(${w.id})" title="Bewerken">${I.pencil}</button>`:''}
-        <button class="wb del" onclick="removeWidget(${w.id})" title="Verwijderen">${I.x}</button>
-      </div>
-    </div>
-    <div class="wbody" id="wb${w.id}">${def.render(w.data,w.id)}</div>
-  </div>`;
+  const def=T[w.type];const editable=!['weather','p2000'].includes(w.type);
+  return`<div class="widget" id="w${w.id}" data-id="${w.id}"><div class="wh"><div class="wh-title">${def.label}</div><div class="wh-acts">${editable?`<button class="wb edit-btn" onclick="openEditWid(${w.id})" title="Bewerken">${I.pencil}</button>`:''}<button class="wb del" onclick="removeWidget(${w.id})" title="Verwijderen">${I.x}</button></div></div><div class="wbody" id="wb${w.id}">${def.render(w.data,w.id)}</div></div>`;
 }
 
-// ── RENDER ──
-function renderWidget(w){
-  grid.addWidget({
-    id:'gs'+w.id,
-    x:w.x, y:w.y, w:w.w, h:w.h,
-    minW:2, minH:2,
-    content: widgetHTML(w)
-  });
-}
+function renderWidget(w){grid.addWidget({id:'gs'+w.id,x:w.x,y:w.y,w:w.w,h:w.h,minW:2,minH:2,content:widgetHTML(w)});}
+function refreshWidget(id){const w=widgets.find(x=>x.id===id);if(!w)return;const el=document.getElementById(`wb${id}`);if(!el)return;el.innerHTML=T[w.type].render(w.data,id);}
+function removeWidget(id){const el=document.querySelector(`.grid-stack-item[gs-id="gs${id}"]`);if(el)grid.removeWidget(el);widgets=widgets.filter(w=>w.id!==id);saveState();buildMobileHome();}
+function toggleTask(wid,idx,checked){const w=widgets.find(x=>x.id==wid);if(w&&w.data.items[idx]!==undefined){w.data.items[idx].d=checked;saveState();}}
 
-function refreshWidget(id){
-  const w=widgets.find(x=>x.id===id);
-  if(!w)return;
-  document.getElementById(`wb${id}`).innerHTML=T[w.type].render(w.data,id);
-}
-
-function removeWidget(id){
-  const el=document.querySelector(`.grid-stack-item[gs-id="gs${id}"]`);
-  if(el)grid.removeWidget(el);
-  widgets=widgets.filter(w=>w.id!==id);
-  saveState();
-  buildMobileHome();
-}
-
-function toggleTask(wid,idx,checked){
-  const w=widgets.find(x=>x.id==wid);
-  if(w&&w.data.items[idx]!==undefined){w.data.items[idx].d=checked;saveState();}
-}
-
-// ── PICKER ──
 function buildPicker(){
   const c=document.getElementById('wpgrid');c.innerHTML='';
   Object.entries(T).forEach(([type,def])=>{
     const taken=widgets.some(w=>w.type===type);
-    const d=document.createElement('div');
-    d.className='wpick'+(taken?' taken':'');
+    const d=document.createElement('div');d.className='wpick'+(taken?' taken':'');
     d.innerHTML=`<div class="wpick-ico">${I[def.ico]||''}</div><div class="wpick-name">${def.label}</div>`;
-    if(!taken)d.onclick=()=>addWidget(type);
-    c.appendChild(d);
+    if(!taken)d.onclick=()=>addWidget(type);c.appendChild(d);
   });
 }
-
 function addWidget(type){
   const w={id:nextId++,type,x:0,y:99,w:4,h:4,data:JSON.parse(JSON.stringify(T[type].def))};
-  widgets.push(w);
-  renderWidget(w);
-  closeModal('add-modal');
-  saveState();
-  buildMobileHome();
+  widgets.push(w);renderWidget(w);closeModal('add-modal');saveState();buildMobileHome();
   showToast(`${T[type].label} toegevoegd`);
+  if(type==='weather')fetchWeather();if(type==='p2000')fetchP2000();
 }
 
-// ── EDIT ──
 function openEditWid(id){
   const w=widgets.find(x=>x.id===id);if(!w)return;
-  curEdit=id;
-  document.getElementById('emh').textContent=`${T[w.type].label} bewerken`;
-  document.getElementById('embody').innerHTML=T[w.type].editForm(w.data);
-  openModal('edit-modal');
+  curEdit=id;document.getElementById('emh').textContent=`${T[w.type].label} bewerken`;
+  document.getElementById('embody').innerHTML=T[w.type].editForm(w.data);openModal('edit-modal');
 }
-
 function saveEdit(){
   const w=widgets.find(x=>x.id===curEdit);if(!w)return;
-  w.data=T[w.type].parseForm();refreshWidget(w.id);closeModal('edit-modal');saveState();showToast('Wijzigingen opgeslagen');
+  const parsed=T[w.type].parseForm();
+  if(Object.keys(parsed).length) w.data={...w.data,...parsed};
+  refreshWidget(w.id);closeModal('edit-modal');saveState();showToast('Wijzigingen opgeslagen');
 }
 
-// ── PERSIST ──
-function syncPositions(){
-  if(!grid)return;
-  grid.engine.nodes.forEach(node=>{
-    const id=parseInt((node.id||'').replace('gs',''));
-    const w=widgets.find(x=>x.id===id);
-    if(w){w.x=node.x;w.y=node.y;w.w=node.w;w.h=node.h;}
-  });
-}
-
-function saveState(){
-  syncPositions();
-  const payload=JSON.stringify({widgets,nextId});
-  try{
-    localStorage.setItem('dashboardState',payload);
-    return true;
-  }catch(e){console.error('Auto-save error',e);}
-  return false;
-}
-
+function syncPositions(){if(!grid)return;grid.engine.nodes.forEach(node=>{const id=parseInt((node.id||'').replace('gs',''));const w=widgets.find(x=>x.id===id);if(w){w.x=node.x;w.y=node.y;w.w=node.w;w.h=node.h;}});}
+function saveState(){syncPositions();try{localStorage.setItem('dashboardState',JSON.stringify({widgets,nextId}));return true;}catch(e){return false;}}
 function manualSave(){
   syncPositions();
-  const payload={widgets,nextId};
-  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;
-  a.download='dashboard-instellingen.json';
-  a.click();
-  URL.revokeObjectURL(url);
-  const btn=document.getElementById('savebtn');
-  btn.textContent='Gedownload ✓';btn.className='tb-btn save-btn ok';
+  const blob=new Blob([JSON.stringify({widgets,nextId},null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='dashboard-instellingen.json';a.click();URL.revokeObjectURL(url);
+  const btn=document.getElementById('savebtn');btn.textContent='Gedownload ✓';btn.className='tb-btn save-btn ok';
   setTimeout(()=>{btn.className='tb-btn save-btn';btn.textContent='Opslaan';},3000);
 }
-
-function triggerLoad(){
-  document.getElementById('loadfile').value='';
-  document.getElementById('loadfile').click();
-}
-
+function triggerLoad(){document.getElementById('loadfile').value='';document.getElementById('loadfile').click();}
 function loadFromFile(e){
-  const file=e.target.files[0];
-  if(!file)return;
+  const file=e.target.files[0];if(!file)return;
   const reader=new FileReader();
   reader.onload=function(ev){
     try{
-      const s=JSON.parse(ev.target.result);
-      if(!s||!s.widgets||!s.widgets.length)throw new Error('Ongeldig bestand');
-      // Clear current grid
-      grid.removeAll();
-      widgets=s.widgets.filter(w=>T[w.type]);
-      nextId=s.nextId||widgets.length+1;
-      widgets.forEach(w=>renderWidget(w));
-      saveState();
-      const btn=document.getElementById('loadbtn');
-      btn.textContent='Geladen ✓';btn.className='tb-btn load-btn ok';
+      const s=JSON.parse(ev.target.result);if(!s||!s.widgets||!s.widgets.length)throw new Error('Ongeldig');
+      grid.removeAll();widgets=s.widgets.filter(w=>T[w.type]);nextId=s.nextId||widgets.length+1;
+      widgets.forEach(w=>renderWidget(w));saveState();
+      const btn=document.getElementById('loadbtn');btn.textContent='Geladen ✓';btn.className='tb-btn load-btn ok';
       setTimeout(()=>{btn.className='tb-btn load-btn';btn.textContent='Laden';},3000);
     }catch(err){
-      console.error('Laad fout:',err);
-      const btn=document.getElementById('loadbtn');
-      btn.textContent='Fout';btn.className='tb-btn load-btn err';
+      const btn=document.getElementById('loadbtn');btn.textContent='Fout';btn.className='tb-btn load-btn err';
       setTimeout(()=>{btn.className='tb-btn load-btn';btn.textContent='Laden';},3000);
     }
-  };
-  reader.readAsText(file);
+  };reader.readAsText(file);
 }
 
-// ── INIT ──
-function init(){
+async function init(){
   const canvas=document.getElementById('canvas');
-  const totalRows=8;
-  const margin=10;
+  const totalRows=8,margin=10;
   const cellH=Math.max(60,Math.floor((canvas.clientHeight-margin*(totalRows+1))/totalRows));
-
-  grid=GridStack.init({
-    el:'#grid',
-    cellHeight:cellH,
-    margin:margin,
-    column:12,
-    staticGrid:true,
-    animate:true,
-    minRow:totalRows,
-    draggable:{handle:'.wh'},
-    resizable:{handles:'se'}
-  });
-
-  // 1. Load from localStorage BEFORE attaching change listener
-  //    so addWidget calls during render don't trigger saveState
-  let loaded=false;
+  grid=GridStack.init({el:'#grid',cellHeight:cellH,margin,column:12,staticGrid:true,animate:true,minRow:totalRows,draggable:{handle:'.wh'},resizable:{handles:'se'}});
+  // Always load from /defaultjson/default.json
   try{
-    const saved=localStorage.getItem('dashboardState');
-    if(saved){
-      const s=JSON.parse(saved);
-      if(s&&s.widgets&&s.widgets.length){
-        // Filter out any widget types that no longer exist in T (e.g. from old experiments)
-        widgets=s.widgets.filter(w=>T[w.type]);
-        nextId=s.nextId||widgets.length+1;
-        // Always reset live-feed widgets so stale data never shows
-        widgets.forEach(w=>{
-          if(w.type==='p2000') w.data={items:[]};
-          if(w.type==='weather') w.data=T.weather.def;
-        });
-        widgets.forEach(w=>renderWidget(w));
-        loaded=true;
-      }
+    const r=await fetch('/defaultjson/default.json');
+    if(!r.ok) throw new Error('not found');
+    const s=await r.json();
+    if(s&&s.widgets&&s.widgets.length){
+      widgets=s.widgets.filter(w=>T[w.type]);
+      nextId=s.nextId||widgets.length+1;
+      widgets.forEach(w=>{if(w.type==='p2000')w.data={loading:true};if(w.type==='weather')w.data=T.weather.def;});
+      widgets.forEach(w=>renderWidget(w));
     }
   }catch(e){
-    console.error('Laad fout:',e);
+    console.warn('Could not load /defaultjson/default.json, using built-in preset.',e);
+    widgets=PRESET_STATE.widgets.filter(w=>T[w.type]);
+    nextId=PRESET_STATE.nextId||widgets.length+1;
+    widgets.forEach(w=>{if(w.type==='p2000')w.data={loading:true};if(w.type==='weather')w.data=T.weather.def;});
+    widgets.forEach(w=>renderWidget(w));
   }
-
-  // 2. Fall back to defaults if nothing saved locally
-  if(!loaded){
-    DEFAULT.forEach(d=>{
-      const w={id:nextId++,type:d.type,x:d.x,y:d.y,w:d.w,h:d.h,data:JSON.parse(JSON.stringify(T[d.type].def))};
-      widgets.push(w);renderWidget(w);
-    });
-    saveState(); // Save defaults locally so next load has data
-  }
-
-  // 3. Only NOW attach the change listener
   grid.on('change',saveState);
-
-  // 4. Start live API feeds
-  fetchWeather();
-  setInterval(fetchWeather, 5*60*1000); // refresh every 5 min
-
-  fetchP2000();
-  setInterval(fetchP2000, 30*1000); // source updates ~every 30s
-
+  fetchWeather();setInterval(fetchWeather,5*60*1000);
+  fetchP2000();scheduleMidnightRefresh();
   buildMobileHome();
+}
+
+function scheduleMidnightRefresh(){
+  const now=new Date();
+  const midnight=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1,0,0,5,0);
+  setTimeout(()=>{fetchP2000();scheduleMidnightRefresh();},midnight.getTime()-now.getTime());
 }
 
 document.querySelectorAll('.mov').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
 
-// ── MOBILE ──
-const APP_COLOR={
-  werkzaamheden:['#007AFF','#0055D4'],
-  weather:['#32ADE6','#0A7AC4'],
-  voertuigen:['#FF9F0A','#CC7700'],
-  reserveringen:['#FF6B35','#CC4415'],
-  ploegindeling:['#5E5CE6','#3634A3'],
-  topdesk:['#FF375F','#CC1035'],
-  p2000:['#D2100B','#8B0707'],
-  wegafsluiting:['#30D158','#1A8C38'],
-};
-
+const APP_COLOR={werkzaamheden:['#007AFF','#0055D4'],weather:['#32ADE6','#0A7AC4'],voertuigen:['#FF9F0A','#CC7700'],reserveringen:['#FF6B35','#CC4415'],ploegindeling:['#5E5CE6','#3634A3'],topdesk:['#FF375F','#CC1035'],p2000:['#D2100B','#8B0707'],wegafsluiting:['#30D158','#1A8C38']};
 function buildMobileHome(){
-  const g=document.getElementById('mob-grid');
-  if(!g)return;
-  g.innerHTML='';
-  widgets.forEach(w=>{
-    const def=T[w.type];
-    const c=APP_COLOR[w.type]||['#636366','#3A3A3C'];
-    const btn=document.createElement('button');
-    btn.className='mob-app';
-    btn.onclick=()=>openApp(w.id);
-    btn.innerHTML=`<div class="mob-ico" style="background:linear-gradient(145deg,${c[0]},${c[1]})">${I[def.ico]||''}</div><div class="mob-lbl">${def.label}</div>`;
-    g.appendChild(btn);
-  });
+  const g=document.getElementById('mob-grid');if(!g)return;g.innerHTML='';
+  widgets.forEach(w=>{const def=T[w.type];const c=APP_COLOR[w.type]||['#636366','#3A3A3C'];const btn=document.createElement('button');btn.className='mob-app';btn.onclick=()=>openApp(w.id);btn.innerHTML=`<div class="mob-ico" style="background:linear-gradient(145deg,${c[0]},${c[1]})">${I[def.ico]||''}</div><div class="mob-lbl">${def.label}</div>`;g.appendChild(btn);});
 }
-
-function openApp(id){
-  const w=widgets.find(x=>x.id===id);if(!w)return;
-  const def=T[w.type];
-  document.getElementById('mob-app-title').textContent=def.label;
-  document.getElementById('mob-app-body').innerHTML=def.render(w.data,id);
-  document.getElementById('mob-appview').classList.add('open');
-}
-
-function closeApp(){
-  document.getElementById('mob-appview').classList.remove('open');
-}
+function openApp(id){const w=widgets.find(x=>x.id===id);if(!w)return;document.getElementById('mob-app-title').textContent=T[w.type].label;document.getElementById('mob-app-body').innerHTML=T[w.type].render(w.data,id);document.getElementById('mob-appview').classList.add('open');}
+function closeApp(){document.getElementById('mob-appview').classList.remove('open');}
 
 window.addEventListener('load',init);
 </script>
