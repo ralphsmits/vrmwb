@@ -21,7 +21,7 @@
   --card-shadow:0 4px 24px rgba(0,0,0,.12),0 1px 4px rgba(0,0,0,.08);
   --text:#1E1E1E;--text-sub:#707172;--text-light:#9DA3B0;
   --divider:rgba(0,0,0,.08);--input-bg:rgba(0,0,0,.04);
-  --radius:10px;--topbar-h:64px;
+  --radius:10px;--topbar-h:80px;
 }
 html,body{height:100%;overflow:hidden}
 body{font-family:'Frutiger',sans-serif;background:#0A0C10;color:var(--text);display:flex;flex-direction:column}
@@ -41,7 +41,7 @@ body{font-family:'Frutiger',sans-serif;background:#0A0C10;color:var(--text);disp
 .topbar{
   flex:0 0 var(--topbar-h);
   background:rgba(255, 255, 255);
-  display:flex;align-items:center;padding:0 20px;
+  display:flex;align-items:center;padding:0 50px;
   z-index:100;position:relative;
 }
 .tb-logos{position:absolute;left:0;right:0;display:flex;align-items:center;justify-content:center;pointer-events:none;height:var(--topbar-h)}
@@ -467,7 +467,7 @@ select.finp{cursor:pointer}
 
 <header class="topbar">
   <div class="tb-left">
-    <a href="https://rvanbroekhoven.github.io/ODj-VRMWB/" target="_blank" class="tb-btn white">ODj Beheer</a>
+    <a href="https://rvanbroekhoven.github.io/ODj-VRMWB/" class="tb-btn white">ODj Beheer</a>
     <div class="tb-divider"></div>
     <div class="loc-wrap">
       <button class="loc-btn" id="loc-btn" onclick="toggleLocMenu()">
