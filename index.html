@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ODj Widgetpagina – VRMWB</title>
 <link href="https://cdn.jsdelivr.net/npm/gridstack@10.0/dist/gridstack.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet"/>
 <style>
 @font-face{font-family:'Frutiger';src:url('font/Frutiger Light.ttf') format('truetype');font-weight:300;font-style:normal}
 @font-face{font-family:'Frutiger';src:url('font/Frutiger Regular.ttf') format('truetype');font-weight:400;font-style:normal}
@@ -32,14 +33,14 @@ body{font-family:'Frutiger',sans-serif;background:#0A0C10;color:var(--text);disp
 }
 .bg::after{
   content:'';position:absolute;inset:0;
-  background:linear-gradient(to bottom,rgba(245,245,245,1) 20%,transparent 65%);
+  /* background:linear-gradient(to bottom,rgb(255, 255, 255) 10%,transparent 100%); */
   pointer-events:none;
 }
 
 /* TOP BAR */
 .topbar{
   flex:0 0 var(--topbar-h);
-  background:rgba(0,0,0,0);
+  background:rgba(255, 255, 255);
   display:flex;align-items:center;padding:0 20px;
   z-index:100;position:relative;
 }
@@ -62,17 +63,74 @@ body{font-family:'Frutiger',sans-serif;background:#0A0C10;color:var(--text);disp
   text-decoration:none;display:inline-flex;align-items:center;
 }
 .tb-btn.white:hover{background:rgba(255,255,255,.85)}
-/* Opslaan / Laden – white with black border, edit-mode only */
-.save-btn{background:#fff;color:#1A1C22;border:1px solid rgba(0, 0, 0, 0.2);display:none}
-.save-btn:hover{background:rgba(255,255,255,.85)}
-.save-btn.ok{background:#16a34a;color:#fff;border-color:#16a34a}
-.load-btn{background:#fff;color:#1A1C22;border:1px solid rgba(0, 0, 0, 0.2);display:none}
-.load-btn:hover{background:rgba(255,255,255,.85)}
-.load-btn.ok{background:#16a34a;color:#fff;border-color:#16a34a}
-.load-btn.err{background:var(--red);color:#fff;border-color:var(--red)}
-body.edit-mode .save-btn,body.edit-mode .load-btn{display:inline-flex;align-items:center}
-.tb-layout{font-size:11px;color:rgba(0,0,0,.55);font-weight:700;white-space:nowrap;letter-spacing:.3px;text-transform:uppercase}
-.tb-layout strong{color:#1A1C22;font-weight:900}
+/* Dark mode */
+body.dark{
+  --text:#E8EAED;--text-sub:#8A909E;--text-light:#4E5566;
+  --divider:rgba(255,255,255,.06);--input-bg:rgba(255,255,255,.06);
+}
+/* Achtergrond: donkere overlay in plaats van lichte gradiënt */
+body.dark .bg::after{background:rgba(0,0,0,.72)}
+/* Topbar */
+body.dark .topbar{background:rgba(10,11,16,.55);backdrop-filter:blur(8px)}
+body.dark .tb-btn.white{background:rgba(255,255,255,.08);color:#E8EAED;border-color:rgba(255,255,255,.12)}
+body.dark .tb-btn.white:hover{background:rgba(255,255,255,.15)}
+body.dark .tb-btn.gold{color:#1A1C22}
+body.dark .tb-datetime{color:rgba(255,255,255,.65)}
+body.dark .tb-divider{background:rgba(255,255,255,.1)}
+/* Locatie */
+body.dark .loc-btn{background:rgba(255,255,255,.07);color:#E8EAED}
+body.dark .loc-btn:hover{background:rgba(255,255,255,.13)}
+body.dark .loc-ico{fill:var(--gold)}
+body.dark .loc-menu{background:#16181F;border-color:rgba(255,255,255,.09);box-shadow:0 8px 32px rgba(0,0,0,.5)}
+body.dark .loc-item{color:#E8EAED}
+body.dark .loc-item:hover{background:rgba(255,255,255,.07)}
+body.dark .loc-item.active{color:var(--gold);background:rgba(204,153,51,.12)}
+/* Widgets */
+body.dark .widget{
+  background:rgba(24,27,36,.9);
+  box-shadow:0 4px 24px rgba(0,0,0,.5),0 1px 4px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.04);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+}
+body.dark .wh{background:rgba(255,255,255,.035);border-bottom-color:rgba(255,255,255,.06)}
+body.dark .wh-title{color:#E8EAED}
+body.dark .wb{color:var(--text-sub)}
+body.dark .wbody::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1)}
+/* Widget inhoud */
+body.dark .acc{background:rgba(255,255,255,.05);border-left-color:var(--red)}
+body.dark .acc.blue{border-left-color:var(--navy)}
+body.dark .acc.gold{border-left-color:var(--gold)}
+body.dark .scell{background:rgba(255,255,255,.05)}
+body.dark .scell .sl{color:var(--text-sub)}
+body.dark .scell .sv{color:#E8EAED}
+body.dark .trow{border-bottom-color:rgba(255,255,255,.06)}
+body.dark .tlabel{color:#E8EAED}
+body.dark .tmeta{color:var(--text-sub)}
+body.dark .wtbl th{color:var(--text-sub);border-bottom-color:rgba(255,255,255,.08)}
+body.dark .wtbl td{color:#E8EAED;border-bottom-color:rgba(255,255,255,.06)}
+body.dark .tcb{border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.06)}
+body.dark .grid-stack-placeholder>.placeholder-content{background:rgba(204,153,51,.12);border-color:rgba(204,153,51,.5)}
+/* Footer */
+body.dark .btmbar{background:rgba(10,11,16,.97);border-top-color:rgba(255,255,255,.06);box-shadow:0 -3px 14px rgba(0,0,0,.4)}
+body.dark .bb-logo strong{color:#E8EAED}
+body.dark .bb-logo span{color:var(--text-sub)}
+body.dark .bb-release{color:var(--text-light)!important}
+body.dark .bb-add,body.dark .bb-date-nav{background:rgba(255,255,255,.1)}
+body.dark .bb-profile:hover{background:rgba(255,255,255,.07)}
+body.dark .bb-pname{color:#E8EAED}
+body.dark .bb-prole{color:var(--text-sub)}
+/* Profiel panel */
+body.dark .profile-panel{background:#16181F;border-color:rgba(255,255,255,.09);box-shadow:0 8px 40px rgba(0,0,0,.55)}
+body.dark .pp-inp{background:#1E2030;border-color:rgba(255,255,255,.12);color:#E8EAED}
+body.dark .pp-inp:focus{border-color:var(--gold)}
+body.dark .pp-avatar{background:var(--navy)}
+body.dark .pp-head{color:var(--text-sub)}
+body.dark .pp-lbl{color:var(--text-sub)}
+body.dark .pp-inp{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1);color:#E8EAED}
+body.dark .pp-inp:focus{border-color:var(--gold)}
+body.dark .pp-inp::placeholder{color:var(--text-light)}
+body.dark .pp-toggle-row{border-top-color:rgba(255,255,255,.08)}
+body.dark .pp-toggle-lbl{color:#E8EAED}
+body.dark .pp-toggle{background:rgba(255,255,255,.12)}
 
 /* Edit strip */
 .estrip{position:fixed;top:var(--topbar-h);left:0;right:0;height:2px;
@@ -99,7 +157,7 @@ body.edit-mode .estrip{opacity:1}
 /* WIDGET – glassmorphism */
 .widget{
   height:100%;
-  background:rgba(255,255,255,0.68);
+  background:rgba(255,255,255,0.80);
   backdrop-filter:blur(18px);
   -webkit-backdrop-filter:blur(18px);
   /* border:1px solid rgba(0, 0, 0, 0.2); */
@@ -110,8 +168,15 @@ body.edit-mode .estrip{opacity:1}
   animation:win .22s cubic-bezier(.2,.8,.4,1) both;
 }
 @keyframes win{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:none}}
-body.edit-mode .widget{outline:2px solid rgba(23,66,140,.3);outline-offset:1px}
-body.edit-mode .grid-stack-item:hover .widget{outline-color:rgba(23,66,140,.6)}
+@keyframes eborder{
+  0%,100%{box-shadow:0 0 0 2px rgba(23,66,140,.5),0 4px 24px rgba(0,0,0,.10),0 1px 4px rgba(0,0,0,.06),inset 0 1px 0 rgba(255,255,255,.9)}
+  50%{box-shadow:0 0 0 2px rgba(204,153,51,.75),0 4px 24px rgba(0,0,0,.10),0 1px 4px rgba(0,0,0,.06),inset 0 1px 0 rgba(255,255,255,.9)}
+}
+body.edit-mode .widget{animation:eborder 2s ease-in-out infinite}
+body.edit-mode .grid-stack-item:hover .widget{
+  animation:none;
+  box-shadow:0 0 0 2.5px var(--navy),0 4px 24px rgba(0,0,0,.12),0 1px 4px rgba(0,0,0,.08),inset 0 1px 0 rgba(255,255,255,.9)
+}
 
 /* Widget header */
 .wh{flex:0 0 auto;height:46px;padding:0 10px 0 14px;display:flex;align-items:center;gap:7px;border-bottom:1px solid rgba(0,0,0,.08);user-select:none;cursor:default;background:rgba(255,255,255,.3)}
@@ -133,7 +198,8 @@ body.edit-mode .wb.edit-btn,body.edit-mode .wb.del{display:flex}
 
 /* BOTTOM BAR */
 .btmbar{
-  flex:0 0 80px;background:rgba(255,255,255,.92);
+  flex:0 0 80px;
+  background:rgba(255,255,255,.92);
   backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
   border-top:1px solid rgba(0,0,0,.08);
   display:flex;align-items:center;justify-content:space-between;
@@ -143,16 +209,128 @@ body.edit-mode .wb.edit-btn,body.edit-mode .wb.del{display:flex}
 }
 .bb-logo strong{font-size:14px;font-weight:700;text-transform:uppercase;color:var(--text);letter-spacing:.3px}
 .bb-logo span{display:block;font-size:14px;font-weight:400;color:var(--text);text-transform:uppercase;letter-spacing:.3px;margin-top:2px}
-.bb-add{
+.bb-release{font-size:10px!important;font-weight:700!important;color:var(--text-light)!important;text-transform:none!important;letter-spacing:.2px!important;margin-top:3px!important}
+.bb-add,.bb-date-nav{
   position:absolute;left:50%;transform:translateX(-50%);
-  background:var(--text);color:#fff;
-  height:81px;width:200px;border:none;border-radius:28px;
-  font-family:'Frutiger',sans-serif;font-size:36px;font-weight:300;
-  cursor:pointer;transition:opacity .15s;
-  display:flex;align-items:center;justify-content:center;
+  height:81px;border:none;border-radius:28px;
+  font-family:'Frutiger',sans-serif;
+  cursor:pointer;transition:opacity .15s,transform .15s;
+  display:none;align-items:center;justify-content:center;
+  background:var(--text);
 }
-.bb-add:hover{opacity:.75}
+.bb-add{width:220px;color:#fff}
+.bb-add:hover{opacity:.85}
+/* Normaal: toon datepicker; edit-mode: toon + */
+.bb-date-nav{display:flex;width:280px;padding:0 8px;gap:0}
+body.edit-mode .bb-date-nav{display:none}
+body.edit-mode .bb-add{display:flex}
+.bb-nav-arrow{
+  background:transparent;border:none;color:rgba(255,255,255,.7);
+  font-size:32px;font-weight:300;line-height:1;cursor:pointer;
+  padding:0 12px;flex-shrink:0;transition:color .15s;
+  font-family:'Frutiger',sans-serif;
+}
+.bb-nav-arrow:hover{color:#fff}
+.bb-date-trigger{
+  flex:1;background:transparent;border:none;
+  font-family:'Frutiger',sans-serif;font-size:17px;font-weight:700;
+  color:#fff;cursor:pointer;white-space:nowrap;letter-spacing:.2px;
+  padding:0 4px;
+}
+
+/* Flatpickr custom theme */
+.flatpickr-calendar{
+  font-family:'Frutiger',sans-serif!important;
+  border-radius:14px!important;
+  box-shadow:0 8px 40px rgba(0,0,0,.18),0 1px 4px rgba(0,0,0,.07)!important;
+  border:1px solid rgba(0,0,0,.08)!important;
+  overflow:hidden;
+}
+.flatpickr-months{background:var(--navy);padding:4px 0}
+.flatpickr-month,.flatpickr-monthDropdown-months,.flatpickr-current-month input.cur-year{color:#fff!important;fill:#fff!important}
+.flatpickr-prev-month svg,.flatpickr-next-month svg{fill:#fff!important}
+.flatpickr-prev-month:hover svg,.flatpickr-next-month:hover svg{fill:var(--gold)!important}
+.flatpickr-weekday{color:var(--text-sub)!important;font-weight:900!important;font-size:11px!important}
+.flatpickr-day{border-radius:8px!important;font-weight:700;color:var(--text)}
+.flatpickr-day:hover,.flatpickr-day.prevMonthDay:hover,.flatpickr-day.nextMonthDay:hover{background:rgba(23,66,140,.1)!important;border-color:transparent!important}
+.flatpickr-day.today{border-color:var(--gold)!important;color:var(--text)!important}
+.flatpickr-day.today:hover{background:rgba(204,153,51,.15)!important}
+.flatpickr-day.selected,.flatpickr-day.selected:hover{background:var(--navy)!important;border-color:var(--navy)!important;color:#fff!important}
+/* Dark mode Flatpickr */
+body.dark .flatpickr-calendar{background:#16181F!important;border-color:rgba(255,255,255,.09)!important;box-shadow:0 8px 40px rgba(0,0,0,.5)!important}
+body.dark .flatpickr-weekday{color:var(--text-sub)!important}
+body.dark .flatpickr-day{color:#E8EAED!important}
+body.dark .flatpickr-day:hover{background:rgba(255,255,255,.08)!important}
+body.dark .flatpickr-day.today{border-color:var(--gold)!important}
+body.dark .flatpickr-day.prevMonthDay,body.dark .flatpickr-day.nextMonthDay{color:rgba(255,255,255,.25)!important}
 .bb-datetime{font-size:22px;font-weight:400;color:var(--text-sub);letter-spacing:.2px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.bb-right{display:flex;align-items:center;gap:12px}
+.bb-controls{display:flex;align-items:center;gap:8px}
+.tb-datetime{font-size:18px;font-weight:400;color:rgba(0,0,0,.65);letter-spacing:.2px;font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* Profile button in footer */
+.bb-profile{display:flex;align-items:center;gap:10px;cursor:pointer;padding:6px 10px;border-radius:12px;border:none;background:transparent;font-family:'Frutiger',sans-serif;transition:background .15s}
+.bb-profile:hover{background:rgba(0,0,0,.06)}
+.bb-avatar{width:38px;height:38px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;letter-spacing:.3px;flex-shrink:0}
+.bb-pinfo{text-align:left}
+.bb-pname{font-size:13px;font-weight:700;color:var(--text);line-height:1.2}
+.bb-prole{font-size:11px;font-weight:400;color:var(--text-sub);margin-top:1px}
+
+/* Profile panel (dropdown) */
+.tb-divider{width:1px;height:28px;background:rgba(0,0,0,.12);margin:0 4px}
+
+/* Location selector */
+.loc-wrap{position:relative}
+.loc-btn{
+  display:flex;align-items:center;gap:6px;
+  height:32px;padding:0 12px 0 10px;border-radius:25px;border:none;
+  background:rgba(0,0,0,.06);color:var(--text);
+  font-family:'Frutiger',sans-serif;font-size:13px;font-weight:700;
+  cursor:pointer;transition:background .15s;white-space:nowrap;
+}
+.loc-btn:hover{background:rgba(0,0,0,.11)}
+.loc-ico{width:14px;height:14px;stroke:none;fill:var(--navy);flex-shrink:0}
+.loc-chevron{width:14px;height:14px;stroke:var(--text-sub);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;transition:transform .2s}
+.loc-wrap.open .loc-chevron{transform:rotate(180deg)}
+.loc-menu{
+  position:absolute;top:calc(100% + 8px);left:0;
+  background:#fff;border-radius:12px;
+  box-shadow:0 8px 32px rgba(0,0,0,.14),0 1px 4px rgba(0,0,0,.07);
+  border:1px solid rgba(0,0,0,.07);
+  min-width:160px;padding:6px;
+  opacity:0;pointer-events:none;transform:translateY(-6px);
+  transition:opacity .18s,transform .18s;z-index:300;
+}
+.loc-wrap.open .loc-menu{opacity:1;pointer-events:all;transform:none}
+.loc-item{
+  display:block;width:100%;padding:9px 14px;border:none;border-radius:8px;
+  background:transparent;text-align:left;font-family:'Frutiger',sans-serif;
+  font-size:14px;font-weight:700;color:var(--text);cursor:pointer;transition:background .12s;
+}
+.loc-item:hover{background:rgba(0,0,0,.05)}
+.loc-item.active{color:var(--navy);background:rgba(23,66,140,.07)}
+.profile-panel{position:fixed;bottom:92px;right:20px;background:#fff;border-radius:14px;box-shadow:0 8px 40px rgba(0,0,0,.18),0 1px 4px rgba(0,0,0,.08);border:1px solid rgba(0,0,0,.08);width:300px;padding:24px;opacity:0;pointer-events:none;transform:translateY(10px);transition:opacity .2s,transform .2s;z-index:200;max-height:calc(100vh - 120px);overflow-y:auto}
+/* Backdrop picker */
+.pp-backdrop-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}
+.pp-backdrop-thumb{width:100%;aspect-ratio:16/9;border-radius:6px;cursor:pointer;object-fit:cover;border:2.5px solid transparent;transition:border-color .15s,transform .1s}
+.pp-backdrop-thumb:hover{transform:scale(1.05)}
+.pp-backdrop-thumb.selected{border-color:var(--navy)}
+body.dark .pp-backdrop-thumb.selected{border-color:var(--gold)}
+.profile-panel.open{opacity:1;pointer-events:all;transform:none}
+.pp-avatar{width:56px;height:56px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;margin:0 auto 14px;letter-spacing:.3px}
+.pp-head{font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:.6px;color:var(--text-sub);margin-bottom:16px;text-align:center}
+.pp-lbl{display:block;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sub);margin:12px 0 5px}
+.pp-inp{width:100%;padding:9px 12px;border:1.5px solid rgba(0,0,0,.12);border-radius:8px;font-family:'Frutiger',sans-serif;font-size:14px;color:var(--text);background:#fff;outline:none;transition:border-color .15s}
+.pp-inp:focus{border-color:var(--navy)}
+.pp-toggle-row{display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding:10px 0;border-top:1px solid rgba(0,0,0,.08)}
+body.dark .pp-toggle-row{border-top-color:rgba(255,255,255,.08)}
+.pp-toggle-lbl{font-size:14px;font-weight:700;color:var(--text)}
+.pp-toggle{width:44px;height:26px;border-radius:13px;border:none;background:rgba(0,0,0,.15);cursor:pointer;padding:3px;transition:background .2s;flex-shrink:0;position:relative}
+.pp-toggle[aria-checked="true"]{background:var(--navy)}
+.pp-toggle-thumb{display:block;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.2);transition:transform .2s}
+.pp-toggle[aria-checked="true"] .pp-toggle-thumb{transform:translateX(18px)}
+.pp-save{width:100%;margin-top:16px;padding:10px;background:var(--navy);color:#fff;border:none;border-radius:8px;font-family:'Frutiger',sans-serif;font-weight:900;font-size:13px;text-transform:uppercase;letter-spacing:.4px;cursor:pointer;transition:background .15s}
+.pp-save:hover{background:#1a4fa8}
 
 /* WIDGET CONTENT */
 .acc{border-left:3px solid var(--red);background:rgba(0,0,0,.04);border-radius:0 8px 8px 0;padding:9px 11px;margin-bottom:8px}
@@ -275,10 +453,10 @@ select.finp{cursor:pointer}
 @media(max-width:768px){
   .canvas{display:none!important}
   .mob-home{display:block!important}
-  .tb-layout,#editbtn,#savebtn,.tb-left{display:none!important}
+  .tb-left,.tb-datetime,#editbtn{display:none!important}
   .btmbar{padding:0 20px}
-  .bb-add{display:none!important}
-  .bb-datetime{font-size:14px}
+  .bb-add,.bb-date-nav{display:none!important}
+  .bb-right{display:none!important}
   .toast{bottom:100px}
 }
 </style>
@@ -290,15 +468,26 @@ select.finp{cursor:pointer}
 <header class="topbar">
   <div class="tb-left">
     <a href="https://rvanbroekhoven.github.io/ODj-VRMWB/" target="_blank" class="tb-btn white">ODj Beheer</a>
+    <div class="tb-divider"></div>
+    <div class="loc-wrap">
+      <button class="loc-btn" id="loc-btn" onclick="toggleLocMenu()">
+        <svg viewBox="0 0 24 24" class="loc-ico"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+        <span id="loc-label">Breda</span>
+        <svg viewBox="0 0 24 24" class="loc-chevron"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="loc-menu" id="loc-menu">
+        <button class="loc-item" onclick="selectLoc('Breda')">Breda</button>
+        <button class="loc-item" onclick="selectLoc('Chaam')">Chaam</button>
+        <button class="loc-item" onclick="selectLoc('Ulvenhout')">Ulvenhout</button>
+      </div>
+    </div>
   </div>
   <div class="tb-logos">
-    <img src="img/logo.png" alt="VRMWB Brandweer" class="tb-logo-img">
+    <img src="img/logo.png" alt="VRMWB Brandweer" class="tb-logo-img" id="tb-logo">
   </div>
   <div class="tb-right">
-    <button class="tb-btn save-btn" id="savebtn" onclick="manualSave()">Opslaan</button>
-    <button class="tb-btn load-btn" id="loadbtn" onclick="triggerLoad()">Laden</button>
-    <input type="file" id="loadfile" accept=".json" style="display:none" onchange="loadFromFile(event)">
-    <div class="tb-layout" id="layout-lbl">Layout: <strong>Vergrendeld</strong></div>
+    <div class="tb-datetime"><span id="bbdate">—</span>&nbsp;&nbsp;<span id="bbtime"></span></div>
+    <div class="tb-divider"></div>
     <button class="tb-btn gold" id="editbtn" onclick="toggleEditMode()">Aanpassen</button>
   </div>
 </header>
@@ -326,9 +515,27 @@ select.finp{cursor:pointer}
   <div class="bb-logo">
     <strong>Operationeel Dagjournaal</strong>
     <span>Widgetpagina</span>
+    <span class="bb-release">production 20260401.1</span>
   </div>
-  <button class="bb-add" onclick="openModal('add-modal')">+</button>
-  <div class="bb-datetime"><span id="bbdate">—</span>&nbsp;&nbsp;<span id="bbtime"></span></div>
+  <div class="bb-date-nav" id="bb-date-nav">
+    <button class="bb-nav-arrow" onclick="changeDay(-1)">&#8249;</button>
+    <button class="bb-date-trigger" id="bb-date-trigger">
+      <span id="bb-date-display">Vandaag</span>
+    </button>
+    <button class="bb-nav-arrow" onclick="changeDay(1)">&#8250;</button>
+  </div>
+  <button class="bb-add" id="bb-add-btn" onclick="openModal('add-modal')">
+    <svg viewBox="0 0 24 24" style="width:32px;height:32px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  </button>
+  <div class="bb-right">
+    <button class="bb-profile" id="profile-btn" onclick="toggleProfilePanel()">
+      <div class="bb-avatar" id="bb-avatar">?</div>
+      <div class="bb-pinfo">
+        <div class="bb-pname" id="bb-pname">Naam Achternaam</div>
+        <div class="bb-prole" id="bb-prole">Rol</div>
+      </div>
+    </button>
+  </div>
 </footer>
 
 <div class="mov" id="add-modal">
@@ -350,9 +557,31 @@ select.finp{cursor:pointer}
   </div>
 </div>
 
+<div class="profile-panel" id="profile-panel">
+  <div class="pp-avatar" id="pp-avatar">?</div>
+  <div class="pp-head">Profielinstellingen</div>
+  <label class="pp-lbl">Voornaam</label>
+  <input class="pp-inp" id="pp-voornaam" type="text" placeholder="Voornaam">
+  <label class="pp-lbl">Achternaam</label>
+  <input class="pp-inp" id="pp-achternaam" type="text" placeholder="Achternaam">
+  <label class="pp-lbl">Rol</label>
+  <input class="pp-inp" id="pp-rol" type="text" placeholder="bijv. Ploegcommandant">
+  <div class="pp-toggle-row">
+    <span class="pp-toggle-lbl">Dark mode</span>
+    <button class="pp-toggle" id="dark-toggle" onclick="toggleDark()" role="switch" aria-checked="false">
+      <span class="pp-toggle-thumb"></span>
+    </button>
+  </div>
+  <label class="pp-lbl" style="margin-top:16px">Achtergrond</label>
+  <div class="pp-backdrop-grid" id="pp-backdrop-grid"></div>
+  <button class="pp-save" onclick="saveProfile()">Opslaan</button>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/gridstack@10.0/dist/gridstack-all.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/nl.js"></script>
 <script>
 const I={
   pencil:`<svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`,
@@ -575,7 +804,7 @@ const T={
       {weg:'A58 richting Breda – km 14',status:'BEPERKT',date:'Ma, 16 maart 2026',desc:'Wegwerkzaamheden rijstrook 1+2, omleiding via N282',warn:''},
     ]},
     render(d){
-      const IMG_MAP={'generaal maczekstraat':'img/maczekstraat.jpeg','tolbrugstraat':'img/tolbrugstraat.jpeg'};
+      const IMG_MAP={'generaal maczekstraat':'/img/maczekstraat.jpeg','tolbrugstraat':'/img/tolbrugstraat.jpeg'};
       return d.items.map(w=>{
         const imgSrc=w.img||IMG_MAP[(w.weg||'').toLowerCase().trim()]||null;
         const mapBlock=imgSrc
@@ -669,10 +898,34 @@ function toggleEditMode(){
   const b=document.getElementById('editbtn');
   b.classList.toggle('active',editMode);
   b.textContent=editMode?'Klaar':'Aanpassen';
-  document.getElementById('layout-lbl').innerHTML=editMode?'Layout: <strong>Bewerken</strong>':'Layout: <strong>Vergrendeld</strong>';
   if(grid)grid.setStatic(!editMode);
   if(editMode)showToast('Bewerkmodus actief – sleep en resize widgets');
 }
+
+// Datepicker
+let selectedDate=new Date();
+let fpInstance=null;
+function isToday(d){const t=new Date();return d.getDate()===t.getDate()&&d.getMonth()===t.getMonth()&&d.getFullYear()===t.getFullYear();}
+function dateLabel(d){
+  if(isToday(d))return'Vandaag';
+  return`${DAYS[d.getDay()]}, ${d.getDate()} ${MONTHS[d.getMonth()]}`;
+}
+function setDate(d){
+  selectedDate=d;
+  document.getElementById('bb-date-display').textContent=dateLabel(d);
+  if(fpInstance)fpInstance.setDate(d,false);
+}
+function changeDay(dir){
+  const d=new Date(selectedDate);d.setDate(d.getDate()+dir);setDate(d);
+}
+function initDatepicker(){
+  setDate(selectedDate);
+  fpInstance=flatpickr('#bb-date-trigger',{
+    locale:'nl',defaultDate:'today',position:'above center',disableMobile:true,
+    onChange:function(dates){if(dates[0])setDate(dates[0]);}
+  });
+}
+window.addEventListener('load',()=>initDatepicker(),{once:true});
 
 function openModal(id){document.getElementById(id).classList.add('open');if(id==='add-modal')buildPicker();}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
@@ -718,30 +971,6 @@ function saveEdit(){
 
 function syncPositions(){if(!grid)return;grid.engine.nodes.forEach(node=>{const id=parseInt((node.id||'').replace('gs',''));const w=widgets.find(x=>x.id===id);if(w){w.x=node.x;w.y=node.y;w.w=node.w;w.h=node.h;}});}
 function saveState(){syncPositions();try{localStorage.setItem('dashboardState',JSON.stringify({widgets,nextId}));return true;}catch(e){return false;}}
-function manualSave(){
-  syncPositions();
-  const blob=new Blob([JSON.stringify({widgets,nextId},null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='dashboard-instellingen.json';a.click();URL.revokeObjectURL(url);
-  const btn=document.getElementById('savebtn');btn.textContent='Gedownload ✓';btn.className='tb-btn save-btn ok';
-  setTimeout(()=>{btn.className='tb-btn save-btn';btn.textContent='Opslaan';},3000);
-}
-function triggerLoad(){document.getElementById('loadfile').value='';document.getElementById('loadfile').click();}
-function loadFromFile(e){
-  const file=e.target.files[0];if(!file)return;
-  const reader=new FileReader();
-  reader.onload=function(ev){
-    try{
-      const s=JSON.parse(ev.target.result);if(!s||!s.widgets||!s.widgets.length)throw new Error('Ongeldig');
-      grid.removeAll();widgets=s.widgets.filter(w=>T[w.type]);nextId=s.nextId||widgets.length+1;
-      widgets.forEach(w=>renderWidget(w));saveState();
-      const btn=document.getElementById('loadbtn');btn.textContent='Geladen ✓';btn.className='tb-btn load-btn ok';
-      setTimeout(()=>{btn.className='tb-btn load-btn';btn.textContent='Laden';},3000);
-    }catch(err){
-      const btn=document.getElementById('loadbtn');btn.textContent='Fout';btn.className='tb-btn load-btn err';
-      setTimeout(()=>{btn.className='tb-btn load-btn';btn.textContent='Laden';},3000);
-    }
-  };reader.readAsText(file);
-}
 
 async function init(){
   const canvas=document.getElementById('canvas');
@@ -779,6 +1008,112 @@ function scheduleMidnightRefresh(){
 }
 
 document.querySelectorAll('.mov').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
+
+// Location
+const LOC_KEY='vrmwb_location';
+const LOCATIONS=['Breda','Chaam','Ulvenhout'];
+function initLoc(){
+  const saved=localStorage.getItem(LOC_KEY)||'Breda';
+  setLocActive(saved,false);
+}
+function selectLoc(name){
+  localStorage.setItem(LOC_KEY,name);
+  setLocActive(name,true);
+}
+function setLocActive(name,close){
+  document.getElementById('loc-label').textContent=name;
+  document.querySelectorAll('.loc-item').forEach(el=>el.classList.toggle('active',el.textContent===name));
+  if(close)document.getElementById('loc-wrap')?.classList.remove('open')||document.querySelector('.loc-wrap').classList.remove('open');
+}
+function toggleLocMenu(){
+  document.querySelector('.loc-wrap').classList.toggle('open');
+}
+document.addEventListener('click',function(e){
+  const wrap=document.querySelector('.loc-wrap');
+  if(wrap&&wrap.classList.contains('open')&&!wrap.contains(e.target))wrap.classList.remove('open');
+});
+initLoc();
+
+// Dark mode
+const DARK_KEY='vrmwb_dark';
+function applyDark(on){
+  document.body.classList.toggle('dark',on);
+  const t=document.getElementById('dark-toggle');
+  if(t)t.setAttribute('aria-checked',on?'true':'false');
+  const logo=document.getElementById('tb-logo');
+  if(logo)logo.src=on?'img/darklogo.png':'img/logo.png';
+}
+function toggleDark(){
+  const on=!document.body.classList.contains('dark');
+  localStorage.setItem(DARK_KEY,on?'1':'0');
+  applyDark(on);
+}
+applyDark(localStorage.getItem(DARK_KEY)==='1');
+
+// Profile
+const PROF_KEY='vrmwb_profile';
+const BACKDROPS=Array.from({length:11},(_,i)=>`img/backdrops/backdrop${i+1}.jpg`);
+let selectedBackdrop=null;
+function buildBackdropGrid(){
+  const grid=document.getElementById('pp-backdrop-grid');
+  if(!grid)return;
+  grid.innerHTML='';
+  const p=JSON.parse(localStorage.getItem(PROF_KEY)||'{}');
+  const current=p.backdrop||null;
+  BACKDROPS.forEach(src=>{
+    const img=document.createElement('img');
+    img.className='pp-backdrop-thumb'+(src===current?' selected':'');
+    img.src=src;
+    img.alt='';
+    img.onclick=function(){
+      document.querySelectorAll('.pp-backdrop-thumb').forEach(t=>t.classList.remove('selected'));
+      img.classList.add('selected');
+      selectedBackdrop=src;
+    };
+    grid.appendChild(img);
+  });
+  selectedBackdrop=current;
+}
+function applyBackdrop(src){
+  const bg=document.querySelector('.bg');
+  if(!bg)return;
+  if(src)bg.style.backgroundImage=`url('${src}')`;
+  else bg.style.backgroundImage="url('img/odjbackdrop.png')";
+}
+function loadProfile(){
+  const p=JSON.parse(localStorage.getItem(PROF_KEY)||'{}');
+  const naam=p.voornaam||'';const ach=p.achternaam||'';const rol=p.rol||'';
+  const initials=((naam[0]||'')+(ach[0]||'')).toUpperCase()||'?';
+  document.getElementById('bb-avatar').textContent=initials;
+  document.getElementById('pp-avatar').textContent=initials;
+  document.getElementById('bb-pname').textContent=(naam+' '+ach).trim()||'Naam Achternaam';
+  document.getElementById('bb-prole').textContent=rol||'Rol';
+  document.getElementById('pp-voornaam').value=naam;
+  document.getElementById('pp-achternaam').value=ach;
+  document.getElementById('pp-rol').value=rol;
+  const t=document.getElementById('dark-toggle');
+  if(t)t.setAttribute('aria-checked',document.body.classList.contains('dark')?'true':'false');
+  applyBackdrop(p.backdrop||null);
+  buildBackdropGrid();
+}
+function saveProfile(){
+  const voornaam=document.getElementById('pp-voornaam').value.trim();
+  const achternaam=document.getElementById('pp-achternaam').value.trim();
+  const rol=document.getElementById('pp-rol').value.trim();
+  const p=JSON.parse(localStorage.getItem(PROF_KEY)||'{}');
+  const backdrop=selectedBackdrop||p.backdrop||null;
+  localStorage.setItem(PROF_KEY,JSON.stringify({voornaam,achternaam,rol,backdrop}));
+  applyBackdrop(backdrop);
+  loadProfile();closeProfilePanel();showToast('Profiel opgeslagen');
+}
+function toggleProfilePanel(){document.getElementById('profile-panel').classList.toggle('open');}
+function closeProfilePanel(){document.getElementById('profile-panel').classList.remove('open');}
+document.addEventListener('click',function(e){
+  const panel=document.getElementById('profile-panel');
+  const btn=document.getElementById('profile-btn');
+  if(panel.classList.contains('open')&&!panel.contains(e.target)&&!btn.contains(e.target))closeProfilePanel();
+});
+loadProfile();
 
 const APP_COLOR={werkzaamheden:['#007AFF','#0055D4'],weather:['#32ADE6','#0A7AC4'],voertuigen:['#FF9F0A','#CC7700'],reserveringen:['#FF6B35','#CC4415'],ploegindeling:['#5E5CE6','#3634A3'],topdesk:['#FF375F','#CC1035'],p2000:['#D2100B','#8B0707'],wegafsluiting:['#30D158','#1A8C38']};
 function buildMobileHome(){
