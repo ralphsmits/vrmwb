@@ -813,7 +813,7 @@ const T={
       {weg:'A58 richting Breda – km 14',status:'BEPERKT',date:'Ma, 16 maart 2026',desc:'Wegwerkzaamheden rijstrook 1+2, omleiding via N282',warn:''},
     ]},
     render(d){
-      const IMG_MAP={'generaal maczekstraat':'/img/maczekstraat.jpeg','tolbrugstraat':'/img/tolbrugstraat.jpeg'};
+      const IMG_MAP={'generaal maczekstraat':'https://raw.githubusercontent.com/ralphsmits/vrmwb/317f92ef408a871b712dd82587b352d1633e079d/img/maczekstraat.jpeg','tolbrugstraat':'https://raw.githubusercontent.com/ralphsmits/vrmwb/main/img/tolbrugstraat.jpeg'};
       return d.items.map(w=>{
         const imgSrc=w.img||IMG_MAP[(w.weg||'').toLowerCase().trim()]||null;
         const mapBlock=imgSrc
