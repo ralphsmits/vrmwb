@@ -24,7 +24,7 @@
   --radius:10px;--topbar-h:80px;
 }
 html,body{height:100%;overflow:hidden}
-body{font-family:'Frutiger',sans-serif;background:#0A0C10;color:var(--text);display:flex;flex-direction:column}
+body{font-family:'Frutiger',sans-serif;background:#0A0C10;color:var(--text);display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 
 /* BG */
 .bg{
@@ -217,30 +217,31 @@ body.edit-mode .wb.edit-btn,body.edit-mode .wb.del{display:flex}
 .bb-release{font-size:10px!important;font-weight:700!important;color:var(--text-light)!important;text-transform:none!important;letter-spacing:.2px!important;margin-top:3px!important}
 .bb-add,.bb-date-nav{
   position:absolute;left:50%;transform:translateX(-50%);
-  height:81px;border:none;border-radius:40px;
+  height:52px;border:none;border-radius:26px;
   font-family:'Frutiger',sans-serif;
-  cursor:pointer;transition:opacity .15s,transform .15s;
+  cursor:pointer;transition:transform .2s ease,box-shadow .2s ease,opacity .15s;
   display:none;align-items:center;justify-content:center;
-  background:var(--text);
+  background:var(--navy);
+  box-shadow:0 6px 20px rgba(18,32,83,.4);
 }
 .bb-add{width:220px;color:#fff}
-.bb-add:hover{opacity:.85}
+.bb-add:hover{opacity:.85;transform:translateX(-50%) translateY(-2px);box-shadow:0 8px 24px rgba(18,32,83,.6)}
 /* Normaal: toon datepicker; edit-mode: toon + */
-.bb-date-nav{display:flex;width:280px;padding:0 8px;gap:0}
+.bb-date-nav{display:flex;width:300px;padding:0 8px;gap:0}
+.bb-date-nav:hover{transform:translateX(-50%) translateY(-2px);box-shadow:0 8px 24px rgba(18,32,83,.6)}
 body.edit-mode .bb-date-nav{display:none}
 body.edit-mode .bb-add{display:flex}
 .bb-nav-arrow{
   background:transparent;border:none;color:rgba(255,255,255,.7);
-  font-size:32px;font-weight:300;line-height:1;cursor:pointer;
+  font-size:32px;font-weight:400;line-height:0;cursor:pointer;
   padding:0 12px;flex-shrink:0;transition:color .15s;
-  font-family:'Frutiger',sans-serif;
+  font-family:'Frutiger',sans-serif;transform:translateY(-2px);
 }
 .bb-nav-arrow:hover{color:#fff}
 .bb-date-trigger{
   flex:1;background:transparent;border:none;
-  font-family:'Frutiger',sans-serif;font-size:17px;font-weight:700;
-  color:#fff;cursor:pointer;white-space:nowrap;letter-spacing:.2px;
-  padding:0 4px;
+  font-family:'Frutiger',sans-serif;font-size:22px;font-weight:600;
+  color:#F6F6F6;cursor:pointer;white-space:nowrap;padding:0;
 }
 
 /* Flatpickr custom theme */
@@ -468,6 +469,132 @@ select.finp{cursor:pointer}
   .bb-right{display:none!important}
   .toast{bottom:100px}
 }
+
+/* =========================================
+   WEBKIT: LOCATIE NESTED MENU (Piket)
+   ========================================= */
+.loc-nested-wrap{margin-top:4px;border-top:1px solid rgba(0,0,0,.06);padding-top:4px}
+.loc-group-btn{display:flex;justify-content:space-between;align-items:center;width:100%;padding:9px 14px;border:none;border-radius:8px;background:transparent;font-family:'Frutiger',sans-serif;font-size:14px;font-weight:700;color:var(--text);cursor:pointer}
+.loc-group-btn:hover{background:rgba(0,0,0,.05)}
+.loc-nested-chevron{width:14px;height:14px;stroke:var(--text-sub);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s;flex-shrink:0}
+.loc-nested-wrap.open .loc-nested-chevron{transform:rotate(180deg)}
+.loc-nested-menu{display:none;background:rgba(0,0,0,.04);border-radius:8px;margin-top:4px;padding:4px;flex-direction:column}
+.loc-nested-wrap.open .loc-nested-menu{display:flex}
+.loc-nested-menu .loc-item{padding:8px 14px;font-weight:400}
+body.dark .loc-nested-menu{background:rgba(255,255,255,.05)}
+body.dark .loc-group-btn{color:#E8EAED}
+body.dark .loc-group-btn:hover{background:rgba(255,255,255,.07)}
+
+/* =========================================
+   WEBKIT: TAB NAVIGATION (Tekst Widget)
+   ========================================= */
+.w-tab-container{display:flex;gap:4px;padding:0 14px;border-bottom:2px solid rgba(0,0,0,.08);overflow-x:auto;overflow-y:hidden;scrollbar-width:none;white-space:nowrap;flex-shrink:0;background:transparent}
+.w-tab-container::-webkit-scrollbar{height:4px}
+.w-tab{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:7px 14px;border-radius:6px 6px 0 0;background:rgba(0,0,0,.04);font-weight:700;font-size:12px;color:var(--text-sub);cursor:pointer;transition:background .15s}
+.w-tab:hover{background:rgba(0,0,0,.08)}
+.w-tab.active{background:rgba(255,255,255,.85);color:var(--text);border:1px solid rgba(0,0,0,.08);border-bottom:none;position:relative;top:2px}
+.tab-content{display:none;flex-direction:column;flex:1}
+.tab-content.active{display:flex}
+body.dark .w-tab-container{border-bottom-color:rgba(255,255,255,.08)}
+body.dark .w-tab{background:rgba(255,255,255,.06);color:rgba(255,255,255,.5)}
+body.dark .w-tab.active{background:rgba(255,255,255,.12);color:#E8EAED;border-color:rgba(255,255,255,.12)}
+
+/* =========================================
+   WEBKIT: TEKST CONTENT
+   ========================================= */
+.w-text-content{font-size:14px;line-height:1.6;color:inherit;margin-bottom:10px}
+.w-tag-small{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:900;background:var(--navy);color:#fff;padding:6px 12px;border-radius:16px;margin-top:8px;margin-bottom:16px;align-self:flex-start;cursor:pointer;transition:transform .2s,box-shadow .2s;border:none;font-family:'Frutiger',sans-serif}
+.w-tag-small:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.1)}
+.w-tag-small svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+.w-photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin:10px 0 14px}
+.w-photo-thumb{width:100%;aspect-ratio:16/9;background:rgba(0,0,0,.06);border-radius:6px;border:1px solid rgba(0,0,0,.08);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text-sub);font-weight:700;cursor:pointer;background-size:cover;background-position:center;transition:transform .2s;text-transform:uppercase}
+.w-photo-thumb:hover{transform:translateY(-2px);border-color:var(--gold)}
+.w-meta-row{margin-top:auto;padding-top:10px;border-top:1px dashed rgba(0,0,0,.1);font-size:11px;color:var(--text-sub);font-style:italic;display:flex;flex-direction:column;gap:3px}
+body.dark .w-photo-thumb{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.12);color:rgba(255,255,255,.5)}
+body.dark .w-meta-row{border-top-color:rgba(255,255,255,.08);color:rgba(255,255,255,.4)}
+
+/* =========================================
+   WEBKIT: DATA TABLE (Tabel Widget)
+   ========================================= */
+.wdata-container{overflow-x:auto;overflow-y:auto;flex:1;position:relative;margin:-12px -13px}
+.wdata-table{width:100%;border-collapse:separate;border-spacing:0;text-align:left;font-size:13px;font-weight:400}
+.wdata-table th,.wdata-table td{padding:11px 13px;vertical-align:top;border:none}
+.wdata-table th{font-weight:900;background:rgba(255,255,255,.92);backdrop-filter:blur(4px);text-transform:uppercase;font-size:11px;letter-spacing:.5px;color:var(--text-sub);position:sticky;top:-1px;z-index:10;padding-top:14px;padding-bottom:10px;box-shadow:inset 0 -2px 0 var(--red)}
+.wdata-table tbody tr:nth-child(even) td{background:rgba(0,0,0,.02)}
+.wdata-table-clickable tbody tr{cursor:pointer;transition:background .15s}
+.wdata-table-clickable tbody tr:hover{background:rgba(0,0,0,.05)!important}
+.wdata-td-hl{font-weight:700;color:var(--navy);white-space:nowrap}
+.wdata-td-sub{display:block;font-size:10px;color:var(--text-sub);margin-top:2px;font-weight:700}
+.wdata-truncate{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px;display:block}
+body.dark .wdata-table th{background:rgba(18,21,30,.95);color:rgba(255,255,255,.5);box-shadow:inset 0 -2px 0 var(--red)}
+body.dark .wdata-table tbody tr:nth-child(even) td{background:rgba(255,255,255,.03)}
+body.dark .wdata-table-clickable tbody tr:hover{background:rgba(255,255,255,.07)!important}
+body.dark .wdata-td-hl{color:var(--gold)}
+
+/* =========================================
+   WEBKIT: WERKLIJST (nieuwe stijl)
+   ========================================= */
+.w-check-toggle{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid rgba(0,0,0,.06);cursor:pointer;transition:background .15s}
+.w-check-toggle:hover{background:rgba(0,0,0,.02)}
+.w-check-toggle:last-child{border-bottom:none}
+.w-check-box{width:20px;height:20px;border-radius:5px;border:2px solid rgba(0,0,0,.2);display:flex;justify-content:center;align-items:center;color:transparent;font-size:13px;font-weight:bold;flex-shrink:0;transition:all .15s;margin-top:1px}
+.w-check-toggle.checked .w-check-box{background:var(--red);border-color:var(--red);color:#fff}
+.w-check-content{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+.w-check-content strong{font-size:13px;font-weight:700;color:var(--text);transition:opacity .15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.w-check-content span{font-size:11px;color:var(--text-sub);font-style:italic}
+.w-check-toggle.checked .w-check-content strong{text-decoration:line-through;opacity:.5}
+.w-checklist-body{flex:1;overflow-y:auto;padding:0 13px}
+.w-footer-link{font-size:12px;font-weight:900;color:var(--navy);text-decoration:none;display:block;text-align:center;padding:10px 13px;border-top:1px solid rgba(0,0,0,.06);cursor:pointer;transition:color .15s;background:transparent;border-left:none;border-right:none;border-bottom:none;font-family:'Frutiger',sans-serif;width:100%;flex-shrink:0}
+.w-footer-link:hover{color:var(--gold)}
+.werklijst-wbody{padding:0!important;display:flex!important;flex-direction:column!important}
+body.dark .w-check-toggle{border-bottom-color:rgba(255,255,255,.07)}
+body.dark .w-check-box{border-color:rgba(255,255,255,.3)}
+body.dark .w-check-content strong{color:#E8EAED}
+body.dark .w-footer-link{color:var(--gold);border-top-color:rgba(255,255,255,.08)}
+body.dark .w-footer-link:hover{color:#fff}
+
+/* =========================================
+   WEBKIT: KIS MODALS (Detail popups)
+   ========================================= */
+.kis-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);backdrop-filter:blur(5px);display:none;justify-content:center;align-items:center;z-index:100002}
+.kis-modal.active{display:flex;animation:kmfade .2s ease forwards}
+@keyframes kmfade{from{opacity:0}to{opacity:1}}
+.kis-modal-box{background:#fff;color:#1E1E1E;border-radius:16px;padding:36px;width:520px;max-width:90vw;box-shadow:0 20px 50px rgba(0,0,0,.5);position:relative;max-height:85vh;overflow-y:auto}
+.kis-modal-title{color:var(--gold);font-size:13px;text-transform:uppercase;font-weight:900;letter-spacing:.5px;margin-bottom:6px}
+.kis-modal-main{font-size:17px;font-weight:900;color:#1E1E1E;margin-bottom:22px;line-height:1.4}
+.kis-modal-meta{background:rgba(0,0,0,.04);border-radius:8px;padding:14px}
+.kis-modal-meta p{font-size:14px;color:#707172;margin-bottom:7px}
+.kis-modal-meta p:last-child{margin-bottom:0}
+.kis-modal-meta strong{color:#1E1E1E}
+.kis-modal-close-btn{background:var(--red);color:#fff;width:28px;height:28px;font-size:20px;border-radius:14px;font-weight:bold;position:absolute;top:14px;right:14px;display:flex;align-items:center;justify-content:center;padding:0 0 3px;border:none;cursor:pointer;line-height:1}
+
+/* =========================================
+   WEBKIT: GALLERY MODAL
+   ========================================= */
+.gallery-modal{position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:100003}
+.gallery-modal.active{display:flex}
+.gallery-modal-inner{position:relative;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;gap:30px;padding:20px}
+.gallery-img-wrap{display:flex;flex-direction:column;align-items:center;max-width:75vw;max-height:85vh}
+.gallery-img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;box-shadow:0 10px 40px rgba(0,0,0,.4);min-width:60vw;min-height:60vh;background:rgba(255,255,255,.06);color:transparent}
+.gallery-nav{background:var(--navy);border:none;color:#fff;font-size:36px;width:56px;height:56px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;user-select:none;line-height:1;padding:0 5px 5px 5px;box-shadow:0 6px 20px rgba(18,32,83,.4);font-family:'Frutiger',sans-serif}
+.gallery-nav:hover{color:var(--gold);transform:scale(1.05)}
+.gallery-count{margin-top:14px;color:#fff;font-weight:700;background:rgba(0,0,0,.5);padding:5px 14px;border-radius:20px;font-size:13px;font-family:'Frutiger',sans-serif}
+.gallery-close{position:absolute;top:18px;right:18px;background:var(--red);color:#fff;width:32px;height:32px;font-size:22px;border-radius:16px;font-weight:bold;display:flex;align-items:center;justify-content:center;padding:0 0 3px;border:none;cursor:pointer;z-index:10;line-height:1}
+
+/* =========================================
+   WEBKIT: FLATPICKR CUSTOM HEADER
+   ========================================= */
+.flatpickr-months{display:none!important}
+.fp-custom-header{background:var(--navy);padding:14px 18px;color:#fff;display:flex;justify-content:space-between;align-items:center;border-radius:14px 14px 0 0}
+.fp-month-group,.fp-year-group{display:flex;align-items:center;gap:8px}
+.fp-c-arrow{background:none;border:none;cursor:pointer;font-size:24px;color:rgba(255,255,255,.6);transition:color .2s;user-select:none;display:flex;align-items:center;justify-content:center;padding:0 5px 5px 5px;line-height:1;font-family:'Frutiger',sans-serif}
+.fp-c-arrow:hover{color:var(--gold)}
+.fp-c-month{font-size:15px;font-weight:700;color:#fff;text-align:center;text-transform:lowercase;display:inline-block;min-width:90px}
+.fp-c-year{font-size:15px;font-weight:700;color:#fff;text-align:center;display:inline-block;min-width:42px}
+.fp-today-btn{background:#f0f2f5;color:var(--navy);font-weight:900;text-align:center;padding:11px;cursor:pointer;text-transform:uppercase;font-size:12px;transition:background .2s;border:none;width:100%;border-top:1px solid rgba(0,0,0,.08);font-family:'Frutiger',sans-serif;letter-spacing:.4px}
+.fp-today-btn:hover{background:#e2e5e9;color:var(--gold)}
+body.dark .fp-today-btn{background:rgba(255,255,255,.08);color:var(--gold);border-top-color:rgba(255,255,255,.08)}
+body.dark .fp-today-btn:hover{background:rgba(255,255,255,.14);color:#fff}
 </style>
 </head>
 <body>
@@ -485,9 +612,28 @@ select.finp{cursor:pointer}
         <svg viewBox="0 0 24 24" class="loc-chevron"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
       <div class="loc-menu" id="loc-menu">
+        <button class="loc-item" onclick="selectLoc('Bergen op Zoom')">Bergen op Zoom</button>
         <button class="loc-item" onclick="selectLoc('Breda')">Breda</button>
-        <button class="loc-item" onclick="selectLoc('Chaam')">Chaam</button>
-        <button class="loc-item" onclick="selectLoc('Ulvenhout')">Ulvenhout</button>
+        <button class="loc-item" onclick="selectLoc('Moerdijk-Haven')">Moerdijk-Haven</button>
+        <button class="loc-item" onclick="selectLoc('Roosendaal')">Roosendaal</button>
+        <button class="loc-item" onclick="selectLoc('Tilburg Centrum')">Tilburg Centrum</button>
+        <button class="loc-item" onclick="selectLoc('Tilburg Vossenberg')">Tilburg Vossenberg</button>
+        <div class="loc-nested-wrap" id="piket-wrap">
+          <button class="loc-group-btn" id="piket-toggle" onclick="togglePiketMenu(event)">
+            Piket
+            <svg viewBox="0 0 24 24" class="loc-nested-chevron"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="loc-nested-menu" id="piket-menu">
+            <button class="loc-item" onclick="selectLoc('Piket: AGS')">AGS</button>
+            <button class="loc-item" onclick="selectLoc('Piket: HOVD')">HOVD</button>
+            <button class="loc-item" onclick="selectLoc('Piket: M&amp;S/IM/GIM')">M&amp;S/IM/GIM</button>
+            <button class="loc-item" onclick="selectLoc('Piket: OVD - Baronie')">OVD - Baronie</button>
+            <button class="loc-item" onclick="selectLoc('Piket: OVD - Hart van Brabant')">OVD - Hart van Brabant</button>
+            <button class="loc-item" onclick="selectLoc('Piket: OVD - Markizaten')">OVD - Markizaten</button>
+            <button class="loc-item" onclick="selectLoc('Piket: OVD BZ')">OVD BZ</button>
+            <button class="loc-item" onclick="selectLoc('Piket: ROL/CvD')">ROL/CvD</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -588,6 +734,54 @@ select.finp{cursor:pointer}
 
 <div class="toast" id="toast"></div>
 
+<!-- WEBKIT: Foto Galerij Modal -->
+<div class="gallery-modal" id="gallery-modal">
+  <button class="gallery-close" id="gallery-close">&times;</button>
+  <div class="gallery-modal-inner">
+    <button class="gallery-nav" id="gallery-prev">&#8249;</button>
+    <div class="gallery-img-wrap">
+      <img class="gallery-img" id="gallery-img" src="" alt="">
+      <div class="gallery-count" id="gallery-count">1 / 1</div>
+    </div>
+    <button class="gallery-nav" id="gallery-next">&#8250;</button>
+  </div>
+</div>
+
+<!-- WEBKIT: Taak Detail Modal -->
+<div class="kis-modal" id="task-modal">
+  <div class="kis-modal-box">
+    <button class="kis-modal-close-btn" onclick="document.getElementById('task-modal').classList.remove('active')">&times;</button>
+    <div class="kis-modal-title">Taak Details</div>
+    <p class="kis-modal-main" id="task-modal-text"></p>
+    <div class="kis-modal-meta">
+      <p>Toegevoegd door: <strong id="task-modal-adder"></strong></p>
+      <p>Toegewezen aan: <strong id="task-modal-assignee"></strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- WEBKIT: Tabel Melding Detail Modal -->
+<div class="kis-modal" id="tabel-modal">
+  <div class="kis-modal-box">
+    <button class="kis-modal-close-btn" onclick="document.getElementById('tabel-modal').classList.remove('active')">&times;</button>
+    <div class="kis-modal-title">Melding Details</div>
+    <p class="kis-modal-main" id="tabel-modal-text"></p>
+    <div class="kis-modal-meta">
+      <p>Datum/Tijd: <strong id="tabel-modal-time"></strong></p>
+      <p>Status: <strong id="tabel-modal-status"></strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- WEBKIT: Open Taken Modal -->
+<div class="kis-modal" id="open-tasks-modal">
+  <div class="kis-modal-box">
+    <button class="kis-modal-close-btn" onclick="document.getElementById('open-tasks-modal').classList.remove('active')">&times;</button>
+    <div class="kis-modal-title">Openstaande Taken</div>
+    <div id="open-tasks-list"></div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/gridstack@10.0/dist/gridstack-all.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/nl.js"></script>
@@ -603,6 +797,9 @@ const I={
   road:`<svg viewBox="0 0 24 24"><path d="M5 22L12 2l7 20"/><line x1="12" y1="17" x2="12" y2="17"/><line x1="10" y1="11" x2="14" y2="11"/></svg>`,
   ticket:`<svg viewBox="0 0 24 24"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2z"/></svg>`,
   bell:`<svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>`,
+  text:`<svg viewBox="0 0 24 24"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>`,
+  table:`<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="9" x2="9" y2="21"/></svg>`,
+  check:`<svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`,
 };
 
 function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -641,6 +838,9 @@ function addFormRow(type){
     reserveringen:`<div class="frow"><input class="finp f-time" placeholder="09:00" style="flex:0 0 72px"><input class="finp f-loc" placeholder="Locatie"><input class="finp f-desc" placeholder="Omschrijving" style="flex:2"><button class="frow-del" onclick="delRow(this)" type="button">×</button></div>`,
     topdesk:`<div class="fcard"><div class="fcard-head"><span class="fcard-num">Melding ${n}</span><button class="frow-del" onclick="delRow(this)" type="button">×</button></div><div class="frow2"><input class="finp f-num" placeholder="Meldingsnummer"><select class="finp f-status" style="flex:0 0 150px"><option value="AFGEHANDELD">Afgehandeld</option><option value="OPEN">Open</option><option value="IN BEHANDELING">In behandeling</option></select></div><input class="finp f-title" placeholder="Titel"><div class="frow2"><input class="finp f-loc" placeholder="Locatie (optioneel)"><input class="finp f-dl" placeholder="Streefdatum" style="flex:0 0 95px"></div><div class="frow2"><input class="finp f-date" placeholder="Aangemaakt op"><input class="finp f-person" placeholder="Verantwoordelijke"></div></div>`,
     wegafsluiting:`<div class="fcard"><div class="fcard-head"><span class="fcard-num">Afsluiting ${n}</span><button class="frow-del" onclick="delRow(this)" type="button">×</button></div><div class="frow2"><input class="finp f-weg" placeholder="Wegnaam"><select class="finp f-status" style="flex:0 0 130px"><option value="AFGESLOTEN">Afgesloten</option><option value="BEPERKT">Beperkt</option></select></div><input class="finp f-date" placeholder="Datum"><input class="finp f-desc" placeholder="Omschrijving"><input class="finp f-warn" placeholder="Waarschuwing (optioneel)"></div>`,
+    tekst:`<div class="fcard"><div class="fcard-head"><span class="fcard-num">Bericht ${n}</span><button class="frow-del" onclick="delRow(this)" type="button">×</button></div><input class="finp f-label" placeholder="Tab label (bijv. Tekst ${n})"><textarea class="fta f-text" placeholder="Tekst inhoud"></textarea><div class="frow2"><input class="finp f-created-date" placeholder="Aanmaakdatum"><input class="finp f-created-by" placeholder="Aangemaakt door"></div><div class="frow2"><input class="finp f-edited-date" placeholder="Bewerkdatum"><input class="finp f-edited-by" placeholder="Bewerkt door"></div><input class="finp f-until" placeholder="Geldig tot (bijv. Za, 22 augustus 2026)"></div>`,
+    tabel:`<div class="fcard"><div class="fcard-head"><span class="fcard-num">Rij ${n}</span><button class="frow-del" onclick="delRow(this)" type="button">×</button></div><input class="finp f-cell" placeholder="Cel 1" style="margin-bottom:7px"><input class="finp f-cell" placeholder="Cel 2" style="margin-bottom:7px"><input class="finp f-cell" placeholder="Cel 3" style="margin-bottom:7px"><select class="finp f-status" style="margin-top:4px"><option value="">Normaal</option><option value="open">Open (rood)</option><option value="green">Opgelost (groen)</option></select></div>`,
+    werklijst:`<div class="frow"><input type="checkbox" class="f-done"><input class="finp f-task" placeholder="Taakomschrijving" style="flex:2"><input class="finp f-meta" placeholder="Toegewezen aan"><button class="frow-del" onclick="delRow(this)" type="button">×</button></div>`,
   };
   if(h[type])c.insertAdjacentHTML('beforeend',h[type]);
 }
@@ -813,7 +1013,7 @@ const T={
       {weg:'A58 richting Breda – km 14',status:'BEPERKT',date:'Ma, 16 maart 2026',desc:'Wegwerkzaamheden rijstrook 1+2, omleiding via N282',warn:''},
     ]},
     render(d){
-      const IMG_MAP={'generaal maczekstraat':'https://raw.githubusercontent.com/ralphsmits/vrmwb/317f92ef408a871b712dd82587b352d1633e079d/img/maczekstraat.jpeg','tolbrugstraat':'https://raw.githubusercontent.com/ralphsmits/vrmwb/main/img/tolbrugstraat.jpeg'};
+      const IMG_MAP={'generaal maczekstraat':'/img/maczekstraat.jpeg','tolbrugstraat':'/img/tolbrugstraat.jpeg'};
       return d.items.map(w=>{
         const imgSrc=w.img||IMG_MAP[(w.weg||'').toLowerCase().trim()]||null;
         const mapBlock=imgSrc
@@ -823,6 +1023,77 @@ const T={
       }).join('');},
     editForm(d){return`<label class="flbl">Wegafsluitingen</label><div id="f-rows">${d.items.map((w,i)=>`<div class="fcard"><div class="fcard-head"><span class="fcard-num">Afsluiting ${i+1}</span><button class="frow-del" onclick="delRow(this)" type="button">×</button></div><div class="frow2"><input class="finp f-weg" value="${esc(w.weg)}" placeholder="Wegnaam"><select class="finp f-status" style="flex:0 0 130px"><option value="AFGESLOTEN" ${w.status==='AFGESLOTEN'?'selected':''}>Afgesloten</option><option value="BEPERKT" ${w.status==='BEPERKT'?'selected':''}>Beperkt</option></select></div><input class="finp f-date" value="${esc(w.date)}" placeholder="Datum"><input class="finp f-desc" value="${esc(w.desc)}" placeholder="Omschrijving"><input class="finp f-warn" value="${esc(w.warn)}" placeholder="Waarschuwing (optioneel)"></div>`).join('')}</div><button class="fadd" onclick="addFormRow('wegafsluiting')" type="button">+ Afsluiting toevoegen</button>`;},
     parseForm(){return{items:[...document.querySelectorAll('#f-rows .fcard')].map(c=>({weg:c.querySelector('.f-weg').value,status:c.querySelector('.f-status').value,date:c.querySelector('.f-date').value,desc:c.querySelector('.f-desc').value,warn:c.querySelector('.f-warn').value}))};},
+  },
+
+  tekst:{label:'Teksten',ico:'text',
+    def:{items:[
+      {label:'Bericht 1',text:'Voer hier uw tekst in.',photos:[],createdDate:'—',createdBy:'—',editedDate:'',editedBy:'',until:''},
+      {label:'Bericht 2',text:'',photos:[],createdDate:'—',createdBy:'—',editedDate:'',editedBy:'',until:''},
+    ]},
+    renderExtra(d,wid){
+      if(!d.items||!d.items.length)return'';
+      return`<div class="w-tab-container" id="wtabs-${wid}">${d.items.map((item,i)=>`<div class="w-tab ${i===0?'active':''}" onclick="switchWTab(${wid},${i})">${esc(item.label||`Tekst ${i+1}`)}</div>`).join('')}</div>`;
+    },
+    render(d,wid){
+      if(!d.items||!d.items.length)return`<div style="color:var(--text-sub);font-size:13px;padding:12px">Geen teksten ingesteld.</div>`;
+      return d.items.map((item,i)=>`
+        <div class="tab-content ${i===0?'active':''}" id="wtab-${wid}-${i}">
+          ${item.text?`<div class="w-text-content">${esc(item.text).replace(/\n/g,'<br>')}</div>`:`<div style="color:var(--text-sub);font-size:13px">Geen tekst ingevoerd.</div>`}
+          ${item.photos&&item.photos.length?`<button class="w-tag-small open-gallery-btn" data-gallery='${JSON.stringify(item.photos)}'><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg> ${item.photos.length} Foto${item.photos.length!==1?"'s":""}</button>`:''}
+          <div class="w-meta-row">
+            ${item.createdDate&&item.createdBy?`<span>${esc(item.createdDate)} aangemaakt door: ${esc(item.createdBy)}</span>`:''}
+            ${item.editedBy&&item.editedBy!==item.createdBy?`<span>${esc(item.editedDate)} bewerkt door: ${esc(item.editedBy)}</span>`:''}
+            ${item.until?`<span>Reeks t/m (${esc(item.until)})</span>`:''}
+          </div>
+        </div>`).join('');
+    },
+    editForm(d){return`<label class="flbl">Tekst Berichten</label><div id="f-rows">${(d.items||[]).map((item,i)=>`<div class="fcard"><div class="fcard-head"><span class="fcard-num">Bericht ${i+1}</span><button class="frow-del" onclick="delRow(this)" type="button">×</button></div><input class="finp f-label" value="${esc(item.label||`Tekst ${i+1}`)}" placeholder="Tab label"><textarea class="fta f-text" placeholder="Tekst inhoud">${esc(item.text||'')}</textarea><div class="frow2"><input class="finp f-created-date" value="${esc(item.createdDate||'')}" placeholder="Aanmaakdatum (bijv. 22-8)"><input class="finp f-created-by" value="${esc(item.createdBy||'')}" placeholder="Aangemaakt door"></div><div class="frow2"><input class="finp f-edited-date" value="${esc(item.editedDate||'')}" placeholder="Bewerkdatum"><input class="finp f-edited-by" value="${esc(item.editedBy||'')}" placeholder="Bewerkt door"></div><input class="finp f-until" value="${esc(item.until||'')}" placeholder="Geldig tot (bijv. Za, 22 augustus 2026)"></div>`).join('')}</div><button class="fadd" onclick="addFormRow('tekst')" type="button">+ Bericht toevoegen</button>`;},
+    parseForm(){return{items:[...document.querySelectorAll('#f-rows .fcard')].map(c=>({label:c.querySelector('.f-label').value,text:c.querySelector('.f-text').value,photos:[],createdDate:c.querySelector('.f-created-date').value,createdBy:c.querySelector('.f-created-by').value,editedDate:c.querySelector('.f-edited-date').value,editedBy:c.querySelector('.f-edited-by').value,until:c.querySelector('.f-until').value}))};},
+  },
+
+  tabel:{label:'Tabel',ico:'table',
+    def:{columns:['Datum/Tijd','Omschrijving','Status'],rows:[
+      {cells:['Vandaag 10:45','Deur garage 2 sluit niet meer af na inzet gisteravond, motor ratelt.','Open'],status:'open'},
+      {cells:['Gisteren 14:20','Printer kantoor BG vertoont strepen op alle kleurenafdrukken.','In Behandeling'],status:''},
+      {cells:['Gisteren 09:15','Zeepdispenser wasruimte heren leeg en mechanisme lekt zeep.','In Behandeling'],status:''},
+      {cells:['28 Apr 16:30','Lamp in kleedkamer heren knippert constant en valt soms uit.','Opgelost'],status:'green'},
+      {cells:['28 Apr 11:05','Lekkage bij wasbak toilet 1e verdieping, sifon lekt water.','Open'],status:'open'},
+      {cells:['27 Apr 08:45','Toegangspas lezer buitenpoort defect, poort gaat niet open.','In Behandeling'],status:''},
+    ]},
+    render(d,wid){
+      const cols=d.columns||[];const rows=d.rows||[];
+      const SC={open:'var(--red)',green:'#009036','':`var(--text)`};
+      return`<div class="wdata-container"><table class="wdata-table wdata-table-clickable"><thead><tr>${cols.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${rows.map((row,ri)=>{
+        const cells=row.cells||[];const sc=SC[row.status||'']||`var(--text)`;
+        return`<tr onclick="openTabelModal(${wid},${ri})">${cells.map((cell,ci)=>{
+          if(ci===0)return`<td><span class="wdata-td-hl">${esc(cell)}</span></td>`;
+          if(ci===cells.length-1)return`<td><span style="font-weight:700;color:${sc}">${esc(cell)}</span></td>`;
+          return`<td><span class="wdata-truncate">${esc(cell)}</span></td>`;
+        }).join('')}</tr>`;
+      }).join('')}</tbody></table></div>`;
+    },
+    editForm(d){const cols=d.columns||[];const rows=d.rows||[];return`<label class="flbl">Kolommen (kommagescheiden)</label><input class="finp" id="f-cols" value="${esc(cols.join(', '))}" placeholder="Kolom 1, Kolom 2, ..."><label class="flbl">Rijen</label><div id="f-rows">${rows.map((row,i)=>`<div class="fcard"><div class="fcard-head"><span class="fcard-num">Rij ${i+1}</span><button class="frow-del" onclick="delRow(this)" type="button">×</button></div>${(row.cells||[]).map((cell,ci)=>`<input class="finp f-cell" value="${esc(cell)}" placeholder="Cel ${ci+1}" style="margin-bottom:7px">`).join('')}<select class="finp f-status" style="margin-top:4px"><option value="" ${(row.status||'')==''?'selected':''}>Normaal</option><option value="open" ${row.status==='open'?'selected':''}>Open (rood)</option><option value="green" ${row.status==='green'?'selected':''}>Opgelost (groen)</option></select></div>`).join('')}</div><button class="fadd" onclick="addFormRow('tabel')" type="button">+ Rij toevoegen</button>`;},
+    parseForm(){const cols=(document.getElementById('f-cols')?.value||'').split(',').map(s=>s.trim()).filter(Boolean);return{columns:cols,rows:[...document.querySelectorAll('#f-rows .fcard')].map(c=>({cells:[...c.querySelectorAll('.f-cell')].map(i=>i.value),status:c.querySelector('.f-status')?.value||''}))};},
+  },
+
+  werklijst:{label:'Werklijst',ico:'check',
+    def:{items:[
+      {t:'Papierbakken legen in alle kantoren op de begane grond',d:false,m:'Toegewezen aan: Jan S.'},
+      {t:'Schoonmaken vuile ruimte na inzet van gisteravond',d:true,m:'Toegewezen aan: Karel D.'},
+      {t:'Vloer kantine dweilen en tafels afnemen',d:false,m:'Toegewezen aan: Schoonmaak'},
+      {t:'SVM-rondpompen 20-1561',d:false,m:'Toegewezen aan: Kazerne Breda'},
+      {t:'Ademlucht testbanken uitschakelen',d:false,m:'Toegewezen aan: Chauffeur'},
+      {t:'Materiaal controleren TS-1',d:false,m:'Toegewezen aan: Manschap 1'},
+      {t:'Oliepeil voertuigen checken',d:false,m:'Toegewezen aan: Chauffeur'},
+    ]},
+    render(d,wid){
+      const items=d.items||[];
+      const open=items.filter(item=>!item.d).length;
+      const footerText=open===0?'Geen taken open':open===1?'Nog 1 taak open':`Nog ${open} taken open`;
+      return`<div class="w-checklist-body">${items.map((item,i)=>`<div class="w-check-toggle ${item.d?'checked':''}" onclick="toggleWerklijstItem(${wid},${i},event)"><div class="w-check-box">${item.d?'✓':''}</div><div class="w-check-content"><strong>${esc(item.t)}</strong>${item.m?`<span>${esc(item.m)}</span>`:''}</div></div>`).join('')}</div><button class="w-footer-link" onclick="openOpenTasksModal(${wid})">${esc(footerText)}</button>`;
+    },
+    editForm(d){return`<label class="flbl">Taken</label><div id="f-rows">${(d.items||[]).map(item=>`<div class="frow"><input type="checkbox" class="f-done" ${item.d?'checked':''}><input class="finp f-task" value="${esc(item.t)}" placeholder="Taakomschrijving" style="flex:2"><input class="finp f-meta" value="${esc(item.m||'')}" placeholder="Toegewezen aan"><button class="frow-del" onclick="delRow(this)" type="button">×</button></div>`).join('')}</div><button class="fadd" onclick="addFormRow('werklijst')" type="button">+ Taak toevoegen</button>`;},
+    parseForm(){return{items:[...document.querySelectorAll('#f-rows .frow')].map(r=>({d:r.querySelector('.f-done').checked,t:r.querySelector('.f-task').value,m:r.querySelector('.f-meta').value}))};},
   },
 };
 
@@ -929,9 +1200,45 @@ function changeDay(dir){
 }
 function initDatepicker(){
   setDate(selectedDate);
+  const MONTHS_NL=['januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december'];
   fpInstance=flatpickr('#bb-date-trigger',{
     locale:'nl',defaultDate:'today',position:'above center',disableMobile:true,
-    onChange:function(dates){if(dates[0])setDate(dates[0]);}
+    onChange:function(dates){if(dates[0])setDate(dates[0]);},
+    onReady:function(dates,dateStr,instance){
+      // Inject custom Navy header
+      const header=document.createElement('div');
+      header.className='fp-custom-header';
+      header.innerHTML=`
+        <div class="fp-month-group">
+          <button type="button" class="fp-c-arrow fp-prev-month">&#8249;</button>
+          <span class="fp-c-month"></span>
+          <button type="button" class="fp-c-arrow fp-next-month">&#8250;</button>
+        </div>
+        <div class="fp-year-group">
+          <button type="button" class="fp-c-arrow fp-prev-year">&#8249;</button>
+          <span class="fp-c-year"></span>
+          <button type="button" class="fp-c-arrow fp-next-year">&#8250;</button>
+        </div>`;
+      const updateHeader=()=>{
+        header.querySelector('.fp-c-month').textContent=MONTHS_NL[instance.currentMonth];
+        header.querySelector('.fp-c-year').textContent=instance.currentYear;
+      };
+      header.querySelector('.fp-prev-month').addEventListener('click',e=>{e.stopPropagation();instance.changeMonth(-1);updateHeader();});
+      header.querySelector('.fp-next-month').addEventListener('click',e=>{e.stopPropagation();instance.changeMonth(1);updateHeader();});
+      header.querySelector('.fp-prev-year').addEventListener('click',e=>{e.stopPropagation();instance.changeYear(instance.currentYear-1);updateHeader();});
+      header.querySelector('.fp-next-year').addEventListener('click',e=>{e.stopPropagation();instance.changeYear(instance.currentYear+1);updateHeader();});
+      instance.calendarContainer.prepend(header);
+      instance.config.onMonthChange.push(updateHeader);
+      instance.config.onYearChange.push(updateHeader);
+      updateHeader();
+      // Inject "Vandaag" button at the bottom
+      const todayBtn=document.createElement('button');
+      todayBtn.className='fp-today-btn';
+      todayBtn.textContent='Vandaag';
+      todayBtn.type='button';
+      todayBtn.addEventListener('click',()=>{instance.setDate(new Date(),true);instance.close();});
+      instance.calendarContainer.appendChild(todayBtn);
+    }
   });
 }
 window.addEventListener('load',()=>initDatepicker(),{once:true});
@@ -942,7 +1249,9 @@ function showToast(m){const t=document.getElementById('toast');t.textContent=m;t
 
 function widgetHTML(w){
   const def=T[w.type];const editable=!['weather','p2000'].includes(w.type);
-  return`<div class="widget" id="w${w.id}" data-id="${w.id}"><div class="wh"><div class="wh-title">${def.label}</div><div class="wh-acts">${editable?`<button class="wb edit-btn" onclick="openEditWid(${w.id})" title="Bewerken">${I.pencil}</button>`:''}<button class="wb del" onclick="removeWidget(${w.id})" title="Verwijderen">${I.x}</button></div></div><div class="wbody" id="wb${w.id}">${def.render(w.data,w.id)}</div></div>`;
+  const extraHTML=def.renderExtra?def.renderExtra(w.data,w.id):'';
+  const bodyClass=w.type==='werklijst'?'wbody werklijst-wbody':'wbody';
+  return`<div class="widget" id="w${w.id}" data-id="${w.id}"><div class="wh"><div class="wh-title">${def.label}</div><div class="wh-acts">${editable?`<button class="wb edit-btn" onclick="openEditWid(${w.id})" title="Bewerken">${I.pencil}</button>`:''}<button class="wb del" onclick="removeWidget(${w.id})" title="Verwijderen">${I.x}</button></div></div>${extraHTML}<div class="${bodyClass}" id="wb${w.id}">${def.render(w.data,w.id)}</div></div>`;
 }
 
 function renderWidget(w){grid.addWidget({id:'gs'+w.id,x:w.x,y:w.y,w:w.w,h:w.h,minW:2,minH:2,content:widgetHTML(w)});}
@@ -1020,7 +1329,7 @@ document.querySelectorAll('.mov').forEach(m=>m.addEventListener('click',function
 
 // Location
 const LOC_KEY='vrmwb_location';
-const LOCATIONS=['Breda','Chaam','Ulvenhout'];
+const LOCATIONS=['Bergen op Zoom','Breda','Moerdijk-Haven','Roosendaal','Tilburg Centrum','Tilburg Vossenberg'];
 function initLoc(){
   const saved=localStorage.getItem(LOC_KEY)||'Breda';
   setLocActive(saved,false);
@@ -1028,20 +1337,92 @@ function initLoc(){
 function selectLoc(name){
   localStorage.setItem(LOC_KEY,name);
   setLocActive(name,true);
+  // Close piket submenu if open
+  document.getElementById('piket-wrap')?.classList.remove('open');
 }
 function setLocActive(name,close){
   document.getElementById('loc-label').textContent=name;
-  document.querySelectorAll('.loc-item').forEach(el=>el.classList.toggle('active',el.textContent===name));
-  if(close)document.getElementById('loc-wrap')?.classList.remove('open')||document.querySelector('.loc-wrap').classList.remove('open');
+  document.querySelectorAll('.loc-item').forEach(el=>el.classList.toggle('active',el.getAttribute('onclick')?.includes(`'${name}'`)||el.textContent.trim()===name));
+  if(close)document.querySelector('.loc-wrap')?.classList.remove('open');
 }
 function toggleLocMenu(){
   document.querySelector('.loc-wrap').classList.toggle('open');
+}
+function togglePiketMenu(e){
+  e.stopPropagation();
+  document.getElementById('piket-wrap')?.classList.toggle('open');
 }
 document.addEventListener('click',function(e){
   const wrap=document.querySelector('.loc-wrap');
   if(wrap&&wrap.classList.contains('open')&&!wrap.contains(e.target))wrap.classList.remove('open');
 });
 initLoc();
+
+// =========================================
+// WEBKIT: TAB SWITCHING
+// =========================================
+function switchWTab(wid,idx){
+  document.querySelectorAll(`#wtabs-${wid} .w-tab`).forEach((t,i)=>t.classList.toggle('active',i===idx));
+  document.querySelectorAll(`#wb${wid} .tab-content`).forEach((c,i)=>c.classList.toggle('active',i===idx));
+}
+
+// =========================================
+// WEBKIT: WERKLIJST TOGGLE
+// =========================================
+function toggleWerklijstItem(wid,idx,e){
+  if(e.target.closest('.w-footer-link'))return;
+  const w=widgets.find(x=>x.id===wid);if(!w)return;
+  w.data.items[idx].d=!w.data.items[idx].d;
+  refreshWidget(wid);saveState();
+}
+
+// =========================================
+// WEBKIT: TABEL MODAL
+// =========================================
+function openTabelModal(wid,rowIdx){
+  const w=widgets.find(x=>x.id===wid);if(!w||!w.data.rows)return;
+  const row=w.data.rows[rowIdx];if(!row)return;
+  const cells=row.cells||[];
+  document.getElementById('tabel-modal-text').textContent=cells[1]||cells[0]||'';
+  document.getElementById('tabel-modal-time').textContent=cells[0]||'—';
+  document.getElementById('tabel-modal-status').textContent=cells[cells.length-1]||'—';
+  document.getElementById('tabel-modal').classList.add('active');
+}
+
+// =========================================
+// WEBKIT: OPEN TAKEN MODAL
+// =========================================
+function openOpenTasksModal(wid){
+  const w=widgets.find(x=>x.id===wid);if(!w)return;
+  const list=document.getElementById('open-tasks-list');
+  list.innerHTML='';
+  const open=(w.data.items||[]).filter(item=>!item.d);
+  if(open.length===0){list.innerHTML='<p style="color:var(--text-sub);font-weight:700;padding:8px 0">Geen openstaande taken.</p>';}
+  else{open.forEach(item=>{const div=document.createElement('div');div.style.cssText='padding:10px 0;border-bottom:1px solid rgba(0,0,0,.06)';div.innerHTML=`<div style="font-size:14px;font-weight:700;color:#1E1E1E">${esc(item.t)}</div>${item.m?`<div style="font-size:12px;color:#707172;margin-top:3px;font-style:italic">${esc(item.m)}</div>`:''}`; list.appendChild(div);});}
+  document.getElementById('open-tasks-modal').classList.add('active');
+}
+
+// =========================================
+// WEBKIT: GALLERY
+// =========================================
+let galleryImages=[],galleryIdx=0;
+function openGallery(images,idx){galleryImages=images;galleryIdx=idx||0;updateGallery();document.getElementById('gallery-modal').classList.add('active');}
+function updateGallery(){document.getElementById('gallery-img').src=galleryImages[galleryIdx]||'';document.getElementById('gallery-count').textContent=`${galleryIdx+1} / ${galleryImages.length}`;}
+
+document.addEventListener('DOMContentLoaded',function(){
+  const gm=document.getElementById('gallery-modal');if(!gm)return;
+  document.getElementById('gallery-close').addEventListener('click',()=>gm.classList.remove('active'));
+  document.getElementById('gallery-prev').addEventListener('click',()=>{galleryIdx=(galleryIdx-1+galleryImages.length)%galleryImages.length;updateGallery();});
+  document.getElementById('gallery-next').addEventListener('click',()=>{galleryIdx=(galleryIdx+1)%galleryImages.length;updateGallery();});
+  gm.addEventListener('click',e=>{if(e.target===gm)gm.classList.remove('active');});
+  // Delegate gallery button clicks from dynamically rendered widgets
+  document.addEventListener('click',e=>{
+    const btn=e.target.closest('.open-gallery-btn');
+    if(btn){const data=btn.getAttribute('data-gallery');if(data){try{openGallery(JSON.parse(data),0);}catch(err){}}}
+  });
+  // Close KIS modals on backdrop click
+  document.querySelectorAll('.kis-modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('active');}));
+});
 
 // Dark mode
 const DARK_KEY='vrmwb_dark';
@@ -1124,7 +1505,7 @@ document.addEventListener('click',function(e){
 });
 loadProfile();
 
-const APP_COLOR={werkzaamheden:['#007AFF','#0055D4'],weather:['#32ADE6','#0A7AC4'],voertuigen:['#FF9F0A','#CC7700'],reserveringen:['#FF6B35','#CC4415'],ploegindeling:['#5E5CE6','#3634A3'],topdesk:['#FF375F','#CC1035'],p2000:['#D2100B','#8B0707'],wegafsluiting:['#30D158','#1A8C38']};
+const APP_COLOR={werkzaamheden:['#007AFF','#0055D4'],weather:['#32ADE6','#0A7AC4'],voertuigen:['#FF9F0A','#CC7700'],reserveringen:['#FF6B35','#CC4415'],ploegindeling:['#5E5CE6','#3634A3'],topdesk:['#FF375F','#CC1035'],p2000:['#D2100B','#8B0707'],wegafsluiting:['#30D158','#1A8C38'],tekst:['#CC9933','#A07820'],tabel:['#122053','#0A1535'],werklijst:['#D2100B','#8B0707']};
 function buildMobileHome(){
   const g=document.getElementById('mob-grid');if(!g)return;g.innerHTML='';
   widgets.forEach(w=>{const def=T[w.type];const c=APP_COLOR[w.type]||['#636366','#3A3A3C'];const btn=document.createElement('button');btn.className='mob-app';btn.onclick=()=>openApp(w.id);btn.innerHTML=`<div class="mob-ico" style="background:linear-gradient(145deg,${c[0]},${c[1]})">${I[def.ico]||''}</div><div class="mob-lbl">${def.label}</div>`;g.appendChild(btn);});
